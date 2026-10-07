@@ -47,4 +47,38 @@ describe("groupWords", () => {
     const g = groupWords(words, { fps: 30, takeBoundaries: [] });
     expect(g[0].endFrame).toBe(27);
   });
+
+  it("splits a 30-char four-word group into two lines of at most 18", () => {
+    const g = groupWords(seq(["aaaaaaaaaa", "bbbbbbb", "cccccccc", "dd"]), { fps: 30, takeBoundaries: [] });
+    expect(g.length).toBe(1);
+    expect(g[0].lines.map((l) => l.map((w) => w.text).join(" "))).toEqual(["aaaaaaaaaa bbbbbbb", "cccccccc dd"]);
+  });
+
+  it("ends the group early when four words cannot fit two lines", () => {
+    const g = groupWords(seq(["aaaaaaaaaaaa", "bbbbbbbbbbbb", "cccccccccccc", "dd"]), { fps: 30, takeBoundaries: [] });
+    expect(g.map((x) => x.words.map((w) => w.text))).toEqual([["aaaaaaaaaaaa", "bbbbbbbbbbbb"], ["cccccccccccc", "dd"]]);
+  });
+
+  it("starts a new group after a word ending in . ! or ?", () => {
+    for (const p of [".", "!", "?"]) {
+      const g = groupWords(seq(["so", `yes${p}`, "then", "no"]), { fps: 30, takeBoundaries: [] });
+      expect(g.map((x) => x.words.length)).toEqual([2, 2]);
+    }
+  });
+
+  it("never exceeds 18 characters on a line unless a single word is longer", () => {
+    const texts = ["we", "are", "repurposing", "everything", "instead", "of", "posting", "once", "ok", "go", "now", "please"];
+    for (const grp of groupWords(seq(texts), { fps: 30, takeBoundaries: [] })) {
+      expect(grp.lines.length).toBeLessThanOrEqual(2);
+      for (const l of grp.lines) expect(l.map((w) => w.text).join(" ").length).toBeLessThanOrEqual(18);
+      expect(grp.lines.flat()).toEqual(grp.words);
+    }
+  });
+
+  it("keeps a word longer than 18 characters alone on its line", () => {
+    const g = groupWords(seq(["a", "internationalization", "b"]), { fps: 30, takeBoundaries: [] });
+    const all = g.flatMap((x) => x.lines);
+    expect(all.find((l) => l.some((w) => w.text === "internationalization"))!.length).toBe(1);
+    expect(g.every((x) => x.lines.length <= 2)).toBe(true);
+  });
 });
