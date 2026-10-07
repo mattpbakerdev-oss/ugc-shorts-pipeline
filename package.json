@@ -34,6 +34,7 @@
     "test": "vitest run",
     "prep": "tsx scripts/prep.ts",
     "transcribe": "tsx scripts/transcribe.ts",
+    "bloopers": "tsx scripts/bloopers.ts",
     "render": "remotion render"
   }
 }

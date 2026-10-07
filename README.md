@@ -90,6 +90,10 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 - Any "Postiz" in a moment (phrase, hold, or graphic text) is rejected by the validator. Do not amplify the brand in graphics; captions are separate.
 - `//` in `hook` or a section title is a line break.
 
+**Finding retakes (`npm run bloopers -- <id>`)**
+
+Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeated within 4 seconds (a retake). It proposes cutting the first attempt, and prints a table plus a ready-to-paste `cuts: [...]` block with take-local seconds. Restarts that straddle a take boundary are skipped with a warning. These are proposals: check each against the transcript before pasting.
+
 **Graphics**
 
 | Helper | Zone | Default hold |
