@@ -1,4 +1,4 @@
-import { findPhrase } from "../phrase";
+import { findPhrase, PhraseNotFoundError } from "../phrase";
 import { DEFAULT_FACE_BOX } from "../zones";
 import type {
   GraphicSpec, Moment, ResolvedMoment, ResolvedSection, ResolvedVideo, Storyboard, TakesFile, WordsFile, ZoneName,
@@ -36,12 +36,12 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
   }).filter((s) => s.title !== "");
 
   let cursor = 0;
-  const moments: ResolvedMoment[] = sb.moments.map((m) => {
+  const moments: ResolvedMoment[] = sb.moments.map((m, i) => {
     let enterFrame: number;
     let wordEnd: number | undefined;
     if (m.on !== undefined) {
       const { start, end } = findPhrase(words, m.on, cursor);
-      cursor = start;
+      cursor = start + 1;
       enterFrame = words[start].startFrame;
       wordEnd = words[end].endFrame;
     } else {
@@ -50,8 +50,16 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
 
     let exitFrame: number;
     if (typeof m.hold === "string") {
-      const { start } = findPhrase(words, m.hold.slice("until:".length), cursor);
-      exitFrame = words[start].startFrame;
+      const phrase = m.hold.slice("until:".length);
+      const fromIdx = words.findIndex((w) => w.startFrame > enterFrame);
+      const notSaid = new Error(`${sb.id}: moment ${i} "until:${phrase}" was not said after its start (frame ${enterFrame})`);
+      if (fromIdx === -1) throw notSaid;
+      try {
+        exitFrame = words[findPhrase(words, phrase, fromIdx).start].startFrame;
+      } catch (e) {
+        if (e instanceof PhraseNotFoundError) throw notSaid;
+        throw e;
+      }
     } else if (typeof m.hold === "number") {
       exitFrame = enterFrame + Math.round(m.hold * fps);
     } else if (m.show?.kind === "flashCard") {
@@ -67,9 +75,10 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
     return { enterFrame, exitFrame, show: m.show, emphasis: m.emphasis, sfx: m.sfx, zone: zoneFor(m) };
   });
 
-  // A later moment in the same zone cuts the earlier one short.
+  // A later graphic in the same zone cuts the earlier one short (sfx-only/emphasis moments never do).
   moments.forEach((m, i) => {
-    const next = moments.slice(i + 1).find((n) => n.zone === m.zone && n.enterFrame > m.enterFrame);
+    if (!m.show) return;
+    const next = moments.slice(i + 1).find((n) => n.show && n.zone === m.zone && n.enterFrame > m.enterFrame);
     if (next && next.enterFrame < m.exitFrame) m.exitFrame = next.enterFrame;
   });
 

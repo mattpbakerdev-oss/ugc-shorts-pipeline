@@ -71,4 +71,38 @@ describe("resolveStoryboard", () => {
       { text: "x", startFrame: 119, endFrame: 120 },
     ]);
   });
+
+  describe("zone cut, clamping and ordering", () => {
+    const mk = (text: string): WordsFile => ({
+      words: text.split(" ").map((t, i) => ({ text: t, startFrame: i * 10, endFrame: i * 10 + 8 })),
+    });
+    const w = mk("a b c d e f g h i j k l");
+    const run = (moments: Storyboard["moments"], wf: WordsFile = w) =>
+      resolveStoryboard({ ...sb, moments }, takes, wf);
+
+    it("cuts a graphic short when a later graphic in the same zone starts inside its hold", () => {
+      const out = run([{ on: "a", show: bigNumber(1, "X") }, { on: "d", show: bigNumber(2, "Y") }]);
+      expect(out.moments[0].exitFrame).toBe(out.moments[1].enterFrame);
+    });
+
+    it("does not cut a graphic for a sfx-only moment", () => {
+      const out = run([{ on: "a", show: bigNumber(1, "X") }, { on: "d", sfx: "whoosh" }, { on: "g", show: bigNumber(2, "Y") }]);
+      expect(out.moments[0].exitFrame).toBe(out.moments[2].enterFrame);
+    });
+
+    it("clamps exit to the end of the video", () => {
+      const out = run([{ on: "l", show: bigNumber(1, "X") }]);
+      expect(out.moments[0].exitFrame).toBe(120);
+    });
+
+    it("resolves repeated phrases in order", () => {
+      const out = run([{ on: "I ask" }, { on: "I ask" }], mk("I ask x y I ask z"));
+      expect(out.moments[0].enterFrame).toBe(0);
+      expect(out.moments[1].enterFrame).toBe(40);
+    });
+
+    it("throws naming the phrase when until: is only said before the moment", () => {
+      expect(() => run([{ on: "f", show: bigNumber(1, "X"), hold: "until:b" }])).toThrow(/until:b/);
+    });
+  });
 });
