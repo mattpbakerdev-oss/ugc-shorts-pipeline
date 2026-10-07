@@ -4,6 +4,7 @@ export default video({
   id: "v1_zero_b",
   // Centred framing, mic bottom-right: face (brow to chin, ear to ear) x 0.31-0.74, y 0.34-0.57.
   faceBox: { x: 0.31, y: 0.34, w: 0.43, h: 0.23 },
+  cuts: [{ take: 7, from: 0.75, to: 2.15 }],
   captionY: 0.62,
   hook: "Starting from zero? // 5 things // I'd do first",
   sections: [

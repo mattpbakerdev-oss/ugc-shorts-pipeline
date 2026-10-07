@@ -468,26 +468,31 @@
     {
       "text": "your",
       "startFrame": 887,
-      "endFrame": 892
+      "endFrame": 891
     },
     {
-      "text": "video's",
-      "startFrame": 892,
-      "endFrame": 902
+      "text": "video",
+      "startFrame": 891,
+      "endFrame": 897
+    },
+    {
+      "text": "is",
+      "startFrame": 897,
+      "endFrame": 899
     },
     {
       "text": "gonna",
-      "startFrame": 902,
-      "endFrame": 908
+      "startFrame": 899,
+      "endFrame": 905
     },
     {
       "text": "blow",
-      "startFrame": 908,
-      "endFrame": 914
+      "startFrame": 905,
+      "endFrame": 909
     },
     {
       "text": "up,",
-      "startFrame": 914,
+      "startFrame": 909,
       "endFrame": 929
     },
     {
@@ -508,16 +513,16 @@
     {
       "text": "on",
       "startFrame": 944,
-      "endFrame": 947
+      "endFrame": 946
     },
     {
       "text": "all",
-      "startFrame": 947,
-      "endFrame": 951
+      "startFrame": 946,
+      "endFrame": 952
     },
     {
       "text": "platforms",
-      "startFrame": 951,
+      "startFrame": 952,
       "endFrame": 967
     },
     {
@@ -573,31 +578,31 @@
     {
       "text": "use",
       "startFrame": 1077,
-      "endFrame": 1082
+      "endFrame": 1083
     },
     {
       "text": "Postiz",
-      "startFrame": 1082,
-      "endFrame": 1097
+      "startFrame": 1083,
+      "endFrame": 1102
     },
     {
       "text": "to",
-      "startFrame": 1097,
+      "startFrame": 1102,
       "endFrame": 1105
     },
     {
       "text": "schedule",
       "startFrame": 1105,
-      "endFrame": 1117
+      "endFrame": 1122
     },
     {
       "text": "it",
-      "startFrame": 1117,
-      "endFrame": 1121
+      "startFrame": 1122,
+      "endFrame": 1128
     },
     {
       "text": "all.",
-      "startFrame": 1121,
+      "startFrame": 1128,
       "endFrame": 1134
     },
     {
@@ -662,88 +667,88 @@
     },
     {
       "text": "Save",
-      "startFrame": 1232,
-      "endFrame": 1245
+      "startFrame": 1231,
+      "endFrame": 1241
     },
     {
       "text": "this",
-      "startFrame": 1245,
-      "endFrame": 1262
+      "startFrame": 1241,
+      "endFrame": 1257
     },
     {
       "text": "just",
-      "startFrame": 1262,
-      "endFrame": 1279
+      "startFrame": 1257,
+      "endFrame": 1264
     },
     {
       "text": "so",
-      "startFrame": 1279,
-      "endFrame": 1297
+      "startFrame": 1264,
+      "endFrame": 1270
     },
     {
       "text": "you",
-      "startFrame": 1297,
-      "endFrame": 1305
+      "startFrame": 1270,
+      "endFrame": 1283
     },
     {
       "text": "don't",
-      "startFrame": 1305,
-      "endFrame": 1323
+      "startFrame": 1283,
+      "endFrame": 1297
     },
     {
       "text": "forget,",
-      "startFrame": 1323,
-      "endFrame": 1353
+      "startFrame": 1297,
+      "endFrame": 1312
     },
     {
       "text": "and",
-      "startFrame": 1353,
-      "endFrame": 1354
+      "startFrame": 1312,
+      "endFrame": 1313
     },
     {
       "text": "send",
-      "startFrame": 1354,
-      "endFrame": 1359
+      "startFrame": 1313,
+      "endFrame": 1318
     },
     {
       "text": "it",
-      "startFrame": 1359,
-      "endFrame": 1361
+      "startFrame": 1318,
+      "endFrame": 1322
     },
     {
       "text": "to",
-      "startFrame": 1361,
-      "endFrame": 1365
+      "startFrame": 1322,
+      "endFrame": 1324
     },
     {
       "text": "a",
-      "startFrame": 1365,
-      "endFrame": 1366
+      "startFrame": 1324,
+      "endFrame": 1325
     },
     {
       "text": "friend",
-      "startFrame": 1365,
-      "endFrame": 1372
+      "startFrame": 1325,
+      "endFrame": 1331
     },
     {
       "text": "who",
-      "startFrame": 1372,
-      "endFrame": 1376
+      "startFrame": 1331,
+      "endFrame": 1334
     },
     {
       "text": "needs",
-      "startFrame": 1376,
-      "endFrame": 1382
+      "startFrame": 1334,
+      "endFrame": 1339
     },
     {
       "text": "some",
-      "startFrame": 1382,
-      "endFrame": 1386
+      "startFrame": 1339,
+      "endFrame": 1344
     },
     {
       "text": "help.",
-      "startFrame": 1386,
-      "endFrame": 1414
+      "startFrame": 1344,
+      "endFrame": 1372
     }
   ]
 }

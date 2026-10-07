@@ -6,32 +6,32 @@
     {
       "file": "1 hook_a.mp4",
       "startFrame": 0,
-      "endFrame": 170
+      "endFrame": 174
     },
     {
       "file": "2 tip1.mp4",
-      "startFrame": 170,
-      "endFrame": 375
+      "startFrame": 174,
+      "endFrame": 379
     },
     {
       "file": "3 tip2.mp4",
-      "startFrame": 375,
-      "endFrame": 474
+      "startFrame": 379,
+      "endFrame": 478
     },
     {
       "file": "4 tip3.mp4",
-      "startFrame": 474,
-      "endFrame": 654
+      "startFrame": 478,
+      "endFrame": 658
     },
     {
       "file": "5 tip4.mp4",
-      "startFrame": 654,
-      "endFrame": 931
+      "startFrame": 658,
+      "endFrame": 935
     },
     {
       "file": "6 close.mp4",
-      "startFrame": 931,
-      "endFrame": 1111
+      "startFrame": 935,
+      "endFrame": 1115
     }
   ]
 }

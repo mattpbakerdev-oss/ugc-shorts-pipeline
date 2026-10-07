@@ -4,7 +4,6 @@ export default video({
   id: "v4_ai_a",
   // Desk shot, face centre-left and close: brow 0.37, chin 0.60, cheeks x 0.22-0.68; hand/room to the right.
   faceBox: { x: 0.18, y: 0.37, w: 0.50, h: 0.23 },
-  cuts: [{ take: 1, from: 5.44, to: 5.567 }],
   hookBox: { x: 0.58, y: 0.03, w: 0.40, h: 0.19 },
   captionY: 0.66,
   graphicsBox: { x: 0.70, y: 0.24, w: 0.27, h: 0.36 },
