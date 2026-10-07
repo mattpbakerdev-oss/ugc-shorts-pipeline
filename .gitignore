@@ -6,3 +6,6 @@ dist
 # Ignore the output video from Git but not videos you import into src/.
 out
 .superpowers/
+work/
+public/videos/*/face.mp4
+out/

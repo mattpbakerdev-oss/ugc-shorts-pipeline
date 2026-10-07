@@ -1,0 +1,32 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "takes": [
+    {
+      "file": "1 hook_b.mp4",
+      "startFrame": 0,
+      "endFrame": 154
+    },
+    {
+      "file": "2 tip1.mp4",
+      "startFrame": 154,
+      "endFrame": 425
+    },
+    {
+      "file": "3 tip2.mp4",
+      "startFrame": 425,
+      "endFrame": 701
+    },
+    {
+      "file": "4 tip3.mp4",
+      "startFrame": 701,
+      "endFrame": 1156
+    },
+    {
+      "file": "5 close.mp4",
+      "startFrame": 1156,
+      "endFrame": 1299
+    }
+  ]
+}
