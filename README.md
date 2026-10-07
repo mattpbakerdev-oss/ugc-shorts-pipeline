@@ -5,9 +5,9 @@ Turns numbered talking-head takes (iPhone, 9:16) into finished 1080x1920 / 30 fp
 Layers, bottom to top (`src/layers/`):
 
 1. **Face**: the takes joined back to back, HLG to SDR through a LUT, with punch-ins and a slow push-in.
-2. **Captions**: Whisper word timings grouped into short lines, above the platform UI.
-3. **Section titles**: the hook (take 1) and one title per later take.
-4. **Graphics**: big numbers, punch lists, icon stacks, counters, flash cards, placed in zones around the face.
+2. **Captions**: Whisper word timings, at most 2 lines of 13 characters each, broken at sentence ends, above the platform UI.
+3. **Section titles and hook chips**: the hook (take 1) is up to three stacked chips (split on `//`, sized to fit the top band); later takes get one title each.
+4. **Graphics**: big numbers, punch lists, icon stacks, counters, flash cards and the save/share CTA, placed in zones around the face.
 5. **SFX**: short sounds fired from storyboard moments.
 6. **Zones overlay** (debug only): shows the face box and zones.
 
@@ -29,7 +29,7 @@ Note: any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (r
 5. Register it. In `src/videos/index.ts` import it and add it to `storyboards`. In `src/Root.tsx` add a `<Composition>` with a **hyphenated** id (Remotion rejects underscores) and the underscored id in props:
    ```tsx
    <Composition id="v4-topic" component={TalkingHead} durationInFrames={30} fps={30}
-     width={1080} height={1920} defaultProps={{ id: "v4_topic", showZones: false }}
+     width={1080} height={1920} defaultProps={{ id: "v4_topic", showZones: false, cover: false }}
      calculateMetadata={calculateMetadata} />
    ```
 6. Preview and tune: `npm run dev`, then open the composition `/v4-topic` in the Studio.
@@ -66,7 +66,7 @@ export default video({
 
 Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
-**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `captionY?` (top of the caption band, 0.3 to 0.88, must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must not overlap `faceBox`, width >= 0.10), `hook` (shown on take 1), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
+**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `cuts?` (`{ take, from, to }[]`: take-local seconds of `work/<id>/take_NN.mp4` BEFORE cutting; prep removes them), `captionY?` (top of the caption band, 0.3 to 0.80, i.e. 1 - 0.10 platform UI - 0.10 caption height; must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must keep a gap of at least 0.02 from `faceBox`, must not overlap the captions band or the top band, width >= 0.10), `hook` (shown on take 1), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
 
 **Moment** (each needs exactly one of `on` / `at`):
 
@@ -90,9 +90,19 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 - Any "Postiz" in a moment (phrase, hold, or graphic text) is rejected by the validator. Do not amplify the brand in graphics; captions are separate.
 - `//` in `hook` or a section title is a line break.
 
+**Cuts and prep**: prep reads `cuts` from the registered storyboard (if none is registered it logs that no cuts were applied), trims each take, applies the cuts, pads audio so it never ends before the video, and normalises the joined voice to -16 LUFS (true peak -1.5 dB).
+
+**Removing retakes**
+
+1. `npm run prep -- <id>` (no cuts yet), then `npm run transcribe -- <id>`.
+2. `npm run bloopers -- <id>` on this UNCUT take: it prints take-local seconds that match `cuts`.
+3. Check each proposal against the transcript and paste the `cuts: [...]` block into the storyboard.
+4. Re-run `npm run prep -- <id>` to apply the cuts.
+5. Delete `public/videos/<id>/words.json` and run `npm run transcribe -- <id>` again, because the timings have moved.
+
 **Finding retakes (`npm run bloopers -- <id>`)**
 
-Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeated within 4 seconds (a retake). It proposes cutting the first attempt, and prints a table plus a ready-to-paste `cuts: [...]` block with take-local seconds. Tune with `--min-words <n>` (default 3; use 2 for short retakes like "First thing. The first thing") and `--window <seconds>` (default 4). Restarts that straddle a take boundary are skipped with a warning. These are proposals: check each against the transcript before pasting.
+Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeated within 4 seconds (a retake). It proposes cutting the first attempt, and prints a table plus a ready-to-paste `cuts: [...]` block with take-local seconds. Tune with `--min-words <n>` (default 3, integer >= 1; use 2 for short retakes like "First thing. The first thing") and `--window <seconds>` (default 4). Restarts that straddle a take boundary are skipped with a warning. These are proposals: check each against the transcript before pasting.
 
 **Graphics**
 
@@ -133,13 +143,13 @@ See where they land (Studio: set `showZones` to true in the props panel, or from
 npx remotion still v2-ai-b out/zones.png --frame=100 --props='{"id":"v2_ai_b","showZones":true}'
 ```
 
-Two optional overrides decouple layout from the face box. `captionY` moves the caption band (its top edge as a fraction of frame height, 0.3 to 0.88); it throws if it sits above the chin line (`faceBox.y + h + 0.02`). `graphicsBox` replaces the primary graphics zone (big numbers, counters, punch lists) with an explicit rectangle that must not overlap the face; the 10% width rule still applies. Icon stacks stay in the opposite side zone if it is at least 12% wide, otherwise they share the graphics box. Graphics are left-aligned when the box centre is left of the face centre, else right-aligned. With `showZones` the graphics box is drawn in cyan. Example: `captionY: 0.66, graphicsBox: { x: 0.48, y: 0.22, w: 0.47, h: 0.40 }`.
+Two optional overrides decouple layout from the face box. `captionY` moves the caption band (its top edge as a fraction of frame height, 0.3 to 0.80); it throws if it sits above the chin line (`faceBox.y + h + 0.02`). `graphicsBox` replaces the primary graphics zone (big numbers, counters, punch lists) with an explicit rectangle that must keep a 0.02 gap from the face and stay clear of the captions and top bands; the 10% width rule still applies. Icon stacks stay in the opposite side zone if it is at least 12% wide, otherwise they share the graphics box. Graphics are left-aligned when the box centre is left of the face centre, else right-aligned. With `showZones` the graphics box is drawn in cyan. Example: `captionY: 0.66, graphicsBox: { x: 0.50, y: 0.22, w: 0.45, h: 0.40 }`.
 
 Adjust `faceBox` in the storyboard and re-check. Big numbers and counters shrink when the chosen side zone is narrow, so a tight face box is worth widening before accepting small graphics.
 
 ## Captions
 
-Words come from Whisper (`public/videos/<id>/words.json`). Mis-hearings and brand spellings are fixed in `src/captionFixes.ts`: add `"heard text": "Correct Text"` (lowercase, no punctuation). To re-transcribe a video, delete its `words.json` and run `npm run transcribe -- <id>` again.
+Words come from Whisper (`public/videos/<id>/words.json`). Captions are fixed at two lines of at most 13 characters; a group also ends at a sentence end (. ! ?), a pause, or a take boundary. Mis-hearings and brand spellings are fixed in `src/captionFixes.ts`: add `"heard text": "Correct Text"` (lowercase, no punctuation). To re-transcribe a video, delete its `words.json` and run `npm run transcribe -- <id>` again.
 
 ## Colour
 
