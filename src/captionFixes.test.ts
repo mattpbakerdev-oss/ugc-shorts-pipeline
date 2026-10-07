@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFixes, captionsToWords } from "./captionFixes";
+import { applyFixes, captionsToWords, snapWordsToTakes } from "./captionFixes";
 
 describe("applyFixes", () => {
   it("corrects known mis-hearings case-insensitively, keeping punctuation", () => {
@@ -69,5 +69,28 @@ describe("captionsToWords", () => {
       { text: "Hello", startFrame: 0, endFrame: 6 },
       { text: "1,000", startFrame: 363, endFrame: 375 },
     ]);
+  });
+});
+
+describe("snapWordsToTakes", () => {
+  const takes = [
+    { file: "a", startFrame: 0, endFrame: 423 },
+    { file: "b", startFrame: 423, endFrame: 900 },
+  ];
+  it("snaps a word straddling a boundary to boundary + headPad - 2 frames", () => {
+    const out = snapWordsToTakes([{ text: "Repurposing.", startFrame: 410, endFrame: 432 }], takes, 9);
+    expect(out).toEqual([{ text: "Repurposing.", startFrame: 430, endFrame: 432 }]);
+  });
+  it("leaves words entirely before or after a boundary alone", () => {
+    const ws = [
+      { text: "a", startFrame: 400, endFrame: 423 },
+      { text: "b", startFrame: 423, endFrame: 440 },
+    ];
+    expect(snapWordsToTakes(ws, takes, 9)).toEqual(ws);
+  });
+  it("keeps at least one frame for short straddling words", () => {
+    const out = snapWordsToTakes([{ text: "x", startFrame: 420, endFrame: 425 }], takes, 9);
+    expect(out[0].endFrame - out[0].startFrame).toBeGreaterThanOrEqual(1);
+    expect(out[0].startFrame).toBe(424);
   });
 });

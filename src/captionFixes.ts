@@ -1,4 +1,4 @@
-import type { Word } from "./types";
+import type { Take, Word } from "./types";
 
 /** transcript word (lowercase, no punctuation) → what the caption should say */
 export const FIXES: Record<string, string> = {
@@ -66,3 +66,20 @@ export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
   }
   return out;
 };
+
+/**
+ * Whisper starts a take's first word at the previous word's end, so the silence of the join
+ * (tail pad + head pad) is absorbed into its start. A word that straddles a take boundary is
+ * pulled forward to just before where speech really begins (boundary + head pad - 2 frames).
+ */
+export const snapWordsToTakes = (words: Word[], takes: Take[], headPadFrames: number): Word[] =>
+  words.map((w) => {
+    let startFrame = w.startFrame;
+    for (const t of takes.slice(1)) {
+      const b = t.startFrame;
+      if (w.startFrame < b && w.endFrame > b) {
+        startFrame = Math.min(b + headPadFrames - 2, w.endFrame - 1);
+      }
+    }
+    return startFrame === w.startFrame ? w : { ...w, startFrame };
+  });

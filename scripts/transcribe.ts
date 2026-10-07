@@ -7,7 +7,8 @@ import {
   transcribe,
 } from "@remotion/install-whisper-cpp";
 import { ffmpeg } from "./ffmpeg";
-import { captionsToWords } from "../src/captionFixes";
+import { HEAD_PAD } from "./silence";
+import { captionsToWords, snapWordsToTakes } from "../src/captionFixes";
 import type { TakesFile, WordsFile } from "../src/types";
 
 const WHISPER_VERSION = "1.5.5";
@@ -30,7 +31,7 @@ const main = async () => {
   } catch {
     throw new Error(`Missing ${face} or takes.json. Run: npm run prep -- ${id}`);
   }
-  const { fps } = JSON.parse(await fs.readFile(takesPath, "utf8")) as TakesFile;
+  const { fps, takes } = JSON.parse(await fs.readFile(takesPath, "utf8")) as TakesFile;
 
   await installWhisperCpp({ to: whisperDir, version: WHISPER_VERSION });
   await downloadWhisperModel({ model: MODEL, folder: whisperDir });
@@ -47,7 +48,7 @@ const main = async () => {
     language: "en",
   });
   const { captions } = toCaptions({ whisperCppOutput: output });
-  const words = captionsToWords(captions, fps);
+  const words = snapWordsToTakes(captionsToWords(captions, fps), takes, Math.round(HEAD_PAD * fps));
   if (words.length === 0) throw new Error("Whisper returned no words");
 
   const file: WordsFile = { words };
