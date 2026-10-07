@@ -4,15 +4,17 @@ import { COLORS, fonts } from "../theme";
 import { rectToStyle, zonesFor } from "../zones";
 import type { Emphasis, ResolvedMoment, ResolvedVideo } from "../types";
 
-const FONT_SIZE = 84;
+const FONT_SIZE = 76;
 const POP_SETTLED = 1.18;
+const RESERVE_PER_CHAR_EM = 0.25; // per side; (POP_SETTLED - 1) * len * 0.25em
 const SIDE_MARGIN_PX = 80;
 const WORD_GAP_EM = 0.15; // margin each side of a word
-const CHAR_EM = 0.84; // approx. Montserrat 900 uppercase advance incl. stroke
+const CHAR_EM = 0.72; // approx. Montserrat 900 uppercase advance incl. stroke
 
 // Width in em of the widest row, including the reserved pop padding, so the font can shrink to keep the text inside the safe margins.
 const rowWidthEm = (line: { text: string }[]) =>
-  line.reduce((sum, w) => sum + w.text.length * (CHAR_EM + (POP_SETTLED - 1)) + WORD_GAP_EM * 2, 0);
+  line.reduce((sum, w) => sum + w.text.length * (CHAR_EM + 2 * (POP_SETTLED - 1) * RESERVE_PER_CHAR_EM) + WORD_GAP_EM * 2, 0);
+// Safety clamp only: with 13-char lines this should never bite, so the size stays constant between groups.
 const fitFontSize = (lines: { text: string }[][], frameWidth: number) =>
   Math.min(FONT_SIZE, (frameWidth - 2 * SIDE_MARGIN_PX) / Math.max(...lines.map(rowWidthEm)));
 
@@ -55,7 +57,7 @@ const Group: React.FC<{ group: CaptionGroup; absoluteStart: number; emphasis?: G
               extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic),
             });
             // Reserve the settled pop width for every word from the start so the highlight never reflows the line.
-            const reserve = `${(POP_SETTLED - 1) * w.text.length * 0.5}em`;
+            const reserve = `${(POP_SETTLED - 1) * w.text.length * RESERVE_PER_CHAR_EM}em`;
             return (
               <span
                 key={i}

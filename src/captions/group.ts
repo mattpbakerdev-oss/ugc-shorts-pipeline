@@ -2,7 +2,7 @@ import type { Word } from "../types";
 
 export type CaptionGroup = { startFrame: number; endFrame: number; words: Word[]; lines: Word[][] };
 
-export const MAX_LINE_CHARS = 18;
+export const MAX_LINE_CHARS = 13;
 const MAX_LINES = 2;
 
 /** Greedy line packing; returns null if the words do not fit in MAX_LINES lines. */
