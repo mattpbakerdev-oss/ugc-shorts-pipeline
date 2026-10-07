@@ -1,6 +1,7 @@
 import { AbsoluteFill, staticFile, type CalculateMetadataFunction } from "remotion";
 import { Captions } from "./layers/Captions";
 import { Face } from "./layers/Face";
+import { Graphics } from "./layers/Graphics";
 import { SectionTitles } from "./layers/SectionTitle";
 import { ZonesOverlay } from "./layers/ZonesOverlay";
 import { resolveStoryboard } from "./storyboard/resolve";
@@ -41,6 +42,7 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones })
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <Face resolved={resolved} />
       <SectionTitles resolved={resolved} />
+      <Graphics resolved={resolved} />
       <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />
       {showZones ? <ZonesOverlay faceBox={resolved.faceBox} /> : null}
     </AbsoluteFill>

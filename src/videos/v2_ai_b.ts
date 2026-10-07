@@ -1,4 +1,4 @@
-import { video } from "../storyboard/dsl";
+import { bigNumber, iconStack, video } from "../storyboard/dsl";
 
 export default video({
   id: "v2_ai_b",
@@ -9,5 +9,9 @@ export default video({
     { take: 4, title: "3. Post it" },
     { take: 5, title: "Save this" },
   ],
-  moments: [],
+  moments: [
+    { on: "already behind", emphasis: "shake" },
+    { on: "10 hook ideas", show: bigNumber(10, "HOOK IDEAS"), sfx: "slam", hold: "until:pick the best one" },
+    { on: "YouTube, TikTok, Facebook and Instagram", show: iconStack(["yt", "tt", "fb", "ig"]), sfx: "pop", hold: 3 },
+  ],
 });
