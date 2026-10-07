@@ -7,9 +7,8 @@ import {
   transcribe,
 } from "@remotion/install-whisper-cpp";
 import { ffmpeg } from "./ffmpeg";
-import { HEAD_PAD } from "./silence";
-import { captionsToWords, snapWordsToTakes } from "../src/captionFixes";
-import type { TakesFile, WordsFile } from "../src/types";
+import { captionsToWords, offsetWords } from "../src/captionFixes";
+import type { TakesFile, Word, WordsFile } from "../src/types";
 
 const WHISPER_VERSION = "1.5.5";
 const MODEL = "medium.en";
@@ -36,24 +35,34 @@ const main = async () => {
   await installWhisperCpp({ to: whisperDir, version: WHISPER_VERSION });
   await downloadWhisperModel({ model: MODEL, folder: whisperDir });
 
-  const wav = path.join(dir, "audio16k.wav");
-  await ffmpeg(["-i", face, "-vn", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav]);
-
-  const output = await transcribe({
-    inputPath: wav,
-    whisperPath: whisperDir,
-    whisperCppVersion: WHISPER_VERSION,
-    model: MODEL,
-    tokenLevelTimestamps: true,
-    language: "en",
-  });
-  const { captions } = toCaptions({ whisperCppOutput: output });
-  const words = snapWordsToTakes(captionsToWords(captions, fps), takes, Math.round(HEAD_PAD * fps));
+  // Transcribe each take on its own: whisper smears a word across silence, so on the joined audio
+  // a take's first word can start inside the previous take. Per take, words cannot cross a join.
+  const words: Word[] = [];
+  for (const [i, take] of takes.entries()) {
+    const wav = path.join(dir, `take_${String(i + 1).padStart(2, "0")}_16k.wav`);
+    await ffmpeg([
+      "-ss", String(take.startFrame / fps), "-t", String((take.endFrame - take.startFrame) / fps),
+      "-i", face, "-vn",
+      // Trailing silence: whisper drops the last words when the audio ends right on them.
+      "-af", "apad=pad_dur=1",
+      "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav,
+    ]);
+    const output = await transcribe({
+      inputPath: wav,
+      whisperPath: whisperDir,
+      whisperCppVersion: WHISPER_VERSION,
+      model: MODEL,
+      tokenLevelTimestamps: true,
+      language: "en",
+    });
+    const { captions } = toCaptions({ whisperCppOutput: output });
+    words.push(...offsetWords(captionsToWords(captions, fps), take.startFrame, take.endFrame));
+    await fs.rm(wav);
+  }
   if (words.length === 0) throw new Error("Whisper returned no words");
 
   const file: WordsFile = { words };
   await fs.writeFile(path.join(dir, "words.json"), JSON.stringify(file, null, 2));
-  await fs.rm(wav);
 
   console.log(`\n${words.map((w) => w.text).join(" ")}\n`);
   console.log(`Wrote ${words.length} words to ${path.join(dir, "words.json")}`);

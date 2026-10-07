@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFixes, captionsToWords, snapWordsToTakes } from "./captionFixes";
+import { applyFixes, captionsToWords, offsetWords } from "./captionFixes";
 
 describe("applyFixes", () => {
   it("corrects known mis-hearings case-insensitively, keeping punctuation", () => {
@@ -72,41 +72,27 @@ describe("captionsToWords", () => {
   });
 });
 
-describe("snapWordsToTakes", () => {
-  const takes = [
-    { file: "a", startFrame: 0, endFrame: 153 },
-    { file: "b", startFrame: 153, endFrame: 900 },
-  ];
-  it("clamps the end of the previous take's last word that smears over the join", () => {
-    const out = snapWordsToTakes([{ text: "it.", startFrame: 139, endFrame: 155 }], takes, 9);
-    expect(out).toEqual([{ text: "it.", startFrame: 139, endFrame: 152 }]);
+describe("captionsToWords split markers", () => {
+  it("drops a marker that whisper split into sub-tokens, without touching the previous word", () => {
+    const toks = [" hand", ".", " [", "BL", "ANK", "_", "AUD", "IO", "]"].map((text, i) => ({ text, startMs: i * 100, endMs: i * 100 + 100 }));
+    expect(captionsToWords(toks, 30).map((w) => w.text)).toEqual(["hand."]);
   });
-  it("treats a word ending up to boundary + headPad + 8 as the previous take's", () => {
-    const out = snapWordsToTakes([{ text: "x", startFrame: 140, endFrame: 170 }], takes, 9);
-    expect(out).toEqual([{ text: "x", startFrame: 140, endFrame: 152 }]);
+});
+
+describe("offsetWords", () => {
+  it("adds the take start to every word", () => {
+    expect(offsetWords([{ text: "a", startFrame: 3, endFrame: 10 }], 100, 200)).toEqual([
+      { text: "a", startFrame: 103, endFrame: 110 },
+    ]);
   });
-  it("clamps v3 'to.' (443-459, boundary 448) and 'people.' (814-843, boundary 830)", () => {
-    const t = [{ file: "a", startFrame: 0, endFrame: 448 }, { file: "b", startFrame: 448, endFrame: 830 }, { file: "c", startFrame: 830, endFrame: 1000 }];
-    const out = snapWordsToTakes([
-      { text: "to.", startFrame: 443, endFrame: 459 },
-      { text: "people.", startFrame: 814, endFrame: 843 },
-    ], t, 9);
-    expect(out.map((w) => w.endFrame)).toEqual([447, 829]);
-    expect(out.map((w) => w.startFrame)).toEqual([443, 814]);
+  it("clamps words running past the take end", () => {
+    expect(offsetWords([{ text: "a", startFrame: 90, endFrame: 150 }], 100, 200)).toEqual([
+      { text: "a", startFrame: 190, endFrame: 200 },
+    ]);
   });
-  it("snaps the next take's first word to boundary + headPad - 2 frames", () => {
-    const out = snapWordsToTakes([{ text: "Repurposing.", startFrame: 140, endFrame: 187 }], takes, 9);
-    expect(out).toEqual([{ text: "Repurposing.", startFrame: 160, endFrame: 187 }]);
-  });
-  it("leaves words entirely before or after a boundary alone", () => {
-    const ws = [
-      { text: "a", startFrame: 130, endFrame: 153 },
-      { text: "b", startFrame: 153, endFrame: 170 },
-    ];
-    expect(snapWordsToTakes(ws, takes, 9)).toEqual(ws);
-  });
-  it("keeps at least one frame for short straddling words", () => {
-    const out = snapWordsToTakes([{ text: "x", startFrame: 152, endFrame: 154 }], takes, 9);
-    expect(out[0].endFrame - out[0].startFrame).toBeGreaterThanOrEqual(1);
+  it("keeps at least one frame for a word at the very end", () => {
+    const [w] = offsetWords([{ text: "a", startFrame: 150, endFrame: 160 }], 100, 200);
+    expect(w.startFrame).toBe(199);
+    expect(w.endFrame).toBe(200);
   });
 });

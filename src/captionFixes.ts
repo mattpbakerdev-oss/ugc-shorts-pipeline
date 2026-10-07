@@ -1,4 +1,4 @@
-import type { Take, Word } from "./types";
+import type { Word } from "./types";
 
 /** transcript word (lowercase, no punctuation) → what the caption should say */
 export const FIXES: Record<string, string> = {
@@ -24,6 +24,8 @@ export const applyFixes = (text: string): string => {
   return fixed ? `${lead}${fixed}${trail}` : text;
 };
 
+type Caption = { text: string; startMs: number; endMs: number };
+
 /**
  * whisper.cpp emits markers like [BLANK_AUDIO], [silence], (music). Any token that is wholly
  * bracketed is dropped, as are punctuation-only tokens. Side effect: a genuinely spoken
@@ -38,14 +40,37 @@ const isNonSpeech = (text: string): boolean => {
   return t.length > 0 && /^\s/.test(text) && !/[\p{L}\p{N}]/u.test(t);
 };
 
-type Caption = { text: string; startMs: number; endMs: number };
+
+/**
+ * Drops non-speech tokens. whisper.cpp may also split a marker into sub-tokens (" [", "BL", "ANK",
+ * "_", "AUD", "IO", "]"), so a token opening a bracket without closing it swallows everything up to
+ * the token that closes it.
+ */
+const dropNonSpeech = (captions: Caption[]): Caption[] => {
+  const out: Caption[] = [];
+  let inMarker = false;
+  for (const c of captions) {
+    const t = c.text.trim();
+    if (inMarker) {
+      if (/[\])]/.test(t)) inMarker = false;
+      continue;
+    }
+    if (/^[\[(]/.test(t) && !/[\])]$/.test(t)) {
+      inMarker = true;
+      continue;
+    }
+    if (isNonSpeech(c.text)) continue;
+    out.push(c);
+  }
+  return out;
+};
 
 /**
  * Whisper emits sub-word tokens; a token without a leading space continues the
  * previous word ("Hook" + "s", "behind" + "."), so merge those before timing.
  */
 export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
-  captions = captions.filter((c) => !isNonSpeech(c.text));
+  captions = dropNonSpeech(captions);
   const merged: Caption[] = [];
   for (const c of captions) {
     const prev = merged[merged.length - 1];
@@ -68,28 +93,12 @@ export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
 };
 
 /**
- * Whisper starts a take's first word at the previous word's end, so the silence of the join
- * (tail pad + head pad) is absorbed into its start. A word that straddles a take boundary is
- * classified by where it ends: a word ending before head pad + OPENER_MIN_FRAMES belongs to the previous take (end
- * clamped to the boundary); a longer one opens the next take (start pulled to boundary + head pad - 2).
+ * Move words transcribed from a single take onto the joined timeline: add the take's start frame,
+ * clamp into [startFrame, endFrame] and keep every word at least one frame long.
  */
-// A real take opener starts at >= boundary + head pad and lasts >= ~0.25 s (8 frames), so it ends
-// at least this many frames after boundary + head pad; a previous-take word stretched over the join ends sooner.
-const OPENER_MIN_FRAMES = 8;
-
-export const snapWordsToTakes = (words: Word[], takes: Take[], headPadFrames: number): Word[] =>
+export const offsetWords = (words: Word[], startFrame: number, endFrame: number): Word[] =>
   words.map((w) => {
-    let { startFrame, endFrame } = w;
-    for (const t of takes.slice(1)) {
-      const b = t.startFrame;
-      if (w.startFrame < b && w.endFrame > b) {
-        if (w.endFrame <= b + headPadFrames + OPENER_MIN_FRAMES) {
-          // Ends within the new take's head pad: it is the previous take's last word, smeared over the join.
-          endFrame = Math.max(startFrame + 1, b - 1);
-        } else {
-          startFrame = Math.min(b + headPadFrames - 2, w.endFrame - 1);
-        }
-      }
-    }
-    return startFrame === w.startFrame && endFrame === w.endFrame ? w : { ...w, startFrame, endFrame };
+    const s = Math.min(Math.max(w.startFrame + startFrame, startFrame), endFrame - 1);
+    const e = Math.min(Math.max(w.endFrame + startFrame, s + 1), Math.max(endFrame, s + 1));
+    return { ...w, startFrame: s, endFrame: e };
   });
