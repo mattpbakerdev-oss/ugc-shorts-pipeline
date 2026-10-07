@@ -1,6 +1,7 @@
 import { AbsoluteFill, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { COLORS, fonts } from "../theme";
 import { rectToStyle, zonesFor } from "../zones";
+import { coverHookBox } from "../hookChips";
 import { HookChips } from "./HookChips";
 import type { ResolvedSection, ResolvedVideo } from "../types";
 
@@ -52,7 +53,7 @@ export const SectionTitles: React.FC<{ resolved: ResolvedVideo; forceHookIn?: bo
       </div>
       {resolved.sections.filter((s) => s.isHook).map((s) => (
         <Sequence key={s.startFrame} name={`Hook: ${s.title}`} from={s.startFrame} durationInFrames={s.endFrame - s.startFrame} layout="none">
-          <HookChips section={s} zone={resolved.hookBox} forceIn={forceHookIn} />
+          <HookChips section={s} zone={forceHookIn ? coverHookBox(resolved.hookBox, resolved.faceBox) : resolved.hookBox} forceIn={forceHookIn} cover={forceHookIn} />
         </Sequence>
       ))}
     </AbsoluteFill>

@@ -13,7 +13,7 @@ describe("splitHook", () => {
   });
 });
 
-import { hookChipFontSize, CHIP_GAP, CHIP_PAD_Y } from "./hookChips";
+import { coverHookBox, hookChipFontSize, CHIP_GAP, CHIP_PAD_Y } from "./hookChips";
 describe("hookChipFontSize", () => {
   it("keeps 56 in a roomy band", () => {
     expect(hookChipFontSize(365, 3)).toBe(56);
@@ -32,5 +32,22 @@ describe("hookChipFontSize", () => {
   it("throws naming the hook when below 36px", () => {
     expect(() => hookChipFontSize(211, 3, 518, 12, "A // B // C")).toThrow(/A \/\/ B \/\/ C.*hookBox/);
     expect(() => hookChipFontSize(365, 3, 300, 12, "H")).toThrow(/hookBox/);
+  });
+});
+
+describe("coverHookBox", () => {
+  const face = { x: 0.22, y: 0.36, w: 0.54, h: 0.42 };
+  it("stops 0.02 above the face for a top-band box", () => {
+    const b = coverHookBox({ x: 0.05, y: 0.04, w: 0.9, h: 0.2 }, face);
+    expect(b.y + b.h).toBeCloseTo(0.34, 9);
+    expect(b.w).toBe(0.9);
+  });
+  it("extends a side box to 0.60", () => {
+    const b = coverHookBox({ x: 0.8, y: 0.03, w: 0.18, h: 0.19 }, face);
+    expect(b.y + b.h).toBeCloseTo(0.6, 9);
+  });
+  it("leaves a box already below 0.60 unchanged", () => {
+    const box = { x: 0.8, y: 0.1, w: 0.18, h: 0.55 };
+    expect(coverHookBox(box, face)).toEqual(box);
   });
 });

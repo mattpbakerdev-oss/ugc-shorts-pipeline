@@ -124,7 +124,7 @@ Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeate
 
 ## Cover image
 
-`npm run cover -- <id> [frame]` (e.g. `npm run cover -- v2_ai_b 30`) renders `out/<id>_cover.png` for the platform thumbnail: face and hook chips only, with captions, graphics and SFX hidden and the chips fully in. Default frame is 30. It is `remotion still` with props `{"id":"<id>","showZones":false,"cover":true}`; set `cover` in the props panel to preview it in Studio.
+`npm run cover -- <id> [frame]` (e.g. `npm run cover -- v2_ai_b 30`) renders `out/<id>_cover.png` for the platform thumbnail: face and hook chips only, with captions, graphics and SFX hidden and the chips fully in. Default frame is 30. The hook renders larger on covers (box extended down toward 0.60 of the frame height, clear of the face, with chips up to 96 px). It is `remotion still` with props `{"id":"<id>","showZones":false,"cover":true}`; set `cover` in the props panel to preview it in Studio.
 
 ## Setting the face box
 

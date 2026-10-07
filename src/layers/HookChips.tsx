@@ -1,10 +1,11 @@
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { COLORS, fonts } from "../theme";
-import { CHIP_BASE_FONT, hookChipFontSize, splitHook } from "../hookChips";
+import { CHIP_BASE_FONT, COVER_MAX_FONT, hookChipFontSize, splitHook } from "../hookChips";
 import { rectToStyle } from "../zones";
 import type { Rect, ResolvedSection } from "../types";
 
 const STEP = 0.03;
+const COVER_STEP = 0.015;
 const TILTS = [-2, 1, -1.5];
 const STYLES = [
   { bg: COLORS.text, fg: COLORS.ink },
@@ -14,16 +15,16 @@ const STYLES = [
 // Montserrat 900 uppercase averages ~0.8em per glyph; used only to shrink an over-wide chip.
 const EST_EM_PER_CHAR = 0.8;
 
-export const HookChips: React.FC<{ section: ResolvedSection; zone: Rect; forceIn?: boolean }> = ({ section, zone, forceIn = false }) => {
+export const HookChips: React.FC<{ section: ResolvedSection; zone: Rect; forceIn?: boolean; cover?: boolean }> = ({ section, zone, forceIn = false, cover = false }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const length = section.endFrame - section.startFrame;
   const chips = splitHook(section.title);
   const exit = forceIn ? 1 : interpolate(frame, [length - 6, length - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const left = 0.02 * width;
-  const bandFont = hookChipFontSize(zone.h * height, chips.length, zone.w * width, Math.max(...chips.map((c) => c.length)), section.title);
+  const bandFont = hookChipFontSize(zone.h * height, chips.length, zone.w * width, Math.max(...chips.map((c) => c.length)), section.title, cover ? COVER_MAX_FONT : CHIP_BASE_FONT, (cover ? COVER_STEP : STEP) * width);
   const widest = Math.max(...chips.map((c) => c.length * EST_EM_PER_CHAR * bandFont + 2 * 28 * (bandFont / CHIP_BASE_FONT)));
-  const stepPx = chips.length > 1 ? Math.max(0, Math.min(STEP * width, (zone.w * width - left - widest) / (chips.length - 1))) : 0;
+  const stepPx = chips.length > 1 ? Math.max(0, Math.min((cover ? COVER_STEP : STEP) * width, (zone.w * width - left - widest) / (chips.length - 1))) : 0;
   const k = bandFont / CHIP_BASE_FONT;
   const padX = 28 * k;
   const padY = 14 * k;
