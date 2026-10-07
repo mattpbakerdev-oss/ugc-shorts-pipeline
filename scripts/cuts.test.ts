@@ -19,4 +19,13 @@ describe("keptSegments", () => {
   it("throws when everything is cut", () => {
     expect(() => keptSegments(10, [{ from: 0, to: 10 }])).toThrow(/nothing/i);
   });
+  it("snaps off-grid bounds to the frame grid and drops sub-frame slivers", () => {
+    const segs = keptSegments(10, [{ from: 1.234, to: 2.567 }, { from: 4.001, to: 9.99 }]);
+    for (const g of segs) {
+      expect(Math.abs(g.from * 30 - Math.round(g.from * 30))).toBeLessThan(1e-9);
+      expect(Math.abs(g.to * 30 - Math.round(g.to * 30))).toBeLessThan(1e-9);
+    }
+    expect(segs.length).toBe(2); // the 9.99-10 sliver is dropped
+    expect(() => keptSegments(10, [{ from: 0, to: 9.99 }])).toThrow(/less than one frame/);
+  });
 });

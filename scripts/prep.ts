@@ -70,7 +70,8 @@ const main = async () => {
     const takeCuts = cuts.filter((c) => c.take === i + 1);
     if (takeCuts.length > 0) {
       const dur = (await streamDurations(out)).video;
-      const segs = keptSegments(dur, takeCuts);
+      const segs = keptSegments(dur, takeCuts, FPS);
+      const cutSeconds = segs.reduce((a, g) => a + (g.to - g.from), 0);
       const f = (n: number) => n.toFixed(3);
       const parts = segs.map((g, k) =>
         `[0:v]trim=start=${f(g.from)}:end=${f(g.to)},setpts=PTS-STARTPTS[v${k}];` +
@@ -79,8 +80,9 @@ const main = async () => {
       const cutPath = path.join(workDir, `take_${String(i + 1).padStart(2, "0")}_cut.mp4`);
       await ffmpeg([
         "-i", out,
-        "-filter_complex", `${parts.join(";")};${inputs}concat=n=${segs.length}:v=1:a=1[v][a]`,
+        "-filter_complex", `${parts.join(";")};${inputs}concat=n=${segs.length}:v=1:a=1[v][ca];[ca]apad=whole_dur=${(cutSeconds + 0.2).toFixed(3)}[a]`,
         "-map", "[v]", "-map", "[a]",
+        "-t", (Math.round(cutSeconds * FPS) / FPS).toFixed(3),
         "-r", String(FPS), "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
         "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
         "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
