@@ -9,10 +9,15 @@ const CAPTION_HEIGHT = 0.12;
 const PLATFORM_UI_HEIGHT = 0.12;
 
 export const zonesFor = (face: Rect): Zones => {
+  if (face.y + face.h > 1 - PLATFORM_UI_HEIGHT - CAPTION_HEIGHT - GAP) {
+    throw new Error(
+      `Face box bottom ${(face.y + face.h).toFixed(2)} leaves no room for captions; keep y + h <= 0.74 or raise the chin line`
+    );
+  }
   const leftW = Math.max(0, face.x - GAP - SIDE_MARGIN);
   const rightX = Math.min(1 - SIDE_MARGIN, face.x + face.w + GAP);
   const rightW = Math.max(0, 1 - SIDE_MARGIN - rightX);
-  const captionsY = Math.min(face.y + face.h + GAP, 1 - PLATFORM_UI_HEIGHT - CAPTION_HEIGHT);
+  const captionsY = face.y + face.h + GAP;
   return {
     topBand: { x: 0.06, y: 0.03, w: 0.88, h: 0.19 },
     face,

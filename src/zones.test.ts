@@ -19,7 +19,7 @@ describe("zonesFor", () => {
 
   it("puts captions below the face and above the platform UI", () => {
     expect(z.captions.y).toBeGreaterThanOrEqual(z.face.y + z.face.h);
-    expect(z.captions.y + z.captions.h).toBeLessThanOrEqual(z.platformUi.y);
+    expect(z.captions.y + z.captions.h).toBeLessThanOrEqual(z.platformUi.y + 1e-9);
   });
 
   it("moves the side zones when the face moves", () => {
@@ -32,6 +32,10 @@ describe("zonesFor", () => {
   it("clamps so a face at the edge still yields non-negative zones", () => {
     const edge = zonesFor({ x: 0, y: 0.2, w: 0.5, h: 0.5 });
     expect(edge.left.w).toBe(0);
+  });
+
+  it("throws when the face box leaves no room for captions", () => {
+    expect(() => zonesFor({ x: 0.3, y: 0.3, w: 0.4, h: 0.5 })).toThrow(/captions/);
   });
 });
 
