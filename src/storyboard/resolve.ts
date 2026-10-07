@@ -1,4 +1,4 @@
-import { findPhrase, PhraseNotFoundError } from "../phrase";
+import { findPhrase, PhraseNotFoundError, normaliseToken } from "../phrase";
 import { DEFAULT_FACE_BOX } from "../zones";
 import type {
   GraphicSpec, Moment, ResolvedMoment, ResolvedSection, ResolvedVideo, Storyboard, TakesFile, WordsFile, ZoneName,
@@ -36,12 +36,19 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
   }).filter((s) => s.title !== "");
 
   let cursor = 0;
+  let lastPhrase = "";
+  let lastStart = -1;
   const moments: ResolvedMoment[] = sb.moments.map((m, i) => {
     let enterFrame: number;
     let wordEnd: number | undefined;
     if (m.on !== undefined) {
-      const { start, end } = findPhrase(words, m.on, cursor);
-      cursor = start + 1;
+      const phrase = m.on.split(/\s+/).map(normaliseToken).filter(Boolean).join(" ");
+      let { start, end } = findPhrase(words, m.on, cursor);
+      // Repeating the previous phrase means its next occurrence; a different phrase may share the start word.
+      if (phrase === lastPhrase && start === lastStart) ({ start, end } = findPhrase(words, m.on, start + 1));
+      cursor = start;
+      lastPhrase = phrase;
+      lastStart = start;
       enterFrame = words[start].startFrame;
       wordEnd = words[end].endFrame;
     } else {

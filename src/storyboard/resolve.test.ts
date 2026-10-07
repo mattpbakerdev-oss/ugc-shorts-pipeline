@@ -101,6 +101,11 @@ describe("resolveStoryboard", () => {
       expect(out.moments[1].enterFrame).toBe(40);
     });
 
+    it("lets different phrases start on the same word", () => {
+      const out = run([{ on: "a b", show: bigNumber(1, "X") }, { on: "a", emphasis: "pulse" }]);
+      expect(out.moments[1].enterFrame).toBe(out.moments[0].enterFrame);
+    });
+
     it("throws naming the phrase when until: is only said before the moment", () => {
       expect(() => run([{ on: "f", show: bigNumber(1, "X"), hold: "until:b" }])).toThrow(/until:b/);
     });
