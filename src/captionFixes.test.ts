@@ -132,3 +132,16 @@ describe("offsetWords", () => {
     ]);
   });
 });
+
+describe("two-word fixes", () => {
+  const w = (t: string, i: number) => ({ text: ` ${t}`, startMs: i * 100, endMs: i * 100 + 90 });
+  it("joins post + its into Postiz spanning both words", () => {
+    expect(captionsToWords([w("post", 0), w("its", 1)], 30)).toEqual([{ text: "Postiz", startFrame: 0, endFrame: 6 }]);
+  });
+  it("keeps trailing punctuation", () => {
+    expect(captionsToWords([w("Post", 0), w("its.", 1)], 30).map((x) => x.text)).toEqual(["Postiz."]);
+  });
+  it("leaves unrelated pairs untouched", () => {
+    expect(captionsToWords([w("post", 0), w("office", 1)], 30).map((x) => x.text)).toEqual(["post", "office"]);
+  });
+});

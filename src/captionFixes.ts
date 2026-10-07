@@ -7,6 +7,7 @@ export const FIXES: Record<string, string> = {
   postis: "Postiz",
   posters: "Postiz",
   "post is": "Postiz",
+  "post its": "Postiz",
   "post-it's": "Postiz",
   "post-its": "Postiz",
   tiktok: "TikTok",
@@ -92,7 +93,17 @@ export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
     }
   }
   const out: Word[] = [];
-  for (const c of merged) {
+  const norm = (t: string) => t.trim().toLowerCase().replace(/[^\p{L}\p{N}'-]/gu, "");
+  const multi = Object.keys(FIXES).filter((k) => k.includes(" ")).map((k) => k.split(" "));
+  for (let i = 0; i < merged.length; i++) {
+    let c = merged[i];
+    const hit = multi.find((parts) => parts.every((p, j) => merged[i + j] && norm(merged[i + j].text) === p));
+    if (hit) {
+      const last = merged[i + hit.length - 1];
+      const trail = last.text.trim().match(/(\W*)$/)![1];
+      c = { text: FIXES[hit.join(" ")] + trail, startMs: c.startMs, endMs: last.endMs };
+      i += hit.length - 1;
+    }
     const text = applyFixes(c.text.trim());
     if (!text) continue;
     const startFrame = Math.round((c.startMs / 1000) * fps);

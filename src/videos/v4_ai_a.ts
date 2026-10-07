@@ -3,9 +3,11 @@ import { bigNumber, ctaSaveShare, flashCard, iconStack, punchList, video } from 
 export default video({
   id: "v4_ai_a",
   // Desk shot, face centre-left and close: brow 0.37, chin 0.60, cheeks x 0.22-0.68; hand/room to the right.
-  faceBox: { x: 0.22, y: 0.37, w: 0.46, h: 0.23 },
+  faceBox: { x: 0.18, y: 0.37, w: 0.50, h: 0.23 },
+  cuts: [{ take: 1, from: 5.44, to: 5.567 }],
+  hookBox: { x: 0.58, y: 0.03, w: 0.40, h: 0.19 },
   captionY: 0.66,
-  graphicsBox: { x: 0.71, y: 0.24, w: 0.25, h: 0.36 },
+  graphicsBox: { x: 0.70, y: 0.24, w: 0.27, h: 0.36 },
   hook: "Post a week // of content // in 5 minutes",
   sections: [
     { take: 2, title: "1. AI writes 10 hooks" },
@@ -23,7 +25,7 @@ export default video({
     { on: "in one take", show: flashCard("ONE TAKE"), sfx: "thud" },
     { on: "writes captions", show: punchList(["Caption 1", "Caption 2", "Caption 3"]), sfx: "tick", hold: 3.5 },
     { on: "post at 8pm", show: punchList(["Post at 8pm"], { pick: 0 }), sfx: "tick", hold: 3 },
-    { on: "all of my channels", show: iconStack(["tt", "ig", "yt", "fb"]), sfx: "pop", hold: 3.5 },
+    { on: "all of my channels", show: iconStack(["tt", "ig", "yt", "fb"]), sfx: "pop", stack: true, hold: 3.5 },
     { on: "hit approve", show: punchList(["Approve"], { pick: 0 }), sfx: "tick", hold: 2 },
     { on: "nothing else to do", emphasis: "pulse" },
     { on: "save this", emphasis: "pulse" },
