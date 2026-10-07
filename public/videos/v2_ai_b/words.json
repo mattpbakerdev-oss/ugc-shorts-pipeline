@@ -1,734 +1,734 @@
 {
   "words": [
     {
-      "text": "If",
-      "startFrame": 1,
-      "endFrame": 10
-    },
-    {
       "text": "you're",
-      "startFrame": 10,
-      "endFrame": 17
+      "startFrame": 7,
+      "endFrame": 13
     },
     {
       "text": "not",
-      "startFrame": 17,
-      "endFrame": 23
+      "startFrame": 13,
+      "endFrame": 20
     },
     {
       "text": "using",
-      "startFrame": 23,
-      "endFrame": 34
+      "startFrame": 20,
+      "endFrame": 31
     },
     {
       "text": "AI",
-      "startFrame": 34,
-      "endFrame": 38
+      "startFrame": 31,
+      "endFrame": 35
     },
     {
       "text": "for",
-      "startFrame": 38,
-      "endFrame": 47
+      "startFrame": 35,
+      "endFrame": 42
     },
     {
       "text": "your",
-      "startFrame": 47,
-      "endFrame": 53
+      "startFrame": 42,
+      "endFrame": 50
     },
     {
-      "text": "content,",
-      "startFrame": 53,
-      "endFrame": 72
+      "text": "content",
+      "startFrame": 50,
+      "endFrame": 67
     },
     {
       "text": "you're",
-      "startFrame": 72,
-      "endFrame": 78
+      "startFrame": 67,
+      "endFrame": 77
     },
     {
       "text": "already",
-      "startFrame": 78,
-      "endFrame": 86
+      "startFrame": 77,
+      "endFrame": 89
     },
     {
-      "text": "behind.",
-      "startFrame": 86,
-      "endFrame": 103
+      "text": "behind",
+      "startFrame": 89,
+      "endFrame": 104
     },
     {
-      "text": "Here",
-      "startFrame": 103,
-      "endFrame": 113
+      "text": "here",
+      "startFrame": 104,
+      "endFrame": 106
     },
     {
       "text": "are",
-      "startFrame": 113,
-      "endFrame": 119
+      "startFrame": 106,
+      "endFrame": 111
     },
     {
       "text": "three",
-      "startFrame": 119,
-      "endFrame": 131
+      "startFrame": 111,
+      "endFrame": 116
     },
     {
       "text": "ways",
-      "startFrame": 131,
-      "endFrame": 140
+      "startFrame": 116,
+      "endFrame": 132
     },
     {
       "text": "I",
-      "startFrame": 140,
-      "endFrame": 143
+      "startFrame": 132,
+      "endFrame": 135
     },
     {
       "text": "use",
-      "startFrame": 143,
-      "endFrame": 154
+      "startFrame": 135,
+      "endFrame": 147
     },
     {
-      "text": "it.",
-      "startFrame": 154,
-      "endFrame": 162
+      "text": "it",
+      "startFrame": 147,
+      "endFrame": 165
     },
     {
-      "text": "Hooks,",
-      "startFrame": 162,
-      "endFrame": 182
+      "text": "hooks",
+      "startFrame": 165,
+      "endFrame": 173
     },
     {
       "text": "I",
-      "startFrame": 182,
+      "startFrame": 173,
       "endFrame": 184
     },
     {
       "text": "give",
       "startFrame": 184,
-      "endFrame": 194
+      "endFrame": 186
     },
     {
       "text": "AI",
-      "startFrame": 194,
-      "endFrame": 200
+      "startFrame": 186,
+      "endFrame": 192
     },
     {
       "text": "my",
-      "startFrame": 200,
-      "endFrame": 205
+      "startFrame": 192,
+      "endFrame": 198
     },
     {
-      "text": "topic,",
-      "startFrame": 205,
-      "endFrame": 224
+      "text": "topic",
+      "startFrame": 198,
+      "endFrame": 213
     },
     {
       "text": "and",
-      "startFrame": 224,
-      "endFrame": 229
+      "startFrame": 213,
+      "endFrame": 223
     },
     {
       "text": "I",
-      "startFrame": 229,
+      "startFrame": 223,
+      "endFrame": 227
+    },
+    {
+      "text": "ask",
+      "startFrame": 227,
       "endFrame": 232
     },
     {
-      "text": "ask",
-      "startFrame": 232,
-      "endFrame": 237
-    },
-    {
       "text": "for",
-      "startFrame": 237,
-      "endFrame": 242
+      "startFrame": 232,
+      "endFrame": 239
     },
     {
       "text": "10",
-      "startFrame": 242,
-      "endFrame": 253
+      "startFrame": 239,
+      "endFrame": 242
     },
     {
       "text": "hook",
-      "startFrame": 253,
-      "endFrame": 260
+      "startFrame": 242,
+      "endFrame": 252
     },
     {
-      "text": "ideas.",
-      "startFrame": 260,
-      "endFrame": 271
-    },
-    {
-      "text": "And",
-      "startFrame": 271,
-      "endFrame": 275
-    },
-    {
-      "text": "then",
-      "startFrame": 275,
-      "endFrame": 280
-    },
-    {
-      "text": "I",
-      "startFrame": 280,
-      "endFrame": 281
-    },
-    {
-      "text": "pick",
-      "startFrame": 281,
-      "endFrame": 287
-    },
-    {
-      "text": "the",
-      "startFrame": 287,
-      "endFrame": 290
-    },
-    {
-      "text": "best",
-      "startFrame": 290,
-      "endFrame": 295
-    },
-    {
-      "text": "one.",
-      "startFrame": 295,
-      "endFrame": 305
-    },
-    {
-      "text": "That's",
-      "startFrame": 305,
-      "endFrame": 313
-    },
-    {
-      "text": "30",
-      "startFrame": 313,
-      "endFrame": 321
-    },
-    {
-      "text": "seconds",
-      "startFrame": 321,
-      "endFrame": 331
-    },
-    {
-      "text": "of",
-      "startFrame": 331,
-      "endFrame": 333
-    },
-    {
-      "text": "work,",
-      "startFrame": 333,
-      "endFrame": 340
-    },
-    {
-      "text": "instead",
-      "startFrame": 340,
-      "endFrame": 354
-    },
-    {
-      "text": "of",
-      "startFrame": 354,
-      "endFrame": 355
-    },
-    {
-      "text": "staring",
-      "startFrame": 355,
-      "endFrame": 367
-    },
-    {
-      "text": "at",
-      "startFrame": 367,
-      "endFrame": 370
-    },
-    {
-      "text": "a",
-      "startFrame": 370,
-      "endFrame": 372
-    },
-    {
-      "text": "blank",
-      "startFrame": 372,
-      "endFrame": 381
-    },
-    {
-      "text": "note",
-      "startFrame": 381,
-      "endFrame": 390
-    },
-    {
-      "text": "for",
-      "startFrame": 390,
-      "endFrame": 394
-    },
-    {
-      "text": "who",
-      "startFrame": 394,
-      "endFrame": 399
-    },
-    {
-      "text": "knows",
-      "startFrame": 399,
-      "endFrame": 408
-    },
-    {
-      "text": "how",
-      "startFrame": 408,
-      "endFrame": 413
-    },
-    {
-      "text": "long.",
-      "startFrame": 413,
-      "endFrame": 426
-    },
-    {
-      "text": "Repurposing,",
-      "startFrame": 426,
-      "endFrame": 461
-    },
-    {
-      "text": "one",
-      "startFrame": 461,
-      "endFrame": 469
-    },
-    {
-      "text": "idea",
-      "startFrame": 469,
-      "endFrame": 485
-    },
-    {
-      "text": "becomes",
-      "startFrame": 485,
-      "endFrame": 500
-    },
-    {
-      "text": "a",
-      "startFrame": 500,
-      "endFrame": 504
-    },
-    {
-      "text": "video,",
-      "startFrame": 504,
-      "endFrame": 523
-    },
-    {
-      "text": "a",
-      "startFrame": 523,
-      "endFrame": 525
-    },
-    {
-      "text": "carousel,",
-      "startFrame": 525,
-      "endFrame": 544
+      "text": "ideas",
+      "startFrame": 252,
+      "endFrame": 272
     },
     {
       "text": "and",
-      "startFrame": 544,
-      "endFrame": 547
+      "startFrame": 272,
+      "endFrame": 274
     },
     {
-      "text": "a",
-      "startFrame": 547,
-      "endFrame": 548
-    },
-    {
-      "text": "caption.",
-      "startFrame": 548,
-      "endFrame": 568
-    },
-    {
-      "text": "Then",
-      "startFrame": 568,
-      "endFrame": 575
+      "text": "then",
+      "startFrame": 274,
+      "endFrame": 277
     },
     {
       "text": "I",
-      "startFrame": 575,
-      "endFrame": 579
+      "startFrame": 277,
+      "endFrame": 278
     },
     {
-      "text": "ask",
-      "startFrame": 579,
-      "endFrame": 583
+      "text": "pick",
+      "startFrame": 278,
+      "endFrame": 284
     },
     {
-      "text": "AI",
-      "startFrame": 583,
-      "endFrame": 586
+      "text": "the",
+      "startFrame": 284,
+      "endFrame": 289
     },
     {
-      "text": "to",
-      "startFrame": 586,
-      "endFrame": 590
+      "text": "best",
+      "startFrame": 289,
+      "endFrame": 295
     },
     {
-      "text": "rewrite",
-      "startFrame": 590,
-      "endFrame": 604
+      "text": "one",
+      "startFrame": 295,
+      "endFrame": 299
     },
     {
-      "text": "it",
-      "startFrame": 604,
-      "endFrame": 608
+      "text": "that's",
+      "startFrame": 299,
+      "endFrame": 308
     },
     {
-      "text": "for",
-      "startFrame": 608,
-      "endFrame": 613
+      "text": "30",
+      "startFrame": 308,
+      "endFrame": 317
     },
     {
-      "text": "each",
-      "startFrame": 613,
-      "endFrame": 620
-    },
-    {
-      "text": "format,",
-      "startFrame": 620,
-      "endFrame": 634
-    },
-    {
-      "text": "instead",
-      "startFrame": 634,
-      "endFrame": 647
+      "text": "seconds",
+      "startFrame": 317,
+      "endFrame": 328
     },
     {
       "text": "of",
-      "startFrame": 647,
-      "endFrame": 650
+      "startFrame": 328,
+      "endFrame": 331
+    },
+    {
+      "text": "work",
+      "startFrame": 331,
+      "endFrame": 338
+    },
+    {
+      "text": "instead",
+      "startFrame": 338,
+      "endFrame": 347
+    },
+    {
+      "text": "of",
+      "startFrame": 347,
+      "endFrame": 351
+    },
+    {
+      "text": "staring",
+      "startFrame": 351,
+      "endFrame": 364
+    },
+    {
+      "text": "at",
+      "startFrame": 364,
+      "endFrame": 368
+    },
+    {
+      "text": "a",
+      "startFrame": 368,
+      "endFrame": 373
+    },
+    {
+      "text": "blank",
+      "startFrame": 373,
+      "endFrame": 380
+    },
+    {
+      "text": "note",
+      "startFrame": 380,
+      "endFrame": 386
+    },
+    {
+      "text": "for",
+      "startFrame": 386,
+      "endFrame": 397
+    },
+    {
+      "text": "who",
+      "startFrame": 397,
+      "endFrame": 407
+    },
+    {
+      "text": "knows",
+      "startFrame": 407,
+      "endFrame": 426
+    },
+    {
+      "text": "how",
+      "startFrame": 426,
+      "endFrame": 435
+    },
+    {
+      "text": "long",
+      "startFrame": 435,
+      "endFrame": 457
+    },
+    {
+      "text": "repurposing",
+      "startFrame": 457,
+      "endFrame": 476
+    },
+    {
+      "text": "one",
+      "startFrame": 476,
+      "endFrame": 487
+    },
+    {
+      "text": "idea",
+      "startFrame": 487,
+      "endFrame": 493
+    },
+    {
+      "text": "becomes",
+      "startFrame": 493,
+      "endFrame": 509
+    },
+    {
+      "text": "a",
+      "startFrame": 509,
+      "endFrame": 514
+    },
+    {
+      "text": "video",
+      "startFrame": 514,
+      "endFrame": 520
+    },
+    {
+      "text": "a",
+      "startFrame": 520,
+      "endFrame": 526
+    },
+    {
+      "text": "carousel",
+      "startFrame": 526,
+      "endFrame": 540
+    },
+    {
+      "text": "and",
+      "startFrame": 540,
+      "endFrame": 546
+    },
+    {
+      "text": "a",
+      "startFrame": 546,
+      "endFrame": 547
+    },
+    {
+      "text": "caption",
+      "startFrame": 547,
+      "endFrame": 560
+    },
+    {
+      "text": "then",
+      "startFrame": 560,
+      "endFrame": 569
+    },
+    {
+      "text": "I",
+      "startFrame": 569,
+      "endFrame": 570
+    },
+    {
+      "text": "asked",
+      "startFrame": 570,
+      "endFrame": 578
+    },
+    {
+      "text": "AI",
+      "startFrame": 578,
+      "endFrame": 581
+    },
+    {
+      "text": "to",
+      "startFrame": 581,
+      "endFrame": 585
+    },
+    {
+      "text": "rewrite",
+      "startFrame": 585,
+      "endFrame": 598
+    },
+    {
+      "text": "it",
+      "startFrame": 598,
+      "endFrame": 601
+    },
+    {
+      "text": "for",
+      "startFrame": 601,
+      "endFrame": 607
+    },
+    {
+      "text": "each",
+      "startFrame": 607,
+      "endFrame": 617
+    },
+    {
+      "text": "format",
+      "startFrame": 617,
+      "endFrame": 630
+    },
+    {
+      "text": "instead",
+      "startFrame": 630,
+      "endFrame": 640
+    },
+    {
+      "text": "of",
+      "startFrame": 640,
+      "endFrame": 642
     },
     {
       "text": "starting",
-      "startFrame": 650,
-      "endFrame": 665
+      "startFrame": 642,
+      "endFrame": 662
     },
     {
       "text": "from",
-      "startFrame": 665,
+      "startFrame": 662,
       "endFrame": 672
     },
     {
       "text": "scratch",
       "startFrame": 672,
-      "endFrame": 685
+      "endFrame": 686
     },
     {
       "text": "every",
-      "startFrame": 685,
-      "endFrame": 694
+      "startFrame": 686,
+      "endFrame": 697
     },
     {
-      "text": "time.",
-      "startFrame": 694,
-      "endFrame": 708
+      "text": "time",
+      "startFrame": 697,
+      "endFrame": 711
     },
     {
-      "text": "Posting,",
-      "startFrame": 708,
-      "endFrame": 728
+      "text": "posting",
+      "startFrame": 711,
+      "endFrame": 722
     },
     {
       "text": "I",
-      "startFrame": 728,
-      "endFrame": 730
+      "startFrame": 722,
+      "endFrame": 724
     },
     {
       "text": "don't",
-      "startFrame": 730,
-      "endFrame": 741
+      "startFrame": 724,
+      "endFrame": 736
     },
     {
       "text": "post",
-      "startFrame": 741,
+      "startFrame": 736,
       "endFrame": 746
     },
     {
       "text": "anything",
       "startFrame": 746,
-      "endFrame": 762
+      "endFrame": 763
     },
     {
       "text": "manually",
-      "startFrame": 762,
-      "endFrame": 778
+      "startFrame": 763,
+      "endFrame": 780
     },
     {
-      "text": "anymore.",
-      "startFrame": 778,
-      "endFrame": 800
+      "text": "anymore",
+      "startFrame": 780,
+      "endFrame": 797
     },
     {
       "text": "I",
-      "startFrame": 800,
-      "endFrame": 803
+      "startFrame": 797,
+      "endFrame": 798
     },
     {
       "text": "tell",
-      "startFrame": 803,
-      "endFrame": 813
+      "startFrame": 804,
+      "endFrame": 807
     },
     {
-      "text": "Postiz",
-      "startFrame": 813,
-      "endFrame": 835
+      "text": "post",
+      "startFrame": 807,
+      "endFrame": 821
+    },
+    {
+      "text": "its",
+      "startFrame": 821,
+      "endFrame": 824
     },
     {
       "text": "AI",
-      "startFrame": 835,
-      "endFrame": 839
+      "startFrame": 824,
+      "endFrame": 829
     },
     {
       "text": "what",
-      "startFrame": 839,
-      "endFrame": 850
+      "startFrame": 829,
+      "endFrame": 838
     },
     {
       "text": "I",
-      "startFrame": 850,
+      "startFrame": 838,
+      "endFrame": 840
+    },
+    {
+      "text": "want",
+      "startFrame": 840,
       "endFrame": 852
     },
     {
-      "text": "want.",
+      "text": "it",
       "startFrame": 852,
-      "endFrame": 871
-    },
-    {
-      "text": "It",
-      "startFrame": 872,
-      "endFrame": 875
+      "endFrame": 854
     },
     {
       "text": "writes",
-      "startFrame": 875,
-      "endFrame": 885
+      "startFrame": 854,
+      "endFrame": 868
     },
     {
       "text": "the",
-      "startFrame": 885,
+      "startFrame": 868,
+      "endFrame": 876
+    },
+    {
+      "text": "captions",
+      "startFrame": 876,
       "endFrame": 894
     },
     {
-      "text": "captions,",
-      "startFrame": 894,
-      "endFrame": 908
-    },
-    {
       "text": "the",
-      "startFrame": 908,
-      "endFrame": 914
+      "startFrame": 894,
+      "endFrame": 902
     },
     {
-      "text": "titles,",
-      "startFrame": 914,
-      "endFrame": 925
+      "text": "titles",
+      "startFrame": 902,
+      "endFrame": 921
     },
     {
       "text": "and",
-      "startFrame": 925,
-      "endFrame": 931
+      "startFrame": 921,
+      "endFrame": 927
     },
     {
       "text": "it",
-      "startFrame": 931,
-      "endFrame": 937
+      "startFrame": 927,
+      "endFrame": 933
     },
     {
       "text": "schedules",
-      "startFrame": 937,
-      "endFrame": 952
+      "startFrame": 933,
+      "endFrame": 947
     },
     {
       "text": "it",
-      "startFrame": 952,
-      "endFrame": 956
+      "startFrame": 947,
+      "endFrame": 951
     },
     {
       "text": "all",
-      "startFrame": 956,
-      "endFrame": 962
+      "startFrame": 951,
+      "endFrame": 959
     },
     {
       "text": "for",
-      "startFrame": 962,
-      "endFrame": 972
+      "startFrame": 959,
+      "endFrame": 964
     },
     {
       "text": "me",
-      "startFrame": 972,
-      "endFrame": 973
+      "startFrame": 964,
+      "endFrame": 968
     },
     {
       "text": "on",
-      "startFrame": 972,
+      "startFrame": 968,
       "endFrame": 975
     },
     {
-      "text": "YouTube,",
+      "text": "YouTube",
       "startFrame": 975,
-      "endFrame": 992
+      "endFrame": 987
     },
     {
-      "text": "TikTok,",
-      "startFrame": 992,
-      "endFrame": 1006
+      "text": "TikTok",
+      "startFrame": 987,
+      "endFrame": 1000
     },
     {
-      "text": "Facebook,",
-      "startFrame": 1006,
-      "endFrame": 1021
+      "text": "Facebook",
+      "startFrame": 1000,
+      "endFrame": 1017
     },
     {
       "text": "and",
-      "startFrame": 1021,
-      "endFrame": 1026
+      "startFrame": 1017,
+      "endFrame": 1023
     },
     {
-      "text": "Instagram.",
-      "startFrame": 1026,
-      "endFrame": 1048
+      "text": "Instagram",
+      "startFrame": 1023,
+      "endFrame": 1040
     },
     {
       "text": "I",
-      "startFrame": 1048,
-      "endFrame": 1050
+      "startFrame": 1040,
+      "endFrame": 1051
     },
     {
       "text": "don't",
-      "startFrame": 1050,
-      "endFrame": 1061
+      "startFrame": 1051,
+      "endFrame": 1064
     },
     {
       "text": "do",
-      "startFrame": 1061,
-      "endFrame": 1068
+      "startFrame": 1064,
+      "endFrame": 1072
     },
     {
-      "text": "anything.",
-      "startFrame": 1068,
-      "endFrame": 1090
+      "text": "anything",
+      "startFrame": 1072,
+      "endFrame": 1091
     },
     {
       "text": "I",
-      "startFrame": 1090,
+      "startFrame": 1091,
       "endFrame": 1092
     },
     {
       "text": "just",
       "startFrame": 1092,
-      "endFrame": 1102
+      "endFrame": 1093
     },
     {
       "text": "sit",
-      "startFrame": 1102,
-      "endFrame": 1109
+      "startFrame": 1093,
+      "endFrame": 1100
     },
     {
       "text": "there",
-      "startFrame": 1109,
-      "endFrame": 1122
+      "startFrame": 1100,
+      "endFrame": 1112
     },
     {
       "text": "and",
-      "startFrame": 1122,
-      "endFrame": 1131
+      "startFrame": 1112,
+      "endFrame": 1119
     },
     {
       "text": "hit",
-      "startFrame": 1131,
-      "endFrame": 1137
+      "startFrame": 1119,
+      "endFrame": 1129
     },
     {
-      "text": "approve.",
-      "startFrame": 1137,
-      "endFrame": 1163
+      "text": "approve",
+      "startFrame": 1129,
+      "endFrame": 1142
     },
     {
-      "text": "Now,",
-      "startFrame": 1163,
-      "endFrame": 1173
+      "text": "now",
+      "startFrame": 1142,
+      "endFrame": 1144
     },
     {
       "text": "save",
-      "startFrame": 1173,
-      "endFrame": 1180
+      "startFrame": 1144,
+      "endFrame": 1166
     },
     {
       "text": "this",
-      "startFrame": 1180,
-      "endFrame": 1184
+      "startFrame": 1166,
+      "endFrame": 1167
     },
     {
       "text": "before",
-      "startFrame": 1184,
-      "endFrame": 1194
+      "startFrame": 1167,
+      "endFrame": 1182
     },
     {
       "text": "your",
-      "startFrame": 1194,
-      "endFrame": 1200
+      "startFrame": 1182,
+      "endFrame": 1196
     },
     {
       "text": "next",
-      "startFrame": 1200,
-      "endFrame": 1207
+      "startFrame": 1196,
+      "endFrame": 1200
     },
     {
       "text": "video",
-      "startFrame": 1207,
-      "endFrame": 1216
+      "startFrame": 1200,
+      "endFrame": 1213
     },
     {
       "text": "and",
-      "startFrame": 1216,
-      "endFrame": 1222
+      "startFrame": 1213,
+      "endFrame": 1219
     },
     {
       "text": "send",
-      "startFrame": 1222,
-      "endFrame": 1225
-    },
-    {
-      "text": "it",
-      "startFrame": 1225,
+      "startFrame": 1219,
       "endFrame": 1228
     },
     {
-      "text": "to",
+      "text": "it",
       "startFrame": 1228,
-      "endFrame": 1232
+      "endFrame": 1233
+    },
+    {
+      "text": "to",
+      "startFrame": 1233,
+      "endFrame": 1234
     },
     {
       "text": "your",
-      "startFrame": 1232,
-      "endFrame": 1238
-    },
-    {
-      "text": "friend",
-      "startFrame": 1238,
+      "startFrame": 1234,
       "endFrame": 1244
     },
     {
-      "text": "who's",
+      "text": "friend",
       "startFrame": 1244,
-      "endFrame": 1253
+      "endFrame": 1259
+    },
+    {
+      "text": "who's",
+      "startFrame": 1259,
+      "endFrame": 1272
     },
     {
       "text": "still",
-      "startFrame": 1253,
-      "endFrame": 1261
-    },
-    {
-      "text": "doing",
-      "startFrame": 1261,
-      "endFrame": 1269
-    },
-    {
-      "text": "everything",
-      "startFrame": 1269,
+      "startFrame": 1272,
       "endFrame": 1285
     },
     {
-      "text": "by",
+      "text": "doing",
       "startFrame": 1285,
-      "endFrame": 1295
+      "endFrame": 1296
     },
     {
-      "text": "hand.",
-      "startFrame": 1295,
-      "endFrame": 1301
+      "text": "everything",
+      "startFrame": 1296,
+      "endFrame": 1297
+    },
+    {
+      "text": "by",
+      "startFrame": 1297,
+      "endFrame": 1298
+    },
+    {
+      "text": "hand",
+      "startFrame": 1297,
+      "endFrame": 1340
     }
   ]
 }

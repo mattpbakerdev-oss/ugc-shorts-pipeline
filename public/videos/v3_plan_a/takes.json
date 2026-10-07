@@ -11,32 +11,32 @@
     {
       "file": "2 tip1.mp4",
       "startFrame": 149,
-      "endFrame": 620
+      "endFrame": 540
     },
     {
       "file": "3 tip2.mp4",
-      "startFrame": 620,
-      "endFrame": 1016
+      "startFrame": 540,
+      "endFrame": 936
     },
     {
       "file": "4 tip3.mp4",
-      "startFrame": 1016,
-      "endFrame": 1383
+      "startFrame": 936,
+      "endFrame": 1303
     },
     {
       "file": "5 tip4.mp4",
-      "startFrame": 1383,
-      "endFrame": 1972
+      "startFrame": 1303,
+      "endFrame": 1892
     },
     {
       "file": "6 tip5.mp4",
-      "startFrame": 1972,
-      "endFrame": 2342
+      "startFrame": 1892,
+      "endFrame": 2262
     },
     {
       "file": "7 close.mp4",
-      "startFrame": 2342,
-      "endFrame": 2542
+      "startFrame": 2262,
+      "endFrame": 2462
     }
   ]
 }

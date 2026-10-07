@@ -1,10 +1,14 @@
-import { bigNumber, counter, flashCard, iconStack, punchList, video } from "../storyboard/dsl";
+import { bigNumber, counter, ctaSaveShare, flashCard, iconStack, punchList, video } from "../storyboard/dsl";
 
 export default video({
   id: "v3_plan_a",
-  hook: "33 followers → 1,000 // my 5-step plan",
+  hook: "33 followers // → 1,000 // my 5-step plan",
   // Desk framing: face top-left (x 0.04-0.48 incl. hair), chin at ~0.50; right side of frame is empty.
   faceBox: { x: 0.04, y: 0.16, w: 0.44, h: 0.34 },
+  // Take 2 opens with a false start ("First thing, hmm,") before the clean "the first thing".
+  cuts: [{ take: 2, from: 0, to: 2.65 }],
+  captionY: 0.66,
+  graphicsBox: { x: 0.48, y: 0.22, w: 0.47, h: 0.40 },
   sections: [
     { take: 2, title: "1. One topic" },
     { take: 3, title: "2. Engage" },
@@ -27,5 +31,6 @@ export default video({
     { on: "four times", emphasis: "shake" },
     { on: "watch time", show: punchList(["Likes", "Watch time"], { pick: 1 }), sfx: "tick", hold: 4 },
     { on: "save this", emphasis: "pulse" },
+    { on: "send it to a mate", show: ctaSaveShare(), sfx: "pop" },
   ],
 });

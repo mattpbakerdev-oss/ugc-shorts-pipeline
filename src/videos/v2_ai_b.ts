@@ -1,8 +1,8 @@
-import { bigNumber, iconStack, punchList, video } from "../storyboard/dsl";
+import { bigNumber, ctaSaveShare, iconStack, punchList, video } from "../storyboard/dsl";
 
 export default video({
   id: "v2_ai_b",
-  hook: "Not using AI yet? // You're already behind",
+  hook: "Not using AI yet? // You're already // behind.",
   sections: [
     { take: 2, title: "1. Hooks" },
     { take: 3, title: "2. Repurpose" },
@@ -21,5 +21,6 @@ export default video({
     { on: "YouTube, TikTok, Facebook and Instagram", show: iconStack(["yt", "tt", "fb", "ig"]), sfx: "pop", hold: 4 },
     { on: "hit approve", show: punchList(["Approve"], { pick: 0 }), sfx: "tick", hold: 2 },
     { on: "save this", emphasis: "pulse" },
+    { on: "send it to your friend", show: ctaSaveShare(), sfx: "pop" },
   ],
 });
