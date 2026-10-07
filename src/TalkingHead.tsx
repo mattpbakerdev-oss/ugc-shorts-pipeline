@@ -3,6 +3,7 @@ import { Captions } from "./layers/Captions";
 import { Face } from "./layers/Face";
 import { Graphics } from "./layers/Graphics";
 import { SectionTitles } from "./layers/SectionTitle";
+import { Sfx } from "./layers/Sfx";
 import { ZonesOverlay } from "./layers/ZonesOverlay";
 import { resolveStoryboard } from "./storyboard/resolve";
 import { storyboards } from "./videos";
@@ -45,6 +46,7 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones })
       <Graphics resolved={resolved} />
       <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />
       {showZones ? <ZonesOverlay faceBox={resolved.faceBox} /> : null}
+      <Sfx resolved={resolved} />
     </AbsoluteFill>
   );
 };
