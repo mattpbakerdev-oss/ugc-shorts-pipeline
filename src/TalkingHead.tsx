@@ -45,7 +45,7 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones })
       <SectionTitles resolved={resolved} />
       <Graphics resolved={resolved} />
       <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />
-      {showZones ? <ZonesOverlay faceBox={resolved.faceBox} /> : null}
+      {showZones ? <ZonesOverlay faceBox={resolved.faceBox} captionY={resolved.captionY} graphicsBox={resolved.graphicsBox} /> : null}
       <Sfx resolved={resolved} />
     </AbsoluteFill>
   );

@@ -25,6 +25,13 @@ export const validateStoryboard = (sb: Storyboard): void => {
     if (!(c.from >= 0)) throw new Error(`${sb.id}: cut ${i} has from ${c.from}; must be >= 0`);
     if (!(c.to > c.from)) throw new Error(`${sb.id}: cut ${i} has to ${c.to} <= from ${c.from}`);
   });
+  if (sb.captionY !== undefined && !(sb.captionY >= 0.3 && sb.captionY <= 0.88)) {
+    throw new Error(`${sb.id}: captionY ${sb.captionY} must be between 0.3 and 0.88`);
+  }
+  const g = sb.graphicsBox;
+  if (g && !(g.x >= 0 && g.y >= 0 && g.w > 0 && g.h > 0 && g.x + g.w <= 1 + 1e-9 && g.y + g.h <= 1 + 1e-9)) {
+    throw new Error(`${sb.id}: graphicsBox must lie inside the frame (x, y >= 0; x + w and y + h <= 1)`);
+  }
   sb.moments.forEach((m, i) => {
     const label = `${sb.id}: moment ${i}`;
     if (m.on === undefined && m.at === undefined) throw new Error(`${label} needs "on" (a phrase) or "at" (seconds)`);

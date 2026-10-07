@@ -8,7 +8,12 @@ const SIDE_MARGIN = 0.05;
 const CAPTION_HEIGHT = 0.1;
 const PLATFORM_UI_HEIGHT = 0.1;
 
-export const zonesFor = (face: Rect): Zones => {
+const overlapsRect = (a: Rect, b: Rect) =>
+  a.x < b.x + b.w - 1e-9 && a.x + a.w > b.x + 1e-9 && a.y < b.y + b.h - 1e-9 && a.y + a.h > b.y + 1e-9;
+
+export type ZoneOverrides = { captionY?: number; graphicsBox?: Rect };
+
+export const zonesFor = (face: Rect, overrides: ZoneOverrides = {}): Zones => {
   const maxBottom = 1 - PLATFORM_UI_HEIGHT - CAPTION_HEIGHT - GAP;
   if (face.y + face.h > maxBottom + 1e-9) {
     throw new Error(
@@ -24,7 +29,16 @@ export const zonesFor = (face: Rect): Zones => {
   const leftW = Math.max(0, face.x - GAP - SIDE_MARGIN);
   const rightX = Math.min(1 - SIDE_MARGIN, face.x + face.w + GAP);
   const rightW = Math.max(0, 1 - SIDE_MARGIN - rightX);
-  const captionsY = face.y + face.h + GAP;
+  const minCaptionsY = face.y + face.h + GAP;
+  if (overrides.captionY !== undefined && overrides.captionY < minCaptionsY - 1e-9) {
+    throw new Error(
+      `captionY ${overrides.captionY.toFixed(2)} is above the chin line; it must be >= ${minCaptionsY.toFixed(2)} (face bottom + gap)`
+    );
+  }
+  if (overrides.graphicsBox && overlapsRect(overrides.graphicsBox, face)) {
+    throw new Error("graphicsBox overlaps the face box; move it clear of the face or shrink it");
+  }
+  const captionsY = overrides.captionY ?? minCaptionsY;
   return {
     topBand: { x: 0.06, y: 0.03, w: 0.88, h: Math.min(0.19, rawBand) },
     face,
@@ -33,6 +47,7 @@ export const zonesFor = (face: Rect): Zones => {
     captions: { x: 0.04, y: captionsY, w: 0.92, h: CAPTION_HEIGHT },
     platformUi: { x: 0, y: 1 - PLATFORM_UI_HEIGHT, w: 1, h: PLATFORM_UI_HEIGHT },
     full: { x: 0, y: 0, w: 1, h: 1 },
+    ...(overrides.graphicsBox ? { graphicsBox: overrides.graphicsBox } : {}),
   };
 };
 

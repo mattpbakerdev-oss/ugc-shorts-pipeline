@@ -153,3 +153,28 @@ describe("resolveStoryboard", () => {
     });
   });
 });
+
+describe("resolver overrides", () => {
+  const face = { x: 0.04, y: 0.16, w: 0.44, h: 0.34 };
+  const base = { id: "o", hook: "H", sections: [] as Storyboard["sections"], faceBox: face };
+  it("derives captionY and graphicsBox when not overridden", () => {
+    const r = resolveStoryboard({ ...base, moments: [] }, takes, wordsFile);
+    expect(r.captionY).toBeCloseTo(0.52, 9);
+    expect(r.graphicsBox.x).toBeCloseTo(0.5, 9);
+  });
+  it("uses captionY and graphicsBox as primary zone", () => {
+    const box = { x: 0.52, y: 0.22, w: 0.43, h: 0.4 };
+    const r = resolveStoryboard({ ...base, captionY: 0.66, graphicsBox: box, moments: [{ at: 1, show: bigNumber(3, "X") }, { at: 2, show: iconStack(["tt"]) }] }, takes, wordsFile);
+    expect(r.captionY).toBe(0.66);
+    expect(r.graphicsBox).toEqual(box);
+    expect(r.moments[0].zone).toBe("graphics");
+    expect(r.moments[1].zone).toBe("graphics");
+  });
+  it("throws when captionY is above the chin or graphicsBox overlaps the face", () => {
+    expect(() => resolveStoryboard({ ...base, captionY: 0.4, moments: [] }, takes, wordsFile)).toThrow(/captionY/);
+    expect(() => resolveStoryboard({ ...base, graphicsBox: { x: 0.3, y: 0.2, w: 0.4, h: 0.3 }, moments: [] }, takes, wordsFile)).toThrow(/graphicsBox/);
+  });
+  it("applies the 10% width rule to graphicsBox", () => {
+    expect(() => resolveStoryboard({ ...base, graphicsBox: { x: 0.6, y: 0.2, w: 0.08, h: 0.3 }, moments: [{ at: 1, show: bigNumber(3, "X") }] }, takes, wordsFile)).toThrow(/10%/);
+  });
+});

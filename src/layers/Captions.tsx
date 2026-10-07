@@ -82,7 +82,7 @@ const Group: React.FC<{ group: CaptionGroup; absoluteStart: number; emphasis?: G
 
 export const Captions: React.FC<{ resolved: ResolvedVideo; emphasis: ResolvedMoment[] }> = ({ resolved, emphasis }) => {
   const { width, height } = useVideoConfig();
-  const zone = zonesFor(resolved.faceBox).captions;
+  const zone = zonesFor(resolved.faceBox, { captionY: resolved.captionY }).captions;
   const groups = groupWords(resolved.words, {
     fps: resolved.fps,
     takeBoundaries: resolved.takes.slice(1).map((t) => t.startFrame),

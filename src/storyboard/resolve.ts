@@ -13,16 +13,18 @@ const FLASH_FRAMES = 3;
 
 export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFile: WordsFile): ResolvedVideo => {
   validateStoryboard(sb);
-  const z = zonesFor(sb.faceBox ?? DEFAULT_FACE_BOX);
-  // Left is preferred unless the right side is clearly wider (default box: 0.15 vs 0.17 stays left).
-  const primary: ZoneName = z.left.w + 0.05 >= z.right.w ? "left" : "right";
   const faceBox = sb.faceBox ?? DEFAULT_FACE_BOX;
-  if (z[primary].w < 0.10 && sb.moments.some((m) => m.show && m.show.kind !== "flashCard")) {
+  const z = zonesFor(faceBox, { captionY: sb.captionY, graphicsBox: sb.graphicsBox });
+  // Left is preferred unless the right side is clearly wider (default box: 0.15 vs 0.17 stays left).
+  const primary: ZoneName = sb.graphicsBox ? "graphics" : z.left.w + 0.05 >= z.right.w ? "left" : "right";
+  const primaryRect = z.graphicsBox ?? z[primary as "left" | "right"];
+  if (primaryRect.w < 0.10 && sb.moments.some((m) => m.show && m.show.kind !== "flashCard")) {
     throw new Error(
-      `${sb.id}: the wider side zone next to the face is only ${(z[primary].w * 100).toFixed(0)}% of the frame; graphics need >= 10%. Narrow faceBox (currently x ${faceBox.x} w ${faceBox.w}) or use only flashCard/emphasis moments`
+      `${sb.id}: the graphics zone ${sb.graphicsBox ? "(graphicsBox)" : "(the wider side zone next to the face)"} is only ${(primaryRect.w * 100).toFixed(0)}% of the frame; graphics need >= 10%. Narrow faceBox (currently x ${faceBox.x} w ${faceBox.w}) or use only flashCard/emphasis moments`
     );
   }
-  const other: ZoneName = primary === "left" ? "right" : "left";
+  const boxLeftOfFace = primaryRect.x + primaryRect.w / 2 < faceBox.x + faceBox.w / 2;
+  const other: ZoneName = primary === "graphics" ? (boxLeftOfFace ? "right" : "left") : primary === "left" ? "right" : "left";
   const secondary: ZoneName = z[other].w >= 0.12 ? other : primary;
   const zoneFor = (m: Moment): ZoneName => {
     if (m.emphasis && !m.show) return "captions";
@@ -108,5 +110,5 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
     if (next && next.enterFrame < m.exitFrame) m.exitFrame = next.enterFrame;
   });
 
-  return { id: sb.id, fps, width, height, durationInFrames, faceBox: sb.faceBox ?? DEFAULT_FACE_BOX, takes, words, sections, moments };
+  return { id: sb.id, fps, width, height, durationInFrames, faceBox, captionY: z.captions.y, graphicsBox: primaryRect, takes, words, sections, moments };
 };

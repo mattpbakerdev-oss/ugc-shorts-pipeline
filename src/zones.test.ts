@@ -82,3 +82,25 @@ describe("rectToStyle", () => {
     });
   });
 });
+
+describe("zonesFor overrides", () => {
+  const face = { x: 0.04, y: 0.16, w: 0.44, h: 0.34 };
+  it("uses a captionY below the face", () => {
+    expect(zonesFor(face, { captionY: 0.66 }).captions.y).toBeCloseTo(0.66, 9);
+  });
+  it("throws when captionY is above the chin", () => {
+    expect(() => zonesFor(face, { captionY: 0.5 })).toThrow(/captionY/);
+  });
+  it("throws when graphicsBox overlaps the face", () => {
+    expect(() => zonesFor(face, { graphicsBox: { x: 0.4, y: 0.2, w: 0.5, h: 0.3 } })).toThrow(/graphicsBox/);
+  });
+  it("exposes a non-overlapping graphicsBox", () => {
+    const box = { x: 0.52, y: 0.22, w: 0.43, h: 0.4 };
+    const z = zonesFor(face, { graphicsBox: box });
+    expect(z.graphicsBox).toEqual(box);
+    expect(overlaps(z.graphicsBox!, face)).toBe(false);
+  });
+  it("is unchanged without overrides", () => {
+    expect(zonesFor(face, {})).toEqual(zonesFor(face));
+  });
+});

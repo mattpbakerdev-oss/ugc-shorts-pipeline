@@ -66,7 +66,7 @@ export default video({
 
 Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
-**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `hook` (shown on take 1), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
+**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `captionY?` (top of the caption band, 0.3 to 0.88, must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must not overlap `faceBox`, width >= 0.10), `hook` (shown on take 1), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
 
 **Moment** (each needs exactly one of `on` / `at`):
 
@@ -125,6 +125,8 @@ See where they land (Studio: set `showZones` to true in the props panel, or from
 ```
 npx remotion still v2-ai-b out/zones.png --frame=100 --props='{"id":"v2_ai_b","showZones":true}'
 ```
+
+Two optional overrides decouple layout from the face box. `captionY` moves the caption band (its top edge as a fraction of frame height, 0.3 to 0.88); it throws if it sits above the chin line (`faceBox.y + h + 0.02`). `graphicsBox` replaces the primary graphics zone (big numbers, counters, punch lists) with an explicit rectangle that must not overlap the face; the 10% width rule still applies. Icon stacks stay in the opposite side zone if it is at least 12% wide, otherwise they share the graphics box. Graphics are left-aligned when the box centre is left of the face centre, else right-aligned. With `showZones` the graphics box is drawn in cyan. Example: `captionY: 0.66, graphicsBox: { x: 0.48, y: 0.22, w: 0.47, h: 0.40 }`.
 
 Adjust `faceBox` in the storyboard and re-check. Big numbers and counters shrink when the chosen side zone is narrow, so a tight face box is worth widening before accepting small graphics.
 

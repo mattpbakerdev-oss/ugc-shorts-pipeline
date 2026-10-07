@@ -20,9 +20,13 @@ const Graphic: React.FC<{ m: ResolvedMoment; zoneWidth: number; align: "left" | 
   }
 };
 
-const SideColumn: React.FC<{ side: "left" | "right"; resolved: ResolvedVideo }> = ({ side, resolved }) => {
+const SideColumn: React.FC<{ side: "left" | "right" | "graphics"; resolved: ResolvedVideo }> = ({ side, resolved }) => {
   const { width, height } = useVideoConfig();
-  const rect = zonesFor(resolved.faceBox)[side];
+  const rect = side === "graphics" ? resolved.graphicsBox : zonesFor(resolved.faceBox)[side];
+  const { faceBox } = resolved;
+  const align: "left" | "right" = side === "graphics"
+    ? (rect.x + rect.w / 2 < faceBox.x + faceBox.w / 2 ? "left" : "right")
+    : side;
   const items = resolved.moments
     .filter((m) => m.show && m.zone === side)
     .sort((a, b) => a.enterFrame - b.enterFrame);
@@ -34,7 +38,7 @@ const SideColumn: React.FC<{ side: "left" | "right"; resolved: ResolvedVideo }> 
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
-        alignItems: side === "left" ? "flex-start" : "flex-end",
+        alignItems: align === "left" ? "flex-start" : "flex-end",
         gap: 24,
         paddingTop: 40,
         overflow: "visible",
@@ -43,7 +47,7 @@ const SideColumn: React.FC<{ side: "left" | "right"; resolved: ResolvedVideo }> 
       {items.map((m, i) => (
         // premountFor is intentionally omitted: premounted children would occupy layout space in the flex column.
         <Sequence key={i} name={`${m.show!.kind} @${m.enterFrame}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} layout="none">
-          <Graphic m={m} zoneWidth={Math.round(rect.w * width)} align={side} />
+          <Graphic m={m} zoneWidth={Math.round(rect.w * width)} align={align} />
         </Sequence>
       ))}
     </div>
@@ -56,6 +60,7 @@ export const Graphics: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) =>
     <AbsoluteFill>
       <SideColumn side="left" resolved={resolved} />
       <SideColumn side="right" resolved={resolved} />
+      <SideColumn side="graphics" resolved={resolved} />
       {resolved.moments.filter((m) => m.show && m.zone === "full").map((m, i) => (
         <Sequence key={i} name={`${m.show!.kind} @${m.enterFrame}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} layout="none">
           <AbsoluteFill>

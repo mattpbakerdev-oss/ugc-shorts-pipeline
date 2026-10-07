@@ -8,7 +8,7 @@ export type TakesFile = { fps: number; width: number; height: number; takes: Tak
 
 export type WordsFile = { words: Word[] };
 
-export type ZoneName = "topBand" | "left" | "right" | "captions" | "full";
+export type ZoneName = "topBand" | "left" | "right" | "captions" | "graphics" | "full";
 
 export type Zones = {
   topBand: Rect;
@@ -18,6 +18,8 @@ export type Zones = {
   captions: Rect;
   platformUi: Rect;
   full: Rect;
+  /** Present only when the storyboard overrides the graphics area. */
+  graphicsBox?: Rect;
 };
 
 export type SfxName = "slam" | "tick" | "pop" | "whoosh" | "riser" | "thud";
@@ -38,12 +40,18 @@ export type Moment = {
 export type Section = { take: number; title: string };
 /** Remove [from, to) seconds from a take; times are take-local, read off work/<id>/take_NN.mp4. */
 export type Cut = { take: number; from: number; to: number };
-export type Storyboard = { id: string; faceBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[] };
+export type Storyboard = {
+  id: string; faceBox?: Rect;
+  /** Top of the caption band as a fraction of frame height (0.3 to 0.88); must sit below the face box. */
+  captionY?: number;
+  /** Replaces the primary graphics zone; must not overlap the face box. */
+  graphicsBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
+};
 export type ResolvedMoment = { enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName; stack?: boolean };
 export type ResolvedSection = { startFrame: number; endFrame: number; title: string; isHook: boolean };
 export type ResolvedVideo = {
   id: string; fps: number; width: number; height: number; durationInFrames: number;
-  faceBox: Rect; takes: Take[]; words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
+  faceBox: Rect; captionY: number; graphicsBox: Rect; takes: Take[]; words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
 };
 
 export const SFX_NAMES: SfxName[] = ["slam", "tick", "pop", "whoosh", "riser", "thud"];

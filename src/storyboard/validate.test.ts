@@ -35,4 +35,13 @@ describe("validateStoryboard", () => {
     expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: -1, to: 1 }] })).toThrow(/cut 0.*from/);
     expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: 2, to: 2 }] })).toThrow(/cut 0.*to/);
   });
+  it("rejects captionY outside 0.3 to 0.88", () => {
+    expect(() => validateStoryboard({ ...base, captionY: 0.2 })).toThrow(/captionY/);
+    expect(() => validateStoryboard({ ...base, captionY: 0.95 })).toThrow(/captionY/);
+    expect(() => validateStoryboard({ ...base, captionY: 0.66 })).not.toThrow();
+  });
+  it("rejects a graphicsBox outside the frame", () => {
+    expect(() => validateStoryboard({ ...base, graphicsBox: { x: 0.8, y: 0.2, w: 0.4, h: 0.3 } })).toThrow(/graphicsBox/);
+    expect(() => validateStoryboard({ ...base, graphicsBox: { x: 0.5, y: 0.2, w: 0.4, h: 0.3 } })).not.toThrow();
+  });
 });
