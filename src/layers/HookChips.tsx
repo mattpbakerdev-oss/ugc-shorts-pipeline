@@ -16,17 +16,17 @@ const STYLES = [
 // Montserrat 900 uppercase averages ~0.8em per glyph; used only to shrink an over-wide chip.
 const EST_EM_PER_CHAR = 0.8;
 
-export const HookChips: React.FC<{ section: ResolvedSection; zone: Rect }> = ({ section, zone }) => {
+export const HookChips: React.FC<{ section: ResolvedSection; zone: Rect; forceIn?: boolean }> = ({ section, zone, forceIn = false }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const length = section.endFrame - section.startFrame;
   const chips = splitHook(section.title);
-  const exit = interpolate(frame, [length - 6, length - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const exit = forceIn ? 1 : interpolate(frame, [length - 6, length - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const left = 0.02 * width;
   return (
     <div style={{ ...rectToStyle(zone, width, height), display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "center", gap: 14 }}>
       {chips.map((text, i) => {
-        const enter = spring({ frame: frame - i * 8, fps, config: { damping: 10, stiffness: 180 } });
+        const enter = forceIn ? 1 : spring({ frame: frame - i * 8, fps, config: { damping: 10, stiffness: 180 } });
         const offset = left + i * STEP * width;
         const maxW = zone.w * width - offset;
         const est = text.length * EST_EM_PER_CHAR * FONT_SIZE + 2 * PAD_X;

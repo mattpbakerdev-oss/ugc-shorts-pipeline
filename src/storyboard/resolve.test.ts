@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveStoryboard } from "./resolve";
-import { bigNumber, iconStack, flashCard } from "./dsl";
+import { bigNumber, ctaSaveShare, iconStack, flashCard } from "./dsl";
 import type { Storyboard, TakesFile, Word, WordsFile } from "../types";
 import { DEFAULT_FACE_BOX } from "../zones";
 
@@ -169,6 +169,11 @@ describe("resolver overrides", () => {
     expect(r.graphicsBox).toEqual(box);
     expect(r.moments[0].zone).toBe("graphics");
     expect(r.moments[1].zone).toBe("graphics");
+  });
+  it("gives ctaSaveShare a 3 s hold in the secondary zone", () => {
+    const r = resolveStoryboard({ ...base, moments: [{ at: 1, show: ctaSaveShare() }] }, takes, wordsFile);
+    expect(r.moments[0].exitFrame - r.moments[0].enterFrame).toBe(Math.round(3 * takes.fps));
+    expect(r.moments[0].zone).toBe("right");
   });
   it("throws when captionY is above the chin or graphicsBox overlaps the face", () => {
     expect(() => resolveStoryboard({ ...base, captionY: 0.4, moments: [] }, takes, wordsFile)).toThrow(/captionY/);

@@ -14,6 +14,8 @@ export const punchList = (items: string[], opts: { pick?: number; strike?: numbe
 
 export const iconStack = (icons: IconName[]): GraphicSpec => ({ kind: "iconStack", icons });
 
+export const ctaSaveShare = (): GraphicSpec => ({ kind: "ctaSaveShare" });
+
 export const counter = (from: number, to: number, label: string): GraphicSpec =>
   ({ kind: "counter", from, to, label });
 

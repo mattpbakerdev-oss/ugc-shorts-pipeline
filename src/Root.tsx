@@ -12,7 +12,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{ id: "v2_ai_b", showZones: false }}
+        defaultProps={{ id: "v2_ai_b", showZones: false, cover: false }}
         calculateMetadata={calculateMetadata}
       />
       <Composition
@@ -22,7 +22,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{ id: "v3_plan_a", showZones: false }}
+        defaultProps={{ id: "v3_plan_a", showZones: false, cover: false }}
         calculateMetadata={calculateMetadata}
       />
     </>

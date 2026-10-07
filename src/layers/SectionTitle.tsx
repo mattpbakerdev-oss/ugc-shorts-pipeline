@@ -37,7 +37,7 @@ const Pill: React.FC<{ section: ResolvedSection }> = ({ section }) => {
   );
 };
 
-export const SectionTitles: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) => {
+export const SectionTitles: React.FC<{ resolved: ResolvedVideo; forceHookIn?: boolean }> = ({ resolved, forceHookIn = false }) => {
   const { width, height } = useVideoConfig();
   const zone = zonesFor(resolved.faceBox).topBand;
   return (
@@ -52,7 +52,7 @@ export const SectionTitles: React.FC<{ resolved: ResolvedVideo }> = ({ resolved 
       </div>
       {resolved.sections.filter((s) => s.isHook).map((s) => (
         <Sequence key={s.startFrame} name={`Hook: ${s.title}`} from={s.startFrame} durationInFrames={s.endFrame - s.startFrame} layout="none">
-          <HookChips section={s} zone={zone} />
+          <HookChips section={s} zone={zone} forceIn={forceHookIn} />
         </Sequence>
       ))}
     </AbsoluteFill>

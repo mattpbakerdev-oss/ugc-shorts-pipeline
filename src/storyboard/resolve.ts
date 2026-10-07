@@ -6,7 +6,7 @@ import type {
 import { validateStoryboard } from "./validate";
 
 const DEFAULT_HOLD_SECONDS: Record<GraphicSpec["kind"], number> = {
-  bigNumber: 3, punchList: 4, iconStack: 3, counter: 3, flashCard: 0,
+  bigNumber: 3, punchList: 4, iconStack: 3, ctaSaveShare: 3, counter: 3, flashCard: 0,
 };
 const FLASH_FRAMES = 3;
 
@@ -29,7 +29,8 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
   const zoneFor = (m: Moment): ZoneName => {
     if (m.emphasis && !m.show) return "captions";
     switch (m.show?.kind) {
-      case "iconStack": return secondary;
+      case "iconStack":
+      case "ctaSaveShare": return secondary;
       case "flashCard": return "full";
       default: return primary;
     }

@@ -35,6 +35,7 @@
     "prep": "tsx scripts/prep.ts",
     "transcribe": "tsx scripts/transcribe.ts",
     "bloopers": "tsx scripts/bloopers.ts",
+    "cover": "tsx scripts/cover.ts",
     "render": "remotion render"
   }
 }

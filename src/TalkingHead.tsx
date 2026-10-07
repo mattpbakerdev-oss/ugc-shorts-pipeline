@@ -12,6 +12,7 @@ import type { ResolvedVideo, TakesFile, WordsFile } from "./types";
 export type TalkingHeadProps = {
   id: string;
   showZones: boolean;
+  cover: boolean;
   resolved?: ResolvedVideo;
 };
 
@@ -37,16 +38,16 @@ export const calculateMetadata: CalculateMetadataFunction<TalkingHeadProps> = as
   };
 };
 
-export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones }) => {
+export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones, cover }) => {
   if (!resolved) return null;
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <Face resolved={resolved} />
-      <SectionTitles resolved={resolved} />
-      <Graphics resolved={resolved} />
-      <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />
+      <SectionTitles resolved={resolved} forceHookIn={cover} />
+      {cover ? null : <Graphics resolved={resolved} />}
+      {cover ? null : <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />}
       {showZones ? <ZonesOverlay faceBox={resolved.faceBox} captionY={resolved.captionY} graphicsBox={resolved.graphicsBox} /> : null}
-      <Sfx resolved={resolved} />
+      {cover ? null : <Sfx resolved={resolved} />}
     </AbsoluteFill>
   );
 };

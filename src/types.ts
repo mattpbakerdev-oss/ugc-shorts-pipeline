@@ -28,6 +28,7 @@ export type GraphicSpec =
   | { kind: "bigNumber"; value: string; label: string }
   | { kind: "punchList"; items: string[]; pick?: number; strike?: number[] }
   | { kind: "iconStack"; icons: IconName[] }
+  | { kind: "ctaSaveShare" }
   | { kind: "counter"; from: number; to: number; label: string }
   | { kind: "flashCard"; word: string };
 export type Emphasis = "shake" | "pulse" | "flash";

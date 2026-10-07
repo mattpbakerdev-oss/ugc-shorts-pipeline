@@ -1,6 +1,7 @@
 import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
 import { BigNumber } from "../graphics/BigNumber";
 import { Counter } from "../graphics/Counter";
+import { CtaSaveShare } from "../graphics/CtaSaveShare";
 import { FlashCard } from "../graphics/FlashCard";
 import { IconStack } from "../graphics/IconStack";
 import { PunchList } from "../graphics/PunchList";
@@ -15,6 +16,7 @@ const Graphic: React.FC<{ m: ResolvedMoment; zoneWidth: number; align: "left" | 
     case "bigNumber": return <BigNumber spec={s} length={length} zoneWidth={zoneWidth} />;
     case "punchList": return <PunchList spec={s} length={length} zoneWidth={zoneWidth} align={align} />;
     case "iconStack": return <IconStack spec={s} length={length} zoneWidth={zoneWidth} />;
+    case "ctaSaveShare": return <CtaSaveShare length={length} zoneWidth={zoneWidth} />;
     case "counter": return <Counter spec={s} length={length} zoneWidth={zoneWidth} />;
     case "flashCard": return <FlashCard spec={s} length={length} />;
   }

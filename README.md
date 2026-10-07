@@ -102,12 +102,19 @@ Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeate
 | `punchList(items, { pick?, strike? })` | same | 4 s |
 | `counter(from, to, label)` | same | 3 s |
 | `iconStack(["yt","tt","fb","ig"])` | the other side, if at least 0.12 wide, else the same side | 3 s |
+| `ctaSaveShare()` | the other side (like `iconStack`) | 3 s |
 | `flashCard(word)` | full frame | 3 frames |
 | emphasis only | captions | the matched phrase's duration |
 
 `punchList`: `pick` is the index of the chosen item (ticked); every other item is struck through unless you pass `strike` (indices) explicitly. Icons: `tt`, `ig`, `yt`, `fb`.
 
 `hold` forms: a number of seconds, `"until:<phrase>"`, or omitted for the default above.
+
+`ctaSaveShare()` is a "save and share" call to action: a bookmark tile and a share-arrow tile pop in, then a tick is drawn over each.
+
+## Cover image
+
+`npm run cover -- <id> [frame]` (e.g. `npm run cover -- v2_ai_b 30`) renders `out/<id>_cover.png` for the platform thumbnail: face and hook chips only, with captions, graphics and SFX hidden and the chips fully in. Default frame is 30. It is `remotion still` with props `{"id":"<id>","showZones":false,"cover":true}`; set `cover` in the props panel to preview it in Studio.
 
 ## Setting the face box
 
