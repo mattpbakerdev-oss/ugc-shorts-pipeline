@@ -79,6 +79,16 @@ describe("captionsToWords split markers", () => {
   });
 });
 
+describe("dropNonSpeech bounds", () => {
+  const mk = (ts: string[]) => ts.map((text, i) => ({ text, startMs: i * 100, endMs: i * 100 + 100 }));
+  it("drops a one-token marker with trailing punctuation alone", () => {
+    expect(captionsToWords(mk([" hi", " (almost),", " there", " [BLANK_AUDIO]."]), 30).map((w) => w.text)).toEqual(["hi", "there"]);
+  });
+  it("keeps real words after an unclosed bracket", () => {
+    expect(captionsToWords(mk([" [", " one", " two", " three", " four", " five"]), 30).map((w) => w.text)).toEqual(["one", "two", "three", "four", "five"]);
+  });
+});
+
 describe("offsetWords", () => {
   it("adds the take start to every word", () => {
     expect(offsetWords([{ text: "a", startFrame: 3, endFrame: 10 }], 100, 200)).toEqual([
@@ -90,9 +100,35 @@ describe("offsetWords", () => {
       { text: "a", startFrame: 190, endFrame: 200 },
     ]);
   });
-  it("keeps at least one frame for a word at the very end", () => {
-    const [w] = offsetWords([{ text: "a", startFrame: 150, endFrame: 160 }], 100, 200);
-    expect(w.startFrame).toBe(199);
-    expect(w.endFrame).toBe(200);
+  it("drops words in the silence pad (hallucinations)", () => {
+    expect(offsetWords([{ text: "a", startFrame: 150, endFrame: 160 }], 100, 200)).toEqual([]);
+  });
+  it("extends a squeezed final word backwards so it shows", () => {
+    const out = offsetWords(
+      [
+        { text: "x", startFrame: 80, endFrame: 95 },
+        { text: "end.", startFrame: 99, endFrame: 104 },
+      ],
+      100,
+      200,
+    );
+    expect(out[1]).toEqual({ text: "end.", startFrame: 195, endFrame: 200 });
+  });
+  it("trims a stretched previous word so the final word keeps 4 frames", () => {
+    const out = offsetWords(
+      [
+        { text: "of", startFrame: 60, endFrame: 99 },
+        { text: "that.", startFrame: 99, endFrame: 100 },
+      ],
+      100,
+      200,
+    );
+    expect(out[1].endFrame - out[1].startFrame).toBeGreaterThanOrEqual(4);
+    expect(out[0].endFrame).toBeLessThanOrEqual(out[1].startFrame);
+  });
+  it("leaves a mid-take word unchanged", () => {
+    expect(offsetWords([{ text: "m", startFrame: 40, endFrame: 50 }], 100, 200)).toEqual([
+      { text: "m", startFrame: 140, endFrame: 150 },
+    ]);
   });
 });

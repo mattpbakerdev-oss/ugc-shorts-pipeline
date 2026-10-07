@@ -37,4 +37,9 @@ describe("parseSilence", () => {
   it("still trims when the silence ends within tolerance of the given duration", () => {
     expect(parseSilence(audioShort, 9.8)).toEqual({ speechStart: 0, speechEnd: 6.75 });
   });
+
+  it("does not treat a silence ending 0.6s before the end as trailing", () => {
+    const early = `[x] silence_start: 8\n[x] silence_end: 8.9 | silence_duration: 0.9\n`;
+    expect(parseSilence(early, 9.5)).toEqual({ speechStart: 0, speechEnd: 9.5 });
+  });
 });

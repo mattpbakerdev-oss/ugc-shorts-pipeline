@@ -46,18 +46,28 @@ const isNonSpeech = (text: string): boolean => {
  * "_", "AUD", "IO", "]"), so a token opening a bracket without closing it swallows everything up to
  * the token that closes it.
  */
+const MAX_MARKER_TOKENS = 12;
+
 const dropNonSpeech = (captions: Caption[]): Caption[] => {
   const out: Caption[] = [];
-  let inMarker = false;
-  for (const c of captions) {
+  for (let i = 0; i < captions.length; i++) {
+    const c = captions[i];
     const t = c.text.trim();
-    if (inMarker) {
-      if (/[\])]/.test(t)) inMarker = false;
-      continue;
-    }
-    if (/^[\[(]/.test(t) && !/[\])]$/.test(t)) {
-      inMarker = true;
-      continue;
+    if (/^[\[(]/.test(t) && !/^[\[(].*[\])]$/.test(t)) {
+      if (/[\])]/.test(t)) continue; // opener and closer in one token, e.g. " (almost),"
+      // Multi-token marker: swallow up to the closing token, but only if it arrives soon.
+      let close = -1;
+      for (let j = i + 1; j < captions.length && j <= i + MAX_MARKER_TOKENS; j++) {
+        if (/[\])]/.test(captions[j].text)) {
+          close = j;
+          break;
+        }
+      }
+      if (close !== -1) {
+        i = close;
+        continue;
+      }
+      // No closer: it was real speech, keep the tokens.
     }
     if (isNonSpeech(c.text)) continue;
     out.push(c);
@@ -93,12 +103,28 @@ export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
 };
 
 /**
- * Move words transcribed from a single take onto the joined timeline: add the take's start frame,
- * clamp into [startFrame, endFrame] and keep every word at least one frame long.
+ * Move words transcribed from a single take onto the joined timeline: add the take's start frame
+ * and clamp into [startFrame, endFrame]. Words starting 3+ frames past the take end lie in the
+ * silence pad whisper was given and are hallucinations, so they are dropped. A final word that would
+ * be clamped to under 4 frames is extended backwards (trimming the previous word if it runs into it) so it shows.
  */
-export const offsetWords = (words: Word[], startFrame: number, endFrame: number): Word[] =>
-  words.map((w) => {
-    const s = Math.min(Math.max(w.startFrame + startFrame, startFrame), endFrame - 1);
-    const e = Math.min(Math.max(w.endFrame + startFrame, s + 1), Math.max(endFrame, s + 1));
-    return { ...w, startFrame: s, endFrame: e };
-  });
+export const offsetWords = (words: Word[], startFrame: number, endFrame: number): Word[] => {
+  const len = endFrame - startFrame;
+  const out: Word[] = [];
+  let prevEnd = startFrame;
+  for (const w of words) {
+    if (w.startFrame >= len + 3) continue;
+    let s = Math.min(Math.max(w.startFrame + startFrame, startFrame), endFrame - 1);
+    let e = Math.min(Math.max(w.endFrame + startFrame, s + 1), endFrame);
+    if (w.endFrame + startFrame >= endFrame && endFrame - s < 4) {
+      s = Math.min(Math.max(prevEnd, endFrame - 6), endFrame - 4);
+      e = endFrame;
+      // The previous word may have been stretched over this one; trim it so the final word shows.
+      const prev = out[out.length - 1];
+      if (prev && prev.endFrame > s) prev.endFrame = Math.max(prev.startFrame + 1, s);
+    }
+    out.push({ ...w, startFrame: s, endFrame: e });
+    prevEnd = e;
+  }
+  return out;
+};
