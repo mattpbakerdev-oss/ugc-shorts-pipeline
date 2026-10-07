@@ -11,22 +11,22 @@
     {
       "file": "2 tip1.mp4",
       "startFrame": 154,
-      "endFrame": 425
+      "endFrame": 424
     },
     {
       "file": "3 tip2.mp4",
-      "startFrame": 425,
-      "endFrame": 701
+      "startFrame": 424,
+      "endFrame": 698
     },
     {
       "file": "4 tip3.mp4",
-      "startFrame": 701,
-      "endFrame": 1156
+      "startFrame": 698,
+      "endFrame": 1152
     },
     {
       "file": "5 close.mp4",
-      "startFrame": 1156,
-      "endFrame": 1299
+      "startFrame": 1152,
+      "endFrame": 1294
     }
   ]
 }

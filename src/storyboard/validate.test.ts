@@ -27,4 +27,12 @@ describe("validateStoryboard", () => {
   it("rejects a section on take 0", () => {
     expect(() => validateStoryboard({ ...base, sections: [{ take: 0, title: "x" }] })).toThrow(/take/);
   });
+  it("accepts valid cuts", () => {
+    expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: 0, to: 1.5 }] })).not.toThrow();
+  });
+  it("rejects cuts with take < 1, from < 0 or to <= from", () => {
+    expect(() => validateStoryboard({ ...base, cuts: [{ take: 0, from: 0, to: 1 }] })).toThrow(/cut 0.*take/);
+    expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: -1, to: 1 }] })).toThrow(/cut 0.*from/);
+    expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: 2, to: 2 }] })).toThrow(/cut 0.*to/);
+  });
 });

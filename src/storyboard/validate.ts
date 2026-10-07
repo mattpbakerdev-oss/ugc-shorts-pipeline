@@ -20,6 +20,11 @@ export const validateStoryboard = (sb: Storyboard): void => {
       throw new Error(`${sb.id}: section ${i} has take ${s.take}; takes are numbered from 1`);
     }
   });
+  (sb.cuts ?? []).forEach((c, i) => {
+    if (!Number.isInteger(c.take) || c.take < 1) throw new Error(`${sb.id}: cut ${i} has take ${c.take}; takes are numbered from 1`);
+    if (!(c.from >= 0)) throw new Error(`${sb.id}: cut ${i} has from ${c.from}; must be >= 0`);
+    if (!(c.to > c.from)) throw new Error(`${sb.id}: cut ${i} has to ${c.to} <= from ${c.from}`);
+  });
   sb.moments.forEach((m, i) => {
     const label = `${sb.id}: moment ${i}`;
     if (m.on === undefined && m.at === undefined) throw new Error(`${label} needs "on" (a phrase) or "at" (seconds)`);

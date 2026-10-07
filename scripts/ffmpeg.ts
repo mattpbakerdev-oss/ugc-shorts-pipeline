@@ -46,3 +46,18 @@ export const probe = async (file: string): Promise<Probe> => {
     colorTrc: s.color_transfer ?? "unknown",
   };
 };
+
+/** Per-stream durations (seconds); audio is null when the file has no audio stream. */
+export const streamDurations = async (file: string): Promise<{ video: number; audio: number | null }> => {
+  const { stdout } = await run("ffprobe", [
+    "-v", "error", "-show_entries", "stream=codec_type,duration", "-of", "json", file,
+  ]);
+  const j = JSON.parse(stdout) as { streams: { codec_type: string; duration?: string }[] };
+  const dur = (t: string) => {
+    const s = j.streams.find((x) => x.codec_type === t);
+    return s?.duration !== undefined ? Number(s.duration) : null;
+  };
+  const video = dur("video");
+  if (video === null) throw new Error(`${file} has no video stream duration`);
+  return { video, audio: dur("audio") };
+};

@@ -36,7 +36,9 @@ export type Moment = {
   stack?: boolean;
 };
 export type Section = { take: number; title: string };
-export type Storyboard = { id: string; faceBox?: Rect; hook: string; sections: Section[]; moments: Moment[] };
+/** Remove [from, to) seconds from a take; times are take-local, read off work/<id>/take_NN.mp4. */
+export type Cut = { take: number; from: number; to: number };
+export type Storyboard = { id: string; faceBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[] };
 export type ResolvedMoment = { enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName; stack?: boolean };
 export type ResolvedSection = { startFrame: number; endFrame: number; title: string; isHook: boolean };
 export type ResolvedVideo = {
