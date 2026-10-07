@@ -16,11 +16,11 @@ describe("punchInSchedule", () => {
 
 describe("scaleAtFrame", () => {
   it("pushes in across the hook take from 1.0 to 1.02", () => {
-    expect(scaleAtFrame(takes, 0, 30)).toBeCloseTo(1.0, 5);
-    expect(scaleAtFrame(takes, 59, 30)).toBeCloseTo(1.02, 2);
+    expect(scaleAtFrame(takes, 0)).toBeCloseTo(1.0, 5);
+    expect(scaleAtFrame(takes, 59)).toBeCloseTo(1.02, 2);
   });
   it("uses the take's punch scale after the hook", () => {
-    expect(scaleAtFrame(takes, 90, 30)).toBeCloseTo(1.08, 5);
-    expect(scaleAtFrame(takes, 140, 30)).toBeCloseTo(1, 5);
+    expect(scaleAtFrame(takes, 90)).toBeCloseTo(1.08, 5);
+    expect(scaleAtFrame(takes, 140)).toBeCloseTo(1, 5);
   });
 });

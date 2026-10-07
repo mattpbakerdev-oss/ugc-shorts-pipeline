@@ -18,7 +18,7 @@ export const Face: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) => {
         style={{
           width: "100%",
           height: "100%",
-          scale: scaleAtFrame(resolved.takes, frame, fps),
+          scale: scaleAtFrame(resolved.takes, frame),
           transformOrigin: `${originX} ${originY}`,
         }}
       />

@@ -41,6 +41,7 @@ const SideColumn: React.FC<{ side: "left" | "right"; resolved: ResolvedVideo }> 
       }}
     >
       {items.map((m, i) => (
+        // premountFor is intentionally omitted: premounted children would occupy layout space in the flex column.
         <Sequence key={i} name={`${m.show!.kind} @${m.enterFrame}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} layout="none">
           <Graphic m={m} zoneWidth={Math.round(rect.w * width)} align={side} />
         </Sequence>

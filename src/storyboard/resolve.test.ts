@@ -25,6 +25,24 @@ const sb: Storyboard = {
   ],
 };
 
+describe("resolver guards", () => {
+  const base = { id: "g", hook: "H", sections: [] as Storyboard["sections"] };
+  it("throws when the side zone is collapsed and a graphic is used", () => {
+    const wide = { x: 0.08, y: 0.3, w: 0.84, h: 0.4 };
+    expect(() => resolveStoryboard({ ...base, faceBox: wide, moments: [{ at: 1, show: bigNumber(3, "X") }] }, takes, wordsFile)).toThrow(/side zone/);
+  });
+  it("allows emphasis-only moments with a collapsed side zone", () => {
+    const wide = { x: 0.08, y: 0.3, w: 0.84, h: 0.4 };
+    expect(() => resolveStoryboard({ ...base, faceBox: wide, moments: [{ on: "best", emphasis: "pulse" }] }, takes, wordsFile)).not.toThrow();
+  });
+  it("throws when an at moment is outside the video", () => {
+    expect(() => resolveStoryboard({ ...base, moments: [{ at: 10, show: flashCard("GO") }] }, takes, wordsFile)).toThrow(/moment 0 at 10s/);
+  });
+  it("throws when a section take exceeds the take count", () => {
+    expect(() => resolveStoryboard({ ...base, sections: [{ take: 5, title: "x" }], moments: [] }, takes, wordsFile)).toThrow(/take 5.*2 takes/);
+  });
+});
+
 describe("resolveStoryboard", () => {
   const r = resolveStoryboard(sb, takes, wordsFile);
 

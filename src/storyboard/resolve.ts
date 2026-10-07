@@ -16,6 +16,12 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
   const z = zonesFor(sb.faceBox ?? DEFAULT_FACE_BOX);
   // Left is preferred unless the right side is clearly wider (default box: 0.15 vs 0.17 stays left).
   const primary: ZoneName = z.left.w + 0.05 >= z.right.w ? "left" : "right";
+  const faceBox = sb.faceBox ?? DEFAULT_FACE_BOX;
+  if (z[primary].w < 0.10 && sb.moments.some((m) => m.show && m.show.kind !== "flashCard")) {
+    throw new Error(
+      `${sb.id}: the wider side zone next to the face is only ${(z[primary].w * 100).toFixed(0)}% of the frame; graphics need >= 10%. Narrow faceBox (currently x ${faceBox.x} w ${faceBox.w}) or use only flashCard/emphasis moments`
+    );
+  }
   const other: ZoneName = primary === "left" ? "right" : "left";
   const secondary: ZoneName = z[other].w >= 0.12 ? other : primary;
   const zoneFor = (m: Moment): ZoneName => {
@@ -35,6 +41,11 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
     startFrame: Math.min(w.startFrame, durationInFrames - 1),
   }));
 
+  for (const s of sb.sections) {
+    if (s.take > takes.length) {
+      throw new Error(`${sb.id}: section "${s.title}" uses take ${s.take} but there are only ${takes.length} takes`);
+    }
+  }
   const sections: ResolvedSection[] = takes.map((t, i) => {
     const s = sb.sections.find((x) => x.take === i + 1);
     return { startFrame: t.startFrame, endFrame: t.endFrame, title: i === 0 ? sb.hook : s?.title ?? "", isHook: i === 0 };
@@ -58,6 +69,9 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
       wordEnd = words[end].endFrame;
     } else {
       enterFrame = Math.round((m.at as number) * fps);
+      if (enterFrame < 0 || enterFrame >= durationInFrames) {
+        throw new Error(`${sb.id}: moment ${i} at ${m.at}s is outside the video (${(durationInFrames / fps).toFixed(2)}s)`);
+      }
     }
 
     let exitFrame: number;

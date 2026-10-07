@@ -5,6 +5,16 @@ import type { Rect } from "./types";
 const overlaps = (a: Rect, b: Rect) =>
   a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 
+describe("title band guard", () => {
+  it("throws when the face is too high for the title band", () => {
+    expect(() => zonesFor({ x: 0.1, y: 0.10, w: 0.5, h: 0.4 })).toThrow(/title band/);
+  });
+  it("accepts a face box with room for the band", () => {
+    const z = zonesFor({ x: 0.04, y: 0.16, w: 0.44, h: 0.34 });
+    expect(z.topBand.y + z.topBand.h).toBeLessThanOrEqual(0.14 + 1e-9);
+  });
+});
+
 describe("zonesFor", () => {
   const z = zonesFor(DEFAULT_FACE_BOX);
 

@@ -43,6 +43,7 @@ export const SectionTitles: React.FC<{ resolved: ResolvedVideo }> = ({ resolved 
     <AbsoluteFill>
       <div style={{ ...rectToStyle(zone, width, height), display: "flex", alignItems: "center", justifyContent: "center" }}>
         {resolved.sections.map((s, i) => (
+          // premountFor is intentionally omitted: premounted children would occupy layout space in the flex column.
           <Sequence key={i} name={`Title: ${s.title}`} from={s.startFrame} durationInFrames={s.endFrame - s.startFrame} layout="none">
             <Pill section={s} />
           </Sequence>

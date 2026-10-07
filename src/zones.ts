@@ -15,12 +15,18 @@ export const zonesFor = (face: Rect): Zones => {
       `Face box bottom ${(face.y + face.h).toFixed(2)} leaves no room for captions; keep y + h <= ${maxBottom.toFixed(2)} or raise the chin line`
     );
   }
+  const rawBand = face.y - 0.03 - GAP;
+  if (rawBand < 0.08 - 1e-9) {
+    throw new Error(
+      `Face box top ${face.y.toFixed(2)} leaves no room for the title band; keep y >= 0.13 or lower the face box`
+    );
+  }
   const leftW = Math.max(0, face.x - GAP - SIDE_MARGIN);
   const rightX = Math.min(1 - SIDE_MARGIN, face.x + face.w + GAP);
   const rightW = Math.max(0, 1 - SIDE_MARGIN - rightX);
   const captionsY = face.y + face.h + GAP;
   return {
-    topBand: { x: 0.06, y: 0.03, w: 0.88, h: Math.max(0.08, Math.min(0.19, face.y - 0.03 - GAP)) },
+    topBand: { x: 0.06, y: 0.03, w: 0.88, h: Math.min(0.19, rawBand) },
     face,
     left: { x: SIDE_MARGIN, y: face.y, w: leftW, h: face.h },
     right: { x: rightX, y: face.y, w: rightW, h: face.h },

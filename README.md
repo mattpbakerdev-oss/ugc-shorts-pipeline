@@ -35,7 +35,7 @@ Note: any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (r
 6. Preview and tune: `npm run dev`, then open the composition `/v4-topic` in the Studio.
 7. Render:
    ```
-   npx remotion render v4-topic out/v4_topic.mp4 --codec=h264 --crf=18
+   npx remotion render v4-topic out/v4_topic.mp4 --codec=h264 --crf=18 --audio-bitrate=192k
    ```
 
 Checks: `npm test` (vitest) and `npx tsc --noEmit`.
@@ -47,7 +47,7 @@ import { video, bigNumber, punchList, iconStack, counter, flashCard } from "../s
 
 export default video({
   id: "my_video",
-  // faceBox: { x: 0.33, y: 0.22, w: 0.42, h: 0.52 },
+  // faceBox: { x: 0.22, y: 0.36, w: 0.54, h: 0.42 },
   hook: "First line // second line",
   sections: [{ take: 2, title: "1. First tip" }],
   moments: [
@@ -75,7 +75,7 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 | `on` | Phrase from the transcript; the moment starts when it is said (fuzzy: case, punctuation and number words tolerated). |
 | `at` | Seconds from the start of the video, instead of `on`. |
 | `show` | A graphic (below). Omit for sfx-only or emphasis moments. |
-| `emphasis` | `"shake"`, `"pulse"` or `"flash"` on the captions at that word. Lasts the word's duration. |
+| `emphasis` | `"shake"`, `"pulse"` or `"flash"` on the captions at that word. Lasts the matched phrase's duration. |
 | `sfx` | `slam`, `tick`, `pop`, `whoosh`, `riser`, `thud`. |
 | `hold` | How long the graphic stays: seconds, or `"until:<phrase>"`. |
 | `stack` | `true` appends the graphic below the previous one in the same zone. |
@@ -99,7 +99,7 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 | `counter(from, to, label)` | same | 3 s |
 | `iconStack(["yt","tt","fb","ig"])` | the other side, if at least 0.12 wide, else the same side | 3 s |
 | `flashCard(word)` | full frame | 3 frames |
-| emphasis only | captions | the word's duration |
+| emphasis only | captions | the matched phrase's duration |
 
 `punchList`: `pick` is the index of the chosen item (ticked); every other item is struck through unless you pass `strike` (indices) explicitly. Icons: `tt`, `ig`, `yt`, `fb`.
 
@@ -107,7 +107,7 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
 ## Setting the face box
 
-There is no face detection. Each video can set `faceBox` as fractions of the frame (`x`, `y`, `w`, `h`); the default is `{ x: 0.22, y: 0.36, w: 0.54, h: 0.42 }`. Include hair, down to the chin. `y + h` must be at most 0.78 or the build throws, because captions need room below.
+There is no face detection. Each video can set `faceBox` as fractions of the frame (`x`, `y`, `w`, `h`); the default is `{ x: 0.22, y: 0.36, w: 0.54, h: 0.42 }`. The box is the face proper (brow to chin, cheek to cheek); hair and shoulders may be overlapped by graphics. `y + h` must be at most 0.78 or the build throws, because captions need room below. Two more guards: `y` must be at least 0.13 (title band) and the wider side zone next to the face must be at least 10% of the frame when the video uses any graphic other than a flash card.
 
 Zones derived from it (`src/zones.ts`):
 
@@ -130,7 +130,7 @@ Words come from Whisper (`public/videos/<id>/words.json`). Mis-hearings and bran
 
 ## Colour
 
-iPhone footage is HLG HDR; it is converted to SDR with the LUT `scripts/lut/hlg_to_sdr.cube`, applied in prep. Background and rationale: the "Colour: iPhone HDR footage" section of the old ugc-renderer README (`/Users/mattdev/Projects/ugc-renderer/README.md`). To change the look, replace that `.cube` file and re-run `npm run prep` for the videos you want.
+iPhone footage is HLG HDR; it is converted to SDR with the LUT `scripts/lut/hlg_to_sdr.cube`, applied in prep. The LUT route was chosen because the installed ffmpeg lacks `zscale`/`tonemap`. Background and rationale: the "Colour: iPhone HDR footage" section of the old ugc-renderer README (`/Users/mattdev/Projects/ugc-renderer/README.md`). To change the look, replace that `.cube` file and re-run `npm run prep` for the videos you want.
 
 ## SFX
 

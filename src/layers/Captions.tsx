@@ -13,6 +13,7 @@ const Group: React.FC<{ group: CaptionGroup; absoluteStart: number; emphasis?: G
   const { fps } = useVideoConfig();
   const absolute = absoluteStart + frame;
   const enter = spring({ frame, fps, config: { damping: 14, stiffness: 220, mass: 0.6 } });
+  const flashing = emphasis !== undefined && emphasis.kind === "flash" && absolute >= emphasis.from && absolute < emphasis.from + 3;
   const emphasised = emphasis !== undefined && absolute >= emphasis.from && absolute < emphasis.to;
   return (
     <div
@@ -24,12 +25,12 @@ const Group: React.FC<{ group: CaptionGroup; absoluteStart: number; emphasis?: G
         fontSize: FONT_SIZE,
         lineHeight: 1.05,
         textTransform: "uppercase",
-        color: COLORS.text,
+        color: flashing ? COLORS.accent : COLORS.text,
         WebkitTextStroke: `6px ${COLORS.ink}`,
         paintOrder: "stroke fill",
         textShadow: `0 8px 0 ${COLORS.ink}, 0 0 28px rgba(0,0,0,0.6)`,
         translate: emphasised && emphasis.kind === "shake" ? `${Math.sin((absolute - emphasis.from) * 2.6) * 14}px 0px` : "0px 0px",
-        scale: interpolate(enter, [0, 1], [0.9, 1]) * (emphasised && emphasis.kind === "pulse" ? 1.1 : 1),
+        scale: interpolate(enter, [0, 1], [0.9, 1]) * (emphasised && emphasis.kind === "pulse" ? 1.1 : 1) * (flashing ? 1.08 : 1),
         opacity: interpolate(enter, [0, 0.3], [0, 1], { extrapolateRight: "clamp" }),
       }}
     >
@@ -67,12 +68,12 @@ export const Captions: React.FC<{ resolved: ResolvedVideo; emphasis: ResolvedMom
     fps: resolved.fps,
     takeBoundaries: resolved.takes.slice(1).map((t) => t.startFrame),
   });
-  const flashes = emphasis.filter((e) => e.emphasis === "flash");
   return (
     <AbsoluteFill>
       <div style={{ ...rectToStyle(zone, width, height), display: "flex", alignItems: "center", justifyContent: "center" }}>
         {groups.map((g, i) => {
           const e = emphasis.find((m) => m.enterFrame >= g.startFrame && m.enterFrame < g.endFrame);
+          // premountFor is intentionally omitted: premounted children would occupy layout space in the flex column.
           return (
             <Sequence key={i} name={`Caption ${i}`} from={g.startFrame} durationInFrames={g.endFrame - g.startFrame} layout="none">
               <Group group={g} absoluteStart={g.startFrame} emphasis={e && e.emphasis ? { kind: e.emphasis, from: e.enterFrame, to: e.exitFrame } : undefined} />
@@ -80,11 +81,6 @@ export const Captions: React.FC<{ resolved: ResolvedVideo; emphasis: ResolvedMom
           );
         })}
       </div>
-      {flashes.map((f, i) => (
-        <Sequence key={`flash${i}`} name={`Flash @${f.enterFrame}`} from={f.enterFrame} durationInFrames={2} layout="none">
-          <AbsoluteFill style={{ backgroundColor: "#fff", opacity: 0.85 }} />
-        </Sequence>
-      ))}
     </AbsoluteFill>
   );
 };
