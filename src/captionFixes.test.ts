@@ -81,9 +81,18 @@ describe("snapWordsToTakes", () => {
     const out = snapWordsToTakes([{ text: "it.", startFrame: 139, endFrame: 155 }], takes, 9);
     expect(out).toEqual([{ text: "it.", startFrame: 139, endFrame: 152 }]);
   });
-  it("treats a word ending exactly at boundary + headPad as the previous take's", () => {
-    const out = snapWordsToTakes([{ text: "x", startFrame: 140, endFrame: 162 }], takes, 9);
+  it("treats a word ending up to boundary + headPad + 8 as the previous take's", () => {
+    const out = snapWordsToTakes([{ text: "x", startFrame: 140, endFrame: 170 }], takes, 9);
     expect(out).toEqual([{ text: "x", startFrame: 140, endFrame: 152 }]);
+  });
+  it("clamps v3 'to.' (443-459, boundary 448) and 'people.' (814-843, boundary 830)", () => {
+    const t = [{ file: "a", startFrame: 0, endFrame: 448 }, { file: "b", startFrame: 448, endFrame: 830 }, { file: "c", startFrame: 830, endFrame: 1000 }];
+    const out = snapWordsToTakes([
+      { text: "to.", startFrame: 443, endFrame: 459 },
+      { text: "people.", startFrame: 814, endFrame: 843 },
+    ], t, 9);
+    expect(out.map((w) => w.endFrame)).toEqual([447, 829]);
+    expect(out.map((w) => w.startFrame)).toEqual([443, 814]);
   });
   it("snaps the next take's first word to boundary + headPad - 2 frames", () => {
     const out = snapWordsToTakes([{ text: "Repurposing.", startFrame: 140, endFrame: 187 }], takes, 9);

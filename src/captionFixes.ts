@@ -70,16 +70,20 @@ export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
 /**
  * Whisper starts a take's first word at the previous word's end, so the silence of the join
  * (tail pad + head pad) is absorbed into its start. A word that straddles a take boundary is
- * classified by where it ends: a word ending within the head pad belongs to the previous take (end
+ * classified by where it ends: a word ending before head pad + OPENER_MIN_FRAMES belongs to the previous take (end
  * clamped to the boundary); a longer one opens the next take (start pulled to boundary + head pad - 2).
  */
+// A real take opener starts at >= boundary + head pad and lasts >= ~0.25 s (8 frames), so it ends
+// at least this many frames after boundary + head pad; a previous-take word stretched over the join ends sooner.
+const OPENER_MIN_FRAMES = 8;
+
 export const snapWordsToTakes = (words: Word[], takes: Take[], headPadFrames: number): Word[] =>
   words.map((w) => {
     let { startFrame, endFrame } = w;
     for (const t of takes.slice(1)) {
       const b = t.startFrame;
       if (w.startFrame < b && w.endFrame > b) {
-        if (w.endFrame <= b + headPadFrames) {
+        if (w.endFrame <= b + headPadFrames + OPENER_MIN_FRAMES) {
           // Ends within the new take's head pad: it is the previous take's last word, smeared over the join.
           endFrame = Math.max(startFrame + 1, b - 1);
         } else {
