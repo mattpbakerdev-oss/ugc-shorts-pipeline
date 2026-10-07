@@ -30,7 +30,8 @@ const Group: React.FC<{ group: CaptionGroup; absoluteStart: number }> = ({ group
       }}
     >
       {group.words.map((w, i) => {
-        const spoken = absolute >= w.startFrame;
+        const nextStart = group.words[i + 1]?.startFrame ?? Number.POSITIVE_INFINITY;
+        const current = absolute >= w.startFrame && absolute < nextStart;
         const sinceStart = absolute - w.startFrame;
         const pop = interpolate(sinceStart, [0, 3, 7], [1, 1.26, 1.18], {
           extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic),
@@ -41,8 +42,8 @@ const Group: React.FC<{ group: CaptionGroup; absoluteStart: number }> = ({ group
             style={{
               display: "inline-block",
               margin: "0 0.4em",
-              color: spoken ? COLORS.accent : COLORS.text,
-              scale: spoken ? pop : 1,
+              color: current ? COLORS.accent : COLORS.text,
+              scale: current ? pop : 1,
             }}
           >
             {w.text}
