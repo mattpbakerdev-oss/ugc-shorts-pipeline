@@ -92,7 +92,7 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
 **Finding retakes (`npm run bloopers -- <id>`)**
 
-Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeated within 4 seconds (a retake). It proposes cutting the first attempt, and prints a table plus a ready-to-paste `cuts: [...]` block with take-local seconds. Restarts that straddle a take boundary are skipped with a warning. These are proposals: check each against the transcript before pasting.
+Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeated within 4 seconds (a retake). It proposes cutting the first attempt, and prints a table plus a ready-to-paste `cuts: [...]` block with take-local seconds. Tune with `--min-words <n>` (default 3; use 2 for short retakes like "First thing. The first thing") and `--window <seconds>` (default 4). Restarts that straddle a take boundary are skipped with a warning. These are proposals: check each against the transcript before pasting.
 
 **Graphics**
 

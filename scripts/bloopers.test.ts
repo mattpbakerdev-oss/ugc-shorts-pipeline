@@ -36,4 +36,12 @@ describe("findRestarts", () => {
     const words = mk([["one", 8], ["two", 8.5], ["three", 9], ["one", 11], ["two", 11.5], ["three", 12]]);
     expect(findRestarts(words, two, fps)).toEqual([]);
   });
+
+  it("treats punctuation as ignorable: minWords 2 catches 'First thing. The first thing', 3 does not", () => {
+    const words = mk([["First", 0], ["thing.", 0.5], ["The", 1.5], ["first", 2], ["thing,", 2.5], ["I'm", 3], ["not", 3.5]]);
+    expect(findRestarts(words, takes, fps, { minWords: 2, windowSeconds: 4 })).toEqual([
+      { take: 1, from: 0, to: 2, phrase: "first thing the" },
+    ]);
+    expect(findRestarts(words, takes, fps)).toEqual([]);
+  });
 });

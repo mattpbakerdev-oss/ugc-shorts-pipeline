@@ -60,16 +60,31 @@ export const findRestarts = (
 ): Restart[] => findRestartsDetailed(words, takes, fps, opts).restarts;
 
 const main = () => {
-  const id = process.argv[2];
+  const args = process.argv.slice(2);
+  const flag = (name: string, def: number): number => {
+    const k = args.indexOf(name);
+    if (k < 0) return def;
+    const v = Number(args[k + 1]);
+    if (!Number.isFinite(v) || v <= 0) {
+      console.error(`${name} needs a positive number`);
+      process.exit(1);
+    }
+    args.splice(k, 2);
+    return v;
+  };
+  const minWords = Math.round(flag("--min-words", 3));
+  const windowSeconds = flag("--window", 4);
+  const id = args[0];
   if (!id) {
-    console.error("Usage: npm run bloopers -- <id>");
+    console.error("Usage: npm run bloopers -- <id> [--min-words <n>] [--window <seconds>]");
     process.exit(1);
   }
   const dir = path.join("public", "videos", id);
   const takesFile = JSON.parse(readFileSync(path.join(dir, "takes.json"), "utf8")) as TakesFile;
   const { words } = JSON.parse(readFileSync(path.join(dir, "words.json"), "utf8")) as WordsFile;
-  const { restarts, skipped } = findRestartsDetailed(words, takesFile.takes, takesFile.fps);
+  const { restarts, skipped } = findRestartsDetailed(words, takesFile.takes, takesFile.fps, { minWords, windowSeconds });
 
+  console.log(`${id}: minWords=${minWords}, window=${windowSeconds}s`);
   if (restarts.length === 0) console.log("No restarts found.");
   else {
     console.log("take file".padEnd(16) + "from".padStart(8) + "to".padStart(8) + "  phrase");
