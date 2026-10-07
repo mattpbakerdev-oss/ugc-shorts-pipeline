@@ -1,0 +1,749 @@
+{
+  "words": [
+    {
+      "text": "If",
+      "startFrame": 1,
+      "endFrame": 5
+    },
+    {
+      "text": "I",
+      "startFrame": 5,
+      "endFrame": 11
+    },
+    {
+      "text": "was",
+      "startFrame": 11,
+      "endFrame": 12
+    },
+    {
+      "text": "a",
+      "startFrame": 12,
+      "endFrame": 14
+    },
+    {
+      "text": "creator",
+      "startFrame": 14,
+      "endFrame": 27
+    },
+    {
+      "text": "starting",
+      "startFrame": 27,
+      "endFrame": 43
+    },
+    {
+      "text": "from",
+      "startFrame": 43,
+      "endFrame": 51
+    },
+    {
+      "text": "zero,",
+      "startFrame": 51,
+      "endFrame": 67
+    },
+    {
+      "text": "here",
+      "startFrame": 67,
+      "endFrame": 75
+    },
+    {
+      "text": "are",
+      "startFrame": 75,
+      "endFrame": 77
+    },
+    {
+      "text": "five",
+      "startFrame": 77,
+      "endFrame": 85
+    },
+    {
+      "text": "things",
+      "startFrame": 85,
+      "endFrame": 93
+    },
+    {
+      "text": "I",
+      "startFrame": 93,
+      "endFrame": 94
+    },
+    {
+      "text": "would",
+      "startFrame": 94,
+      "endFrame": 103
+    },
+    {
+      "text": "do.",
+      "startFrame": 103,
+      "endFrame": 109
+    },
+    {
+      "text": "Post",
+      "startFrame": 120,
+      "endFrame": 136
+    },
+    {
+      "text": "every",
+      "startFrame": 136,
+      "endFrame": 145
+    },
+    {
+      "text": "single",
+      "startFrame": 145,
+      "endFrame": 156
+    },
+    {
+      "text": "day",
+      "startFrame": 156,
+      "endFrame": 163
+    },
+    {
+      "text": "for",
+      "startFrame": 163,
+      "endFrame": 172
+    },
+    {
+      "text": "30",
+      "startFrame": 172,
+      "endFrame": 185
+    },
+    {
+      "text": "days",
+      "startFrame": 185,
+      "endFrame": 204
+    },
+    {
+      "text": "before",
+      "startFrame": 204,
+      "endFrame": 205
+    },
+    {
+      "text": "you",
+      "startFrame": 205,
+      "endFrame": 208
+    },
+    {
+      "text": "judge",
+      "startFrame": 208,
+      "endFrame": 216
+    },
+    {
+      "text": "anything.",
+      "startFrame": 216,
+      "endFrame": 232
+    },
+    {
+      "text": "Consistency",
+      "startFrame": 232,
+      "endFrame": 254
+    },
+    {
+      "text": "will",
+      "startFrame": 254,
+      "endFrame": 264
+    },
+    {
+      "text": "always",
+      "startFrame": 264,
+      "endFrame": 274
+    },
+    {
+      "text": "be",
+      "startFrame": 274,
+      "endFrame": 278
+    },
+    {
+      "text": "perfection",
+      "startFrame": 278,
+      "endFrame": 299
+    },
+    {
+      "text": "when",
+      "startFrame": 299,
+      "endFrame": 306
+    },
+    {
+      "text": "nobody",
+      "startFrame": 306,
+      "endFrame": 316
+    },
+    {
+      "text": "knows",
+      "startFrame": 316,
+      "endFrame": 324
+    },
+    {
+      "text": "you",
+      "startFrame": 324,
+      "endFrame": 329
+    },
+    {
+      "text": "yet.",
+      "startFrame": 329,
+      "endFrame": 335
+    },
+    {
+      "text": "Nail",
+      "startFrame": 342,
+      "endFrame": 357
+    },
+    {
+      "text": "the",
+      "startFrame": 357,
+      "endFrame": 359
+    },
+    {
+      "text": "first",
+      "startFrame": 359,
+      "endFrame": 372
+    },
+    {
+      "text": "two",
+      "startFrame": 372,
+      "endFrame": 381
+    },
+    {
+      "text": "seconds.",
+      "startFrame": 381,
+      "endFrame": 407
+    },
+    {
+      "text": "If",
+      "startFrame": 407,
+      "endFrame": 411
+    },
+    {
+      "text": "your",
+      "startFrame": 411,
+      "endFrame": 416
+    },
+    {
+      "text": "hook",
+      "startFrame": 416,
+      "endFrame": 424
+    },
+    {
+      "text": "doesn't",
+      "startFrame": 424,
+      "endFrame": 439
+    },
+    {
+      "text": "stop",
+      "startFrame": 439,
+      "endFrame": 450
+    },
+    {
+      "text": "the",
+      "startFrame": 450,
+      "endFrame": 455
+    },
+    {
+      "text": "scroll,",
+      "startFrame": 455,
+      "endFrame": 477
+    },
+    {
+      "text": "nothing",
+      "startFrame": 477,
+      "endFrame": 484
+    },
+    {
+      "text": "else",
+      "startFrame": 484,
+      "endFrame": 489
+    },
+    {
+      "text": "matters.",
+      "startFrame": 489,
+      "endFrame": 503
+    },
+    {
+      "text": "Copy",
+      "startFrame": 514,
+      "endFrame": 515
+    },
+    {
+      "text": "format,",
+      "startFrame": 514,
+      "endFrame": 540
+    },
+    {
+      "text": "not",
+      "startFrame": 540,
+      "endFrame": 544
+    },
+    {
+      "text": "content.",
+      "startFrame": 544,
+      "endFrame": 569
+    },
+    {
+      "text": "Find",
+      "startFrame": 569,
+      "endFrame": 574
+    },
+    {
+      "text": "three",
+      "startFrame": 574,
+      "endFrame": 582
+    },
+    {
+      "text": "viral",
+      "startFrame": 582,
+      "endFrame": 601
+    },
+    {
+      "text": "videos",
+      "startFrame": 601,
+      "endFrame": 618
+    },
+    {
+      "text": "in",
+      "startFrame": 618,
+      "endFrame": 619
+    },
+    {
+      "text": "your",
+      "startFrame": 618,
+      "endFrame": 623
+    },
+    {
+      "text": "own",
+      "startFrame": 623,
+      "endFrame": 628
+    },
+    {
+      "text": "niche",
+      "startFrame": 628,
+      "endFrame": 644
+    },
+    {
+      "text": "and",
+      "startFrame": 644,
+      "endFrame": 648
+    },
+    {
+      "text": "use",
+      "startFrame": 648,
+      "endFrame": 653
+    },
+    {
+      "text": "their",
+      "startFrame": 653,
+      "endFrame": 658
+    },
+    {
+      "text": "structure,",
+      "startFrame": 658,
+      "endFrame": 679
+    },
+    {
+      "text": "but",
+      "startFrame": 679,
+      "endFrame": 680
+    },
+    {
+      "text": "use",
+      "startFrame": 680,
+      "endFrame": 685
+    },
+    {
+      "text": "your",
+      "startFrame": 685,
+      "endFrame": 692
+    },
+    {
+      "text": "own",
+      "startFrame": 692,
+      "endFrame": 697
+    },
+    {
+      "text": "spin.",
+      "startFrame": 697,
+      "endFrame": 705
+    },
+    {
+      "text": "Put",
+      "startFrame": 717,
+      "endFrame": 728
+    },
+    {
+      "text": "the",
+      "startFrame": 728,
+      "endFrame": 729
+    },
+    {
+      "text": "text",
+      "startFrame": 729,
+      "endFrame": 737
+    },
+    {
+      "text": "on",
+      "startFrame": 737,
+      "endFrame": 742
+    },
+    {
+      "text": "the",
+      "startFrame": 742,
+      "endFrame": 748
+    },
+    {
+      "text": "screen.",
+      "startFrame": 748,
+      "endFrame": 766
+    },
+    {
+      "text": "Most",
+      "startFrame": 766,
+      "endFrame": 772
+    },
+    {
+      "text": "people",
+      "startFrame": 772,
+      "endFrame": 779
+    },
+    {
+      "text": "are",
+      "startFrame": 779,
+      "endFrame": 783
+    },
+    {
+      "text": "watching",
+      "startFrame": 783,
+      "endFrame": 794
+    },
+    {
+      "text": "you",
+      "startFrame": 794,
+      "endFrame": 798
+    },
+    {
+      "text": "on",
+      "startFrame": 798,
+      "endFrame": 800
+    },
+    {
+      "text": "mute",
+      "startFrame": 800,
+      "endFrame": 806
+    },
+    {
+      "text": "right",
+      "startFrame": 806,
+      "endFrame": 814
+    },
+    {
+      "text": "now.",
+      "startFrame": 814,
+      "endFrame": 822
+    },
+    {
+      "text": "Most",
+      "startFrame": 840,
+      "endFrame": 844
+    },
+    {
+      "text": "importantly,",
+      "startFrame": 844,
+      "endFrame": 869
+    },
+    {
+      "text": "you",
+      "startFrame": 869,
+      "endFrame": 870
+    },
+    {
+      "text": "never",
+      "startFrame": 870,
+      "endFrame": 876
+    },
+    {
+      "text": "know",
+      "startFrame": 876,
+      "endFrame": 882
+    },
+    {
+      "text": "where",
+      "startFrame": 882,
+      "endFrame": 887
+    },
+    {
+      "text": "your",
+      "startFrame": 887,
+      "endFrame": 892
+    },
+    {
+      "text": "video's",
+      "startFrame": 892,
+      "endFrame": 902
+    },
+    {
+      "text": "gonna",
+      "startFrame": 902,
+      "endFrame": 908
+    },
+    {
+      "text": "blow",
+      "startFrame": 908,
+      "endFrame": 914
+    },
+    {
+      "text": "up,",
+      "startFrame": 914,
+      "endFrame": 929
+    },
+    {
+      "text": "so",
+      "startFrame": 929,
+      "endFrame": 930
+    },
+    {
+      "text": "I",
+      "startFrame": 930,
+      "endFrame": 932
+    },
+    {
+      "text": "post",
+      "startFrame": 932,
+      "endFrame": 944
+    },
+    {
+      "text": "on",
+      "startFrame": 944,
+      "endFrame": 947
+    },
+    {
+      "text": "all",
+      "startFrame": 947,
+      "endFrame": 951
+    },
+    {
+      "text": "platforms",
+      "startFrame": 951,
+      "endFrame": 967
+    },
+    {
+      "text": "at",
+      "startFrame": 967,
+      "endFrame": 972
+    },
+    {
+      "text": "once.",
+      "startFrame": 972,
+      "endFrame": 984
+    },
+    {
+      "text": "TikTok,",
+      "startFrame": 984,
+      "endFrame": 1000
+    },
+    {
+      "text": "Instagram,",
+      "startFrame": 1000,
+      "endFrame": 1022
+    },
+    {
+      "text": "YouTube,",
+      "startFrame": 1022,
+      "endFrame": 1041
+    },
+    {
+      "text": "Facebook,",
+      "startFrame": 1041,
+      "endFrame": 1062
+    },
+    {
+      "text": "and",
+      "startFrame": 1062,
+      "endFrame": 1066
+    },
+    {
+      "text": "for",
+      "startFrame": 1066,
+      "endFrame": 1069
+    },
+    {
+      "text": "me,",
+      "startFrame": 1069,
+      "endFrame": 1074
+    },
+    {
+      "text": "I",
+      "startFrame": 1074,
+      "endFrame": 1077
+    },
+    {
+      "text": "use",
+      "startFrame": 1077,
+      "endFrame": 1082
+    },
+    {
+      "text": "Postiz",
+      "startFrame": 1082,
+      "endFrame": 1097
+    },
+    {
+      "text": "to",
+      "startFrame": 1097,
+      "endFrame": 1105
+    },
+    {
+      "text": "schedule",
+      "startFrame": 1105,
+      "endFrame": 1117
+    },
+    {
+      "text": "it",
+      "startFrame": 1117,
+      "endFrame": 1121
+    },
+    {
+      "text": "all.",
+      "startFrame": 1121,
+      "endFrame": 1134
+    },
+    {
+      "text": "It",
+      "startFrame": 1134,
+      "endFrame": 1137
+    },
+    {
+      "text": "will",
+      "startFrame": 1137,
+      "endFrame": 1143
+    },
+    {
+      "text": "take",
+      "startFrame": 1143,
+      "endFrame": 1149
+    },
+    {
+      "text": "me",
+      "startFrame": 1149,
+      "endFrame": 1152
+    },
+    {
+      "text": "two",
+      "startFrame": 1152,
+      "endFrame": 1157
+    },
+    {
+      "text": "minutes",
+      "startFrame": 1157,
+      "endFrame": 1167
+    },
+    {
+      "text": "instead",
+      "startFrame": 1167,
+      "endFrame": 1177
+    },
+    {
+      "text": "of",
+      "startFrame": 1177,
+      "endFrame": 1181
+    },
+    {
+      "text": "20.",
+      "startFrame": 1181,
+      "endFrame": 1198
+    },
+    {
+      "text": "It's",
+      "startFrame": 1198,
+      "endFrame": 1203
+    },
+    {
+      "text": "a",
+      "startFrame": 1203,
+      "endFrame": 1204
+    },
+    {
+      "text": "no-brainer.",
+      "startFrame": 1204,
+      "endFrame": 1224
+    },
+    {
+      "text": "Save",
+      "startFrame": 1232,
+      "endFrame": 1245
+    },
+    {
+      "text": "this",
+      "startFrame": 1245,
+      "endFrame": 1262
+    },
+    {
+      "text": "just",
+      "startFrame": 1262,
+      "endFrame": 1279
+    },
+    {
+      "text": "so",
+      "startFrame": 1279,
+      "endFrame": 1297
+    },
+    {
+      "text": "you",
+      "startFrame": 1297,
+      "endFrame": 1305
+    },
+    {
+      "text": "don't",
+      "startFrame": 1305,
+      "endFrame": 1323
+    },
+    {
+      "text": "forget,",
+      "startFrame": 1323,
+      "endFrame": 1353
+    },
+    {
+      "text": "and",
+      "startFrame": 1353,
+      "endFrame": 1354
+    },
+    {
+      "text": "send",
+      "startFrame": 1354,
+      "endFrame": 1359
+    },
+    {
+      "text": "it",
+      "startFrame": 1359,
+      "endFrame": 1361
+    },
+    {
+      "text": "to",
+      "startFrame": 1361,
+      "endFrame": 1365
+    },
+    {
+      "text": "a",
+      "startFrame": 1365,
+      "endFrame": 1366
+    },
+    {
+      "text": "friend",
+      "startFrame": 1365,
+      "endFrame": 1372
+    },
+    {
+      "text": "who",
+      "startFrame": 1372,
+      "endFrame": 1376
+    },
+    {
+      "text": "needs",
+      "startFrame": 1376,
+      "endFrame": 1382
+    },
+    {
+      "text": "some",
+      "startFrame": 1382,
+      "endFrame": 1386
+    },
+    {
+      "text": "help.",
+      "startFrame": 1386,
+      "endFrame": 1414
+    }
+  ]
+}

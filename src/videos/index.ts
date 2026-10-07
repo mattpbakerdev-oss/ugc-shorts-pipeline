@@ -1,5 +1,7 @@
 import type { Storyboard } from "../types";
+import v1_zero_b from "./v1_zero_b";
 import v2_ai_b from "./v2_ai_b";
 import v3_plan_a from "./v3_plan_a";
+import v4_ai_a from "./v4_ai_a";
 
-export const storyboards: Record<string, Storyboard> = { v2_ai_b, v3_plan_a };
+export const storyboards: Record<string, Storyboard> = { v1_zero_b, v2_ai_b, v3_plan_a, v4_ai_a };

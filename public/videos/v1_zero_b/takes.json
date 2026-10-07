@@ -1,0 +1,42 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "takes": [
+    {
+      "file": "1 hook.mp4",
+      "startFrame": 0,
+      "endFrame": 119
+    },
+    {
+      "file": "2 tip1.mp4",
+      "startFrame": 119,
+      "endFrame": 340
+    },
+    {
+      "file": "3 tip2.mp4",
+      "startFrame": 340,
+      "endFrame": 503
+    },
+    {
+      "file": "4 tip3.mp4",
+      "startFrame": 503,
+      "endFrame": 716
+    },
+    {
+      "file": "5 tip4.mp4",
+      "startFrame": 716,
+      "endFrame": 834
+    },
+    {
+      "file": "6 tip5.mp4",
+      "startFrame": 834,
+      "endFrame": 1228
+    },
+    {
+      "file": "7 close.mp4",
+      "startFrame": 1228,
+      "endFrame": 1415
+    }
+  ]
+}

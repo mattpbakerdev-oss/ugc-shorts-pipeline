@@ -1,0 +1,719 @@
+{
+  "words": [
+    {
+      "text": "If",
+      "startFrame": 1,
+      "endFrame": 8
+    },
+    {
+      "text": "you're",
+      "startFrame": 8,
+      "endFrame": 13
+    },
+    {
+      "text": "still",
+      "startFrame": 13,
+      "endFrame": 22
+    },
+    {
+      "text": "posting",
+      "startFrame": 22,
+      "endFrame": 34
+    },
+    {
+      "text": "your",
+      "startFrame": 34,
+      "endFrame": 40
+    },
+    {
+      "text": "content",
+      "startFrame": 40,
+      "endFrame": 53
+    },
+    {
+      "text": "by",
+      "startFrame": 53,
+      "endFrame": 56
+    },
+    {
+      "text": "hand",
+      "startFrame": 56,
+      "endFrame": 67
+    },
+    {
+      "text": "you're",
+      "startFrame": 67,
+      "endFrame": 80
+    },
+    {
+      "text": "wasting",
+      "startFrame": 80,
+      "endFrame": 94
+    },
+    {
+      "text": "hours",
+      "startFrame": 94,
+      "endFrame": 110
+    },
+    {
+      "text": "every",
+      "startFrame": 110,
+      "endFrame": 114
+    },
+    {
+      "text": "single",
+      "startFrame": 114,
+      "endFrame": 125
+    },
+    {
+      "text": "week.",
+      "startFrame": 125,
+      "endFrame": 141
+    },
+    {
+      "text": "Here's",
+      "startFrame": 141,
+      "endFrame": 150
+    },
+    {
+      "text": "what",
+      "startFrame": 150,
+      "endFrame": 156
+    },
+    {
+      "text": "I",
+      "startFrame": 156,
+      "endFrame": 158
+    },
+    {
+      "text": "do",
+      "startFrame": 158,
+      "endFrame": 161
+    },
+    {
+      "text": "I",
+      "startFrame": 167,
+      "endFrame": 168
+    },
+    {
+      "text": "do.",
+      "startFrame": 167,
+      "endFrame": 174
+    },
+    {
+      "text": "And",
+      "startFrame": 175,
+      "endFrame": 185
+    },
+    {
+      "text": "before",
+      "startFrame": 185,
+      "endFrame": 192
+    },
+    {
+      "text": "I",
+      "startFrame": 192,
+      "endFrame": 193
+    },
+    {
+      "text": "film",
+      "startFrame": 192,
+      "endFrame": 200
+    },
+    {
+      "text": "anything,",
+      "startFrame": 200,
+      "endFrame": 217
+    },
+    {
+      "text": "I",
+      "startFrame": 217,
+      "endFrame": 218
+    },
+    {
+      "text": "give",
+      "startFrame": 218,
+      "endFrame": 222
+    },
+    {
+      "text": "my",
+      "startFrame": 222,
+      "endFrame": 225
+    },
+    {
+      "text": "topic",
+      "startFrame": 225,
+      "endFrame": 238
+    },
+    {
+      "text": "to",
+      "startFrame": 238,
+      "endFrame": 246
+    },
+    {
+      "text": "AI",
+      "startFrame": 246,
+      "endFrame": 256
+    },
+    {
+      "text": "and",
+      "startFrame": 256,
+      "endFrame": 258
+    },
+    {
+      "text": "it",
+      "startFrame": 258,
+      "endFrame": 261
+    },
+    {
+      "text": "gives",
+      "startFrame": 261,
+      "endFrame": 266
+    },
+    {
+      "text": "me",
+      "startFrame": 266,
+      "endFrame": 268
+    },
+    {
+      "text": "10",
+      "startFrame": 268,
+      "endFrame": 275
+    },
+    {
+      "text": "hooks",
+      "startFrame": 275,
+      "endFrame": 280
+    },
+    {
+      "text": "back.",
+      "startFrame": 280,
+      "endFrame": 294
+    },
+    {
+      "text": "I",
+      "startFrame": 294,
+      "endFrame": 300
+    },
+    {
+      "text": "choose",
+      "startFrame": 300,
+      "endFrame": 307
+    },
+    {
+      "text": "one,",
+      "startFrame": 307,
+      "endFrame": 316
+    },
+    {
+      "text": "and",
+      "startFrame": 316,
+      "endFrame": 325
+    },
+    {
+      "text": "that",
+      "startFrame": 325,
+      "endFrame": 329
+    },
+    {
+      "text": "only",
+      "startFrame": 329,
+      "endFrame": 336
+    },
+    {
+      "text": "took",
+      "startFrame": 336,
+      "endFrame": 344
+    },
+    {
+      "text": "30",
+      "startFrame": 344,
+      "endFrame": 355
+    },
+    {
+      "text": "seconds.",
+      "startFrame": 355,
+      "endFrame": 371
+    },
+    {
+      "text": "Then,",
+      "startFrame": 389,
+      "endFrame": 393
+    },
+    {
+      "text": "in",
+      "startFrame": 393,
+      "endFrame": 403
+    },
+    {
+      "text": "one",
+      "startFrame": 403,
+      "endFrame": 405
+    },
+    {
+      "text": "take,",
+      "startFrame": 405,
+      "endFrame": 423
+    },
+    {
+      "text": "I",
+      "startFrame": 423,
+      "endFrame": 424
+    },
+    {
+      "text": "film",
+      "startFrame": 424,
+      "endFrame": 431
+    },
+    {
+      "text": "everything",
+      "startFrame": 431,
+      "endFrame": 450
+    },
+    {
+      "text": "on",
+      "startFrame": 450,
+      "endFrame": 454
+    },
+    {
+      "text": "my",
+      "startFrame": 454,
+      "endFrame": 458
+    },
+    {
+      "text": "phone.",
+      "startFrame": 458,
+      "endFrame": 473
+    },
+    {
+      "text": "Then",
+      "startFrame": 486,
+      "endFrame": 488
+    },
+    {
+      "text": "it",
+      "startFrame": 488,
+      "endFrame": 491
+    },
+    {
+      "text": "all",
+      "startFrame": 491,
+      "endFrame": 498
+    },
+    {
+      "text": "goes",
+      "startFrame": 498,
+      "endFrame": 505
+    },
+    {
+      "text": "into",
+      "startFrame": 505,
+      "endFrame": 514
+    },
+    {
+      "text": "post",
+      "startFrame": 514,
+      "endFrame": 522
+    },
+    {
+      "text": "its",
+      "startFrame": 522,
+      "endFrame": 529
+    },
+    {
+      "text": "I",
+      "startFrame": 529,
+      "endFrame": 531
+    },
+    {
+      "text": "tell",
+      "startFrame": 531,
+      "endFrame": 539
+    },
+    {
+      "text": "the",
+      "startFrame": 539,
+      "endFrame": 546
+    },
+    {
+      "text": "AI",
+      "startFrame": 546,
+      "endFrame": 550
+    },
+    {
+      "text": "what",
+      "startFrame": 550,
+      "endFrame": 558
+    },
+    {
+      "text": "I",
+      "startFrame": 558,
+      "endFrame": 561
+    },
+    {
+      "text": "want",
+      "startFrame": 561,
+      "endFrame": 569
+    },
+    {
+      "text": "and",
+      "startFrame": 569,
+      "endFrame": 574
+    },
+    {
+      "text": "then",
+      "startFrame": 574,
+      "endFrame": 578
+    },
+    {
+      "text": "it",
+      "startFrame": 578,
+      "endFrame": 581
+    },
+    {
+      "text": "writes",
+      "startFrame": 581,
+      "endFrame": 588
+    },
+    {
+      "text": "captions",
+      "startFrame": 588,
+      "endFrame": 602
+    },
+    {
+      "text": "for",
+      "startFrame": 602,
+      "endFrame": 606
+    },
+    {
+      "text": "every",
+      "startFrame": 606,
+      "endFrame": 613
+    },
+    {
+      "text": "single",
+      "startFrame": 613,
+      "endFrame": 621
+    },
+    {
+      "text": "one",
+      "startFrame": 621,
+      "endFrame": 625
+    },
+    {
+      "text": "of",
+      "startFrame": 625,
+      "endFrame": 627
+    },
+    {
+      "text": "my",
+      "startFrame": 627,
+      "endFrame": 630
+    },
+    {
+      "text": "videos",
+      "startFrame": 630,
+      "endFrame": 641
+    },
+    {
+      "text": "And",
+      "startFrame": 664,
+      "endFrame": 668
+    },
+    {
+      "text": "then",
+      "startFrame": 668,
+      "endFrame": 671
+    },
+    {
+      "text": "the",
+      "startFrame": 671,
+      "endFrame": 677
+    },
+    {
+      "text": "final",
+      "startFrame": 677,
+      "endFrame": 687
+    },
+    {
+      "text": "thing",
+      "startFrame": 687,
+      "endFrame": 696
+    },
+    {
+      "text": "I",
+      "startFrame": 696,
+      "endFrame": 698
+    },
+    {
+      "text": "do",
+      "startFrame": 698,
+      "endFrame": 704
+    },
+    {
+      "text": "is",
+      "startFrame": 704,
+      "endFrame": 705
+    },
+    {
+      "text": "that",
+      "startFrame": 705,
+      "endFrame": 711
+    },
+    {
+      "text": "I",
+      "startFrame": 711,
+      "endFrame": 713
+    },
+    {
+      "text": "say",
+      "startFrame": 713,
+      "endFrame": 718
+    },
+    {
+      "text": "post",
+      "startFrame": 718,
+      "endFrame": 729
+    },
+    {
+      "text": "at",
+      "startFrame": 729,
+      "endFrame": 734
+    },
+    {
+      "text": "8pm",
+      "startFrame": 734,
+      "endFrame": 748
+    },
+    {
+      "text": "on",
+      "startFrame": 748,
+      "endFrame": 751
+    },
+    {
+      "text": "all",
+      "startFrame": 751,
+      "endFrame": 756
+    },
+    {
+      "text": "of",
+      "startFrame": 756,
+      "endFrame": 760
+    },
+    {
+      "text": "my",
+      "startFrame": 760,
+      "endFrame": 764
+    },
+    {
+      "text": "channels,",
+      "startFrame": 764,
+      "endFrame": 783
+    },
+    {
+      "text": "I",
+      "startFrame": 783,
+      "endFrame": 791
+    },
+    {
+      "text": "wait",
+      "startFrame": 791,
+      "endFrame": 797
+    },
+    {
+      "text": "a",
+      "startFrame": 797,
+      "endFrame": 798
+    },
+    {
+      "text": "little",
+      "startFrame": 798,
+      "endFrame": 802
+    },
+    {
+      "text": "bit,",
+      "startFrame": 802,
+      "endFrame": 811
+    },
+    {
+      "text": "it",
+      "startFrame": 811,
+      "endFrame": 818
+    },
+    {
+      "text": "schedules",
+      "startFrame": 818,
+      "endFrame": 826
+    },
+    {
+      "text": "it",
+      "startFrame": 826,
+      "endFrame": 830
+    },
+    {
+      "text": "all",
+      "startFrame": 830,
+      "endFrame": 839
+    },
+    {
+      "text": "for",
+      "startFrame": 839,
+      "endFrame": 843
+    },
+    {
+      "text": "me,",
+      "startFrame": 843,
+      "endFrame": 852
+    },
+    {
+      "text": "I",
+      "startFrame": 852,
+      "endFrame": 854
+    },
+    {
+      "text": "hit",
+      "startFrame": 854,
+      "endFrame": 856
+    },
+    {
+      "text": "approve,",
+      "startFrame": 856,
+      "endFrame": 881
+    },
+    {
+      "text": "but",
+      "startFrame": 881,
+      "endFrame": 901
+    },
+    {
+      "text": "nothing",
+      "startFrame": 901,
+      "endFrame": 908
+    },
+    {
+      "text": "else",
+      "startFrame": 908,
+      "endFrame": 918
+    },
+    {
+      "text": "to",
+      "startFrame": 918,
+      "endFrame": 923
+    },
+    {
+      "text": "do.",
+      "startFrame": 923,
+      "endFrame": 928
+    },
+    {
+      "text": "Now,",
+      "startFrame": 935,
+      "endFrame": 945
+    },
+    {
+      "text": "before",
+      "startFrame": 945,
+      "endFrame": 958
+    },
+    {
+      "text": "you",
+      "startFrame": 958,
+      "endFrame": 964
+    },
+    {
+      "text": "scroll,",
+      "startFrame": 964,
+      "endFrame": 980
+    },
+    {
+      "text": "save",
+      "startFrame": 980,
+      "endFrame": 987
+    },
+    {
+      "text": "this",
+      "startFrame": 987,
+      "endFrame": 995
+    },
+    {
+      "text": "before",
+      "startFrame": 995,
+      "endFrame": 1009
+    },
+    {
+      "text": "your",
+      "startFrame": 1009,
+      "endFrame": 1015
+    },
+    {
+      "text": "next",
+      "startFrame": 1015,
+      "endFrame": 1021
+    },
+    {
+      "text": "upload",
+      "startFrame": 1021,
+      "endFrame": 1031
+    },
+    {
+      "text": "and",
+      "startFrame": 1031,
+      "endFrame": 1040
+    },
+    {
+      "text": "then",
+      "startFrame": 1040,
+      "endFrame": 1047
+    },
+    {
+      "text": "send",
+      "startFrame": 1047,
+      "endFrame": 1053
+    },
+    {
+      "text": "it",
+      "startFrame": 1053,
+      "endFrame": 1055
+    },
+    {
+      "text": "to",
+      "startFrame": 1055,
+      "endFrame": 1059
+    },
+    {
+      "text": "somebody",
+      "startFrame": 1059,
+      "endFrame": 1066
+    },
+    {
+      "text": "who's",
+      "startFrame": 1066,
+      "endFrame": 1072
+    },
+    {
+      "text": "still",
+      "startFrame": 1072,
+      "endFrame": 1078
+    },
+    {
+      "text": "doing",
+      "startFrame": 1078,
+      "endFrame": 1084
+    },
+    {
+      "text": "everything",
+      "startFrame": 1084,
+      "endFrame": 1096
+    },
+    {
+      "text": "by",
+      "startFrame": 1096,
+      "endFrame": 1099
+    },
+    {
+      "text": "hand.",
+      "startFrame": 1099,
+      "endFrame": 1115
+    }
+  ]
+}

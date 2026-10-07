@@ -6,6 +6,16 @@ export const RemotionRoot: React.FC = () => {
     <>
       {/* Remotion disallows underscores in composition ids; props.id keeps the underscore (data folder name). */}
       <Composition
+        id="v1-zero-b"
+        component={TalkingHead}
+        durationInFrames={30}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ id: "v1_zero_b", showZones: false, cover: false }}
+        calculateMetadata={calculateMetadata}
+      />
+      <Composition
         id="v2-ai-b"
         component={TalkingHead}
         durationInFrames={30}
@@ -23,6 +33,16 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ id: "v3_plan_a", showZones: false, cover: false }}
+        calculateMetadata={calculateMetadata}
+      />
+      <Composition
+        id="v4-ai-a"
+        component={TalkingHead}
+        durationInFrames={30}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ id: "v4_ai_a", showZones: false, cover: false }}
         calculateMetadata={calculateMetadata}
       />
     </>
