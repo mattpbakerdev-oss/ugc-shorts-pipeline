@@ -20,39 +20,48 @@ const Graphic: React.FC<{ m: ResolvedMoment; zoneWidth: number; align: "left" | 
   }
 };
 
-export const Graphics: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) => {
+const SideColumn: React.FC<{ side: "left" | "right"; resolved: ResolvedVideo }> = ({ side, resolved }) => {
   const { width, height } = useVideoConfig();
-  const zones = zonesFor(resolved.faceBox);
+  const rect = zonesFor(resolved.faceBox)[side];
+  const items = resolved.moments
+    .filter((m) => m.show && m.zone === side)
+    .sort((a, b) => a.enterFrame - b.enterFrame);
+  if (items.length === 0) return null;
+  return (
+    <div
+      style={{
+        ...rectToStyle(rect, width, height),
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: side === "left" ? "flex-start" : "flex-end",
+        gap: 24,
+        paddingTop: 40,
+        overflow: "visible",
+      }}
+    >
+      {items.map((m, i) => (
+        <Sequence key={i} name={`${m.show!.kind} @${m.enterFrame}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} layout="none">
+          <Graphic m={m} zoneWidth={Math.round(rect.w * width)} align={side} />
+        </Sequence>
+      ))}
+    </div>
+  );
+};
+
+export const Graphics: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) => {
+  const { width } = useVideoConfig();
   return (
     <AbsoluteFill>
-      {resolved.moments.filter((m) => m.show).map((m, i) => {
-        // emphasis-only moments have zone "captions" and no graphic; the left fallback is never rendered
-        const rect = zones[m.zone === "captions" ? "left" : m.zone];
-        const alignLeft = m.zone === "left";
-        return (
-          <Sequence key={i} name={`${m.show!.kind} @${m.enterFrame}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} layout="none">
-            {m.zone === "full" ? (
-              <AbsoluteFill>
-                <Graphic m={m} zoneWidth={width} align="left" />
-              </AbsoluteFill>
-            ) : (
-            <div
-              style={{
-                ...rectToStyle(rect, width, height),
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                alignItems: alignLeft ? "flex-start" : m.zone === "right" ? "flex-end" : "center",
-                paddingTop: 40,
-                overflow: "visible",
-              }}
-            >
-              <Graphic m={m} zoneWidth={Math.round(rect.w * width)} align={m.zone === "right" ? "right" : "left"} />
-            </div>
-            )}
-          </Sequence>
-        );
-      })}
+      <SideColumn side="left" resolved={resolved} />
+      <SideColumn side="right" resolved={resolved} />
+      {resolved.moments.filter((m) => m.show && m.zone === "full").map((m, i) => (
+        <Sequence key={i} name={`${m.show!.kind} @${m.enterFrame}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} layout="none">
+          <AbsoluteFill>
+            <Graphic m={m} zoneWidth={width} align="left" />
+          </AbsoluteFill>
+        </Sequence>
+      ))}
     </AbsoluteFill>
   );
 };

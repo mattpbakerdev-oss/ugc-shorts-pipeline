@@ -39,6 +39,23 @@ describe("zonesFor", () => {
     expect(edge.left.w).toBe(0);
   });
 
+  it("keeps the default left/right widths at 0.15/0.17", () => {
+    expect(z.left.w).toBeCloseTo(0.15, 5);
+    expect(z.right.w).toBeCloseTo(0.17, 5);
+  });
+
+  it("top band stays above a high face", () => {
+    const high = zonesFor({ x: 0.06, y: 0.17, w: 0.38, h: 0.33 });
+    expect(high.topBand.y + high.topBand.h).toBeLessThanOrEqual(0.15 + 1e-9);
+    expect(z.topBand.h).toBeCloseTo(0.19, 5);
+  });
+
+  it("left zone has no width when the face hugs the left edge", () => {
+    const hug = zonesFor({ x: 0.06, y: 0.17, w: 0.38, h: 0.33 });
+    expect(hug.left.w).toBe(0);
+    expect(hug.right.w).toBeCloseTo(0.49, 5);
+  });
+
   it("throws when the face box leaves no room for captions", () => {
     expect(() => zonesFor({ x: 0.3, y: 0.3, w: 0.4, h: 0.5 })).toThrow(/captions/);
   });

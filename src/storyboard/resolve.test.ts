@@ -86,6 +86,29 @@ describe("resolveStoryboard", () => {
       expect(out.moments[0].exitFrame).toBe(out.moments[1].enterFrame);
     });
 
+    it("a stack:true moment does not cut the earlier same-zone moment", () => {
+      const out = resolveStoryboard({
+        ...sb, sections: [],
+        moments: [
+          { on: "b", show: bigNumber(1, "A"), hold: 2 },
+          { on: "e", show: bigNumber(2, "B"), hold: 2, stack: true },
+        ],
+      }, takes, w);
+      expect(out.moments[0].exitFrame).toBe(10 + 60);
+      expect(out.moments[0].zone).toBe(out.moments[1].zone);
+    });
+
+    it("picks the wider side from the face box", () => {
+      const mkSb = (faceBox?: Storyboard["faceBox"]): Storyboard => ({
+        ...sb, sections: [], faceBox,
+        moments: [{ on: "b", show: bigNumber(1, "A") }, { on: "e", show: iconStack(["tt"]) }],
+      });
+      const hug = resolveStoryboard(mkSb({ x: 0.06, y: 0.17, w: 0.38, h: 0.33 }), takes, w);
+      expect(hug.moments.map((m) => m.zone)).toEqual(["right", "right"]);
+      const def = resolveStoryboard(mkSb(), takes, w);
+      expect(def.moments.map((m) => m.zone)).toEqual(["left", "right"]);
+    });
+
     it("does not cut a graphic for a sfx-only moment", () => {
       const out = run([{ on: "a", show: bigNumber(1, "X") }, { on: "d", sfx: "whoosh" }, { on: "g", show: bigNumber(2, "Y") }]);
       expect(out.moments[0].exitFrame).toBe(out.moments[2].enterFrame);

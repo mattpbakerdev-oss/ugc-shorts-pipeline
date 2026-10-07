@@ -1,5 +1,5 @@
 import { findPhrase, PhraseNotFoundError, normaliseToken } from "../phrase";
-import { DEFAULT_FACE_BOX } from "../zones";
+import { DEFAULT_FACE_BOX, zonesFor } from "../zones";
 import type {
   GraphicSpec, Moment, ResolvedMoment, ResolvedSection, ResolvedVideo, Storyboard, TakesFile, WordsFile, ZoneName,
 } from "../types";
@@ -10,17 +10,22 @@ const DEFAULT_HOLD_SECONDS: Record<GraphicSpec["kind"], number> = {
 };
 const FLASH_FRAMES = 3;
 
-const zoneFor = (m: Moment): ZoneName => {
-  if (m.emphasis && !m.show) return "captions";
-  switch (m.show?.kind) {
-    case "iconStack": return "right";
-    case "flashCard": return "full";
-    default: return "left";
-  }
-};
 
 export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFile: WordsFile): ResolvedVideo => {
   validateStoryboard(sb);
+  const z = zonesFor(sb.faceBox ?? DEFAULT_FACE_BOX);
+  // Left is preferred unless the right side is clearly wider (default box: 0.15 vs 0.17 stays left).
+  const primary: ZoneName = z.left.w + 0.05 >= z.right.w ? "left" : "right";
+  const other: ZoneName = primary === "left" ? "right" : "left";
+  const secondary: ZoneName = z[other].w >= 0.12 ? other : primary;
+  const zoneFor = (m: Moment): ZoneName => {
+    if (m.emphasis && !m.show) return "captions";
+    switch (m.show?.kind) {
+      case "iconStack": return secondary;
+      case "flashCard": return "full";
+      default: return primary;
+    }
+  };
   const { fps, width, height, takes } = takesFile;
   const durationInFrames = takes[takes.length - 1].endFrame;
   // Whisper can report a last word that ends a couple of frames past the video.
@@ -79,13 +84,13 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
     exitFrame = Math.min(exitFrame, durationInFrames);
     if (exitFrame <= enterFrame) exitFrame = enterFrame + 1;
 
-    return { enterFrame, exitFrame, show: m.show, emphasis: m.emphasis, sfx: m.sfx, zone: zoneFor(m) };
+    return { enterFrame, exitFrame, show: m.show, emphasis: m.emphasis, sfx: m.sfx, zone: zoneFor(m), stack: m.stack };
   });
 
   // A later graphic in the same zone cuts the earlier one short (sfx-only/emphasis moments never do).
   moments.forEach((m, i) => {
     if (!m.show) return;
-    const next = moments.slice(i + 1).find((n) => n.show && n.zone === m.zone && n.enterFrame > m.enterFrame);
+    const next = moments.slice(i + 1).find((n) => n.show && !n.stack && n.zone === m.zone && n.enterFrame > m.enterFrame);
     if (next && next.enterFrame < m.exitFrame) m.exitFrame = next.enterFrame;
   });
 
