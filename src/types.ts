@@ -19,3 +19,27 @@ export type Zones = {
   platformUi: Rect;
   full: Rect;
 };
+
+export type SfxName = "slam" | "tick" | "pop" | "whoosh" | "riser" | "thud";
+export type IconName = "tt" | "ig" | "yt" | "fb";
+export type GraphicSpec =
+  | { kind: "bigNumber"; value: string; label: string }
+  | { kind: "punchList"; items: string[]; pick?: number; strike?: number[] }
+  | { kind: "iconStack"; icons: IconName[] }
+  | { kind: "counter"; from: number; to: number; label: string }
+  | { kind: "flashCard"; word: string };
+export type Emphasis = "shake" | "pulse" | "flash";
+export type Moment = {
+  on?: string; at?: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName;
+  hold?: number | `until:${string}`;
+};
+export type Section = { take: number; title: string };
+export type Storyboard = { id: string; faceBox?: Rect; hook: string; sections: Section[]; moments: Moment[] };
+export type ResolvedMoment = { enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName };
+export type ResolvedSection = { startFrame: number; endFrame: number; title: string; isHook: boolean };
+export type ResolvedVideo = {
+  id: string; fps: number; width: number; height: number; durationInFrames: number;
+  faceBox: Rect; takes: Take[]; words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
+};
+
+export const SFX_NAMES: SfxName[] = ["slam", "tick", "pop", "whoosh", "riser", "thud"];
