@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFixes, captionsToWords, offsetWords } from "./captionFixes";
+import { applyFixes, captionsToWords, offsetWords, dropAfterSpeechEnd } from "./captionFixes";
 
 describe("applyFixes", () => {
   it("corrects known mis-hearings case-insensitively, keeping punctuation", () => {
@@ -143,5 +143,18 @@ describe("two-word fixes", () => {
   });
   it("leaves unrelated pairs untouched", () => {
     expect(captionsToWords([w("post", 0), w("office", 1)], 30).map((x) => x.text)).toEqual(["post", "office"]);
+  });
+});
+
+describe("dropAfterSpeechEnd", () => {
+  const w = (text: string, startFrame: number, endFrame: number) => ({ text, startFrame, endFrame });
+  it("drops a word starting after speech end", () => {
+    expect(dropAfterSpeechEnd([w("a", 10, 20), w("ghost", 25, 40)], 25)).toEqual([w("a", 10, 20)]);
+  });
+  it("clamps a word straddling speech end", () => {
+    expect(dropAfterSpeechEnd([w("a", 10, 40)], 25)).toEqual([w("a", 10, 27)]);
+  });
+  it("leaves words before speech end unchanged", () => {
+    expect(dropAfterSpeechEnd([w("a", 10, 20), w("b", 20, 27)], 25)).toEqual([w("a", 10, 20), w("b", 20, 27)]);
   });
 });

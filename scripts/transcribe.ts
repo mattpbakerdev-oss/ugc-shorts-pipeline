@@ -7,7 +7,7 @@ import {
   transcribe,
 } from "@remotion/install-whisper-cpp";
 import { ffmpeg } from "./ffmpeg";
-import { captionsToWords, offsetWords } from "../src/captionFixes";
+import { captionsToWords, dropAfterSpeechEnd, offsetWords } from "../src/captionFixes";
 import type { TakesFile, Word, WordsFile } from "../src/types";
 
 const WHISPER_VERSION = "1.5.5";
@@ -19,6 +19,26 @@ if (!id) {
   console.error("Usage: npm run transcribe -- <videoId>");
   process.exit(1);
 }
+
+/** Seconds where speech ends in a wav: the start of a silence that reaches the end, else its duration. */
+const speechEndSeconds = async (wav: string): Promise<number> => {
+  const { stderr } = await ffmpeg(["-i", wav, "-af", "silencedetect=noise=-35dB:d=0.15", "-f", "null", "-"]);
+  const dur = stderr.match(/Duration:\s*(\d+):(\d+):([\d.]+)/);
+  if (!dur) throw new Error(`Cannot read duration of ${wav}`);
+  const duration = Number(dur[1]) * 3600 + Number(dur[2]) * 60 + Number(dur[3]);
+  let open: number | null = null;
+  let lastStart: number | null = null;
+  let lastEnd: number | null = null;
+  for (const line of stderr.split("\n")) {
+    const s = line.match(/silence_start:\s*(-?[\d.]+)/);
+    const e = line.match(/silence_end:\s*([\d.]+)/);
+    if (s) { open = Number(s[1]); lastStart = open; lastEnd = null; }
+    if (e && open !== null) { lastEnd = Number(e[1]); open = null; }
+  }
+  // A silence still open at EOF, or ending within 50 ms of it, reaches the wav end.
+  const reachesEnd = lastStart !== null && (open !== null || (lastEnd !== null && lastEnd >= duration - 0.05));
+  return reachesEnd && lastStart !== null ? Math.max(0, lastStart) : duration;
+};
 
 const main = async () => {
   const dir = path.resolve("public", "videos", id);
@@ -40,6 +60,7 @@ const main = async () => {
   const words: Word[] = [];
   for (const [i, take] of takes.entries()) {
     const wav = path.join(dir, `take_${String(i + 1).padStart(2, "0")}_16k.wav`);
+    const rawWav = path.join(dir, `take_${String(i + 1).padStart(2, "0")}_raw.wav`);
     await ffmpeg([
       "-ss", String(take.startFrame / fps), "-t", String((take.endFrame - take.startFrame) / fps),
       "-i", face, "-vn",
@@ -47,6 +68,13 @@ const main = async () => {
       "-af", "apad=pad_dur=1",
       "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav,
     ]);
+    // Speech end is measured on the unpadded take; words Whisper puts after it are hallucinations.
+    await ffmpeg([
+      "-ss", String(take.startFrame / fps), "-t", String((take.endFrame - take.startFrame) / fps),
+      "-i", face, "-vn", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", rawWav,
+    ]);
+    const speechEndFrame = Math.round((await speechEndSeconds(rawWav)) * fps);
+    await fs.rm(rawWav);
     const output = await transcribe({
       inputPath: wav,
       whisperPath: whisperDir,
@@ -56,7 +84,12 @@ const main = async () => {
       language: "en",
     });
     const { captions } = toCaptions({ whisperCppOutput: output });
-    words.push(...offsetWords(captionsToWords(captions, fps), take.startFrame, take.endFrame));
+    const takeWords = captionsToWords(captions, fps);
+    const kept = dropAfterSpeechEnd(takeWords, speechEndFrame);
+    if (kept.length < takeWords.length) {
+      console.log(`take ${i + 1}: dropped after speech end (frame ${speechEndFrame}): ${takeWords.slice(kept.length).map((w) => w.text).join(" ")}`);
+    }
+    words.push(...offsetWords(kept, take.startFrame, take.endFrame));
     await fs.rm(wav);
   }
   if (words.length === 0) throw new Error("Whisper returned no words");

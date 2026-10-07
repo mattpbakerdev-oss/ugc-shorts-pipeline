@@ -21,7 +21,7 @@ Note: any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (r
    npm run prep -- v4_topic [sourceRoot]
    ```
    Without `sourceRoot` it uses the ugc-renderer reposts folder (`/Users/mattdev/Projects/ugc-renderer/reposts/7 Oct - v2 and v3 originals`).
-3. Transcribe (writes `public/videos/<id>/words.json`). Each take is transcribed separately and offset onto the joined timeline, because whisper stretches a word over silence and, on the joined audio, would start a take's first word inside the previous take. The first run downloads whisper.cpp 1.5.5 and the medium.en model (about 1.5 GB) into `./whisper/`:
+3. Transcribe (writes `public/videos/<id>/words.json`). Each take is transcribed separately and offset onto the joined timeline, because whisper stretches a word over silence and, on the joined audio, would start a take's first word inside the previous take. Words Whisper places after a take's measured speech end (trailing silence below -35 dB) are dropped as hallucinations, and a word running past it is clamped. The first run downloads whisper.cpp 1.5.5 and the medium.en model (about 1.5 GB) into `./whisper/`:
    ```
    npm run transcribe -- v4_topic
    ```

@@ -86,9 +86,9 @@
       "endFrame": 158
     },
     {
-      "text": "do.",
+      "text": "do",
       "startFrame": 158,
-      "endFrame": 167
+      "endFrame": 161
     },
     {
       "text": "And",
@@ -273,7 +273,7 @@
     {
       "text": "phone.",
       "startFrame": 458,
-      "endFrame": 473
+      "endFrame": 471
     },
     {
       "text": "Then",
@@ -698,7 +698,7 @@
     {
       "text": "hand.",
       "startFrame": 1099,
-      "endFrame": 1115
+      "endFrame": 1109
     }
   ]
 }

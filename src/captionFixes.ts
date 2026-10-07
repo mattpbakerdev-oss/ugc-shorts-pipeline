@@ -139,3 +139,18 @@ export const offsetWords = (words: Word[], startFrame: number, endFrame: number)
   }
   return out;
 };
+
+/**
+ * Whisper hallucinates words in the silence it is padded with. Words starting at or after
+ * `speechEndFrame` (take-local frames; a word cannot start once sound has stopped) are dropped; a word
+ * ending past `speechEndFrame + 2` is clamped to that point (at least 1 frame long).
+ */
+export const dropAfterSpeechEnd = (words: Word[], speechEndFrame: number): Word[] => {
+  const limit = speechEndFrame + 2;
+  const out: Word[] = [];
+  for (const w of words) {
+    if (w.startFrame >= speechEndFrame) continue;
+    out.push(w.endFrame > limit ? { ...w, endFrame: Math.max(w.startFrame + 1, limit) } : w);
+  }
+  return out;
+};
