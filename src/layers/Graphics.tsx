@@ -7,13 +7,13 @@ import { PunchList } from "../graphics/PunchList";
 import { rectToStyle, zonesFor } from "../zones";
 import type { ResolvedMoment, ResolvedVideo } from "../types";
 
-const Graphic: React.FC<{ m: ResolvedMoment; zoneWidth: number }> = ({ m, zoneWidth }) => {
+const Graphic: React.FC<{ m: ResolvedMoment; zoneWidth: number; align: "left" | "right" }> = ({ m, zoneWidth, align }) => {
   const length = m.exitFrame - m.enterFrame;
   const s = m.show;
   if (!s) return null;
   switch (s.kind) {
     case "bigNumber": return <BigNumber spec={s} length={length} zoneWidth={zoneWidth} />;
-    case "punchList": return <PunchList spec={s} length={length} zoneWidth={zoneWidth} />;
+    case "punchList": return <PunchList spec={s} length={length} zoneWidth={zoneWidth} align={align} />;
     case "iconStack": return <IconStack spec={s} length={length} zoneWidth={zoneWidth} />;
     case "counter": return <Counter spec={s} length={length} zoneWidth={zoneWidth} />;
     case "flashCard": return <FlashCard spec={s} length={length} />;
@@ -26,24 +26,30 @@ export const Graphics: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) =>
   return (
     <AbsoluteFill>
       {resolved.moments.filter((m) => m.show).map((m, i) => {
+        // emphasis-only moments have zone "captions" and no graphic; the left fallback is never rendered
         const rect = zones[m.zone === "captions" ? "left" : m.zone];
-        const style = rectToStyle(rect, width, height);
         const alignLeft = m.zone === "left";
         return (
           <Sequence key={i} name={`${m.show!.kind} @${m.enterFrame}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} layout="none">
+            {m.zone === "full" ? (
+              <AbsoluteFill>
+                <Graphic m={m} zoneWidth={width} align="left" />
+              </AbsoluteFill>
+            ) : (
             <div
               style={{
-                ...style,
+                ...rectToStyle(rect, width, height),
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: m.zone === "full" ? "center" : "flex-start",
+                justifyContent: "flex-start",
                 alignItems: alignLeft ? "flex-start" : m.zone === "right" ? "flex-end" : "center",
-                paddingTop: m.zone === "full" ? 0 : 40,
+                paddingTop: 40,
                 overflow: "visible",
               }}
             >
-              <Graphic m={m} zoneWidth={Number(style.width)} />
+              <Graphic m={m} zoneWidth={Math.round(rect.w * width)} align={m.zone === "right" ? "right" : "left"} />
             </div>
+            )}
           </Sequence>
         );
       })}

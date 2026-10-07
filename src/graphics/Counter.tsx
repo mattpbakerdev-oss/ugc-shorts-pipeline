@@ -4,8 +4,10 @@ import { useEnterExit } from "./enter";
 
 export const Counter: React.FC<{ spec: { from: number; to: number; label: string }; length: number; zoneWidth: number }> = ({ spec, length, zoneWidth }) => {
   const { enter, exit, frame, fps } = useEnterExit(length);
-  const fontSize = Math.min(260, zoneWidth * 0.95);
-  const labelSize = Math.min(56, zoneWidth * 0.26);
+  const chars = Math.max(2, spec.to.toLocaleString("en-GB").length);
+  const fontSize = Math.min(260, (zoneWidth * 0.95 * 2) / chars);
+  const longestWord = Math.max(1, ...spec.label.split(/\s+/).map((w) => w.length));
+  const labelSize = Math.min(56, zoneWidth * 0.26, (zoneWidth * 0.9) / (0.75 * longestWord));
   const value = Math.round(
     interpolate(frame, [6, 6 + fps * 1.2], [spec.from, spec.to], {
       extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic),

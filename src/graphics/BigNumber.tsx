@@ -4,8 +4,10 @@ import { useEnterExit } from "./enter";
 
 export const BigNumber: React.FC<{ spec: { value: string; label: string }; length: number; zoneWidth: number }> = ({ spec, length, zoneWidth }) => {
   const { enter, exit } = useEnterExit(length);
-  const fontSize = Math.min(260, zoneWidth * 0.95);
-  const labelSize = Math.min(56, zoneWidth * 0.26);
+  const chars = Math.max(2, spec.value.length);
+  const fontSize = Math.min(260, (zoneWidth * 0.95 * 2) / chars);
+  const longestWord = Math.max(1, ...spec.label.split(/\s+/).map((w) => w.length));
+  const labelSize = Math.min(56, zoneWidth * 0.26, (zoneWidth * 0.9) / (0.75 * longestWord));
   return (
     <div
       style={{

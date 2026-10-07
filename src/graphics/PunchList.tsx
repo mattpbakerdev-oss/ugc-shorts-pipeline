@@ -4,14 +4,14 @@ import { useEnterExit } from "./enter";
 
 const STAGGER = 8;
 
-export const PunchList: React.FC<{ spec: { items: string[]; pick?: number; strike?: number[] }; length: number; zoneWidth: number }> = ({ spec, length, zoneWidth }) => {
+export const PunchList: React.FC<{ spec: { items: string[]; pick?: number; strike?: number[] }; length: number; zoneWidth: number; align: "left" | "right" }> = ({ spec, length, zoneWidth, align }) => {
   const { exit } = useEnterExit(length);
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const fontSize = Math.min(40, zoneWidth * 0.2);
   const strike = new Set(spec.strike ?? spec.items.map((_, i) => i).filter((i) => spec.pick !== undefined && i !== spec.pick));
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: fontSize * 0.35, opacity: exit, maxWidth: zoneWidth }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: fontSize * 0.35, opacity: exit, maxWidth: zoneWidth, boxSizing: "border-box" }}>
       {spec.items.map((item, i) => {
         const s = spring({ frame: frame - i * STAGGER, fps, config: { damping: 12, stiffness: 220 } });
         const picked = spec.pick === i;
@@ -22,7 +22,8 @@ export const PunchList: React.FC<{ spec: { items: string[]; pick?: number; strik
             key={i}
             style={{
               position: "relative",
-              alignSelf: "flex-start",
+              alignSelf: align === "right" ? "flex-end" : "flex-start",
+              boxSizing: "border-box",
               maxWidth: zoneWidth,
               fontFamily: fonts.body,
               fontWeight: 800,
@@ -33,7 +34,7 @@ export const PunchList: React.FC<{ spec: { items: string[]; pick?: number; strik
               color: picked ? COLORS.ink : COLORS.text,
               boxShadow: `0 ${fontSize * 0.2}px 0 ${picked ? COLORS.ink : COLORS.accent}`,
               transform: "skewX(-6deg)",
-              translate: `${interpolate(s, [0, 1], [-80, 0])}px 0px`,
+              translate: `${interpolate(s, [0, 1], [align === "right" ? 80 : -80, 0])}px 0px`,
               opacity: s,
             }}
           >
