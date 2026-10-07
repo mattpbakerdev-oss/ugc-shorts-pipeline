@@ -52,7 +52,11 @@ const main = async () => {
     const isHdr = info.colorTrc === "arib-std-b67" || info.colorTrc === "smpte2084";
 
     const { stderr } = await ffmpeg(["-i", src, "-map", "0:a", "-af", "silencedetect=noise=-35dB:d=0.3", "-f", "null", "-"]);
-    const { speechStart, speechEnd } = parseSilence(stderr, info.duration);
+    // Audio ends ~0.3s before video on iPhone takes; detect trailing silence against the audio length.
+    const audioLen = (await streamDurations(src)).audio ?? info.duration;
+    const parsed = parseSilence(stderr, audioLen);
+    const speechStart = parsed.speechStart;
+    const speechEnd = Math.min(parsed.speechEnd, info.duration);
 
     const takeSeconds = Math.round((speechEnd - speechStart) * FPS) / FPS;
     const out = path.join(workDir, `take_${String(i + 1).padStart(2, "0")}.mp4`);

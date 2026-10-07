@@ -1,6 +1,9 @@
 const HEAD_PAD = 0.3;
 const TAIL_PAD = 0.35;
-const END_TOLERANCE = 0.25;
+// How close to the end a silence must finish to count as "trailing". Callers should pass the AUDIO
+// stream length (iPhone audio ends ~0.3s before the video); 0.5s also absorbs that gap if they pass
+// the container duration instead.
+const END_TOLERANCE = 0.5;
 
 type Span = { start: number; end: number };
 

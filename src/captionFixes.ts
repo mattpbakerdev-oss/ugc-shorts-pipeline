@@ -24,6 +24,20 @@ export const applyFixes = (text: string): string => {
   return fixed ? `${lead}${fixed}${trail}` : text;
 };
 
+/**
+ * whisper.cpp emits markers like [BLANK_AUDIO], [silence], (music). Any token that is wholly
+ * bracketed is dropped, as are punctuation-only tokens. Side effect: a genuinely spoken
+ * parenthesised token such as "(almost)" would also be dropped; acceptable, whisper does not
+ * normally emit parentheses around real speech.
+ */
+const isNonSpeech = (text: string): boolean => {
+  const t = text.trim();
+  if (/^[\[(].*[\])]$/.test(t)) return true;
+  // Standalone punctuation-only tokens (leading space) go; unspaced ones ("," after "Hooks") must
+  // survive to be merged into the previous word.
+  return t.length > 0 && /^\s/.test(text) && !/[\p{L}\p{N}]/u.test(t);
+};
+
 type Caption = { text: string; startMs: number; endMs: number };
 
 /**
@@ -31,6 +45,7 @@ type Caption = { text: string; startMs: number; endMs: number };
  * previous word ("Hook" + "s", "behind" + "."), so merge those before timing.
  */
 export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
+  captions = captions.filter((c) => !isNonSpeech(c.text));
   const merged: Caption[] = [];
   for (const c of captions) {
     const prev = merged[merged.length - 1];

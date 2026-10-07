@@ -51,4 +51,23 @@ describe("captionsToWords", () => {
       { text: "Postiz", startFrame: 12, endFrame: 21 },
     ]);
   });
+
+  it("drops non-speech markers and punctuation-only tokens, keeps numbers", () => {
+    expect(
+      captionsToWords(
+        [
+          { text: " Hello", startMs: 0, endMs: 200 },
+          { text: " [BLANK_AUDIO]", startMs: 200, endMs: 10000 },
+          { text: " (music)", startMs: 10000, endMs: 11000 },
+          { text: " [silence]", startMs: 11000, endMs: 12000 },
+          { text: " ...", startMs: 12000, endMs: 12100 },
+          { text: " 1,000", startMs: 12100, endMs: 12500 },
+        ],
+        30,
+      ),
+    ).toEqual([
+      { text: "Hello", startFrame: 0, endFrame: 6 },
+      { text: "1,000", startFrame: 363, endFrame: 375 },
+    ]);
+  });
 });

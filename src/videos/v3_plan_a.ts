@@ -26,7 +26,7 @@ export default video({
     { on: "content creation tips", show: punchList(["Content creation tips"], { pick: 0 }), sfx: "tick", stack: true, hold: 3 },
     { on: "liking and I'm commenting", show: punchList(["Like", "Comment", "Repeat"]), sfx: "tick", hold: 4 },
     { on: "reply with video", show: flashCard("REPLY"), sfx: "thud" },
-    { on: "hook is really written", emphasis: "pulse" },
+    { on: "hook is already written", emphasis: "pulse" },
     { on: "posting everywhere", show: bigNumber(4, "CHANNELS"), sfx: "slam", hold: "until:four channels" },
     { on: "TikTok, Facebook, Instagram and YouTube", show: iconStack(["tt", "fb", "ig", "yt"]), sfx: "pop", hold: 4 },
     { on: "four times", emphasis: "shake" },
