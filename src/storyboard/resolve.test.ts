@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resolveStoryboard } from "./resolve";
 import { bigNumber, iconStack, flashCard } from "./dsl";
 import type { Storyboard, TakesFile, Word, WordsFile } from "../types";
+import { DEFAULT_FACE_BOX } from "../zones";
 
 const words: Word[] = "not using AI yet hooks ten hook ideas pick the best one".split(" ")
   .map((text, i) => ({ text, startFrame: i * 10, endFrame: i * 10 + 8 }));
@@ -60,7 +61,7 @@ describe("resolveStoryboard", () => {
   });
 
   it("uses the default face box when none is given", () => {
-    expect(r.faceBox).toEqual({ x: 0.33, y: 0.22, w: 0.42, h: 0.52 });
+    expect(r.faceBox).toEqual(DEFAULT_FACE_BOX);
   });
 
   it("clamps words that run past the end of the video", () => {

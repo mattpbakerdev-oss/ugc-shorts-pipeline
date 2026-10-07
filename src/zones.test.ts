@@ -8,6 +8,11 @@ const overlaps = (a: Rect, b: Rect) =>
 describe("zonesFor", () => {
   const z = zonesFor(DEFAULT_FACE_BOX);
 
+  it("accepts the default face box with captions at 0.80", () => {
+    expect(() => zonesFor(DEFAULT_FACE_BOX)).not.toThrow();
+    expect(Math.abs(z.captions.y - 0.80)).toBeLessThan(1e-9);
+  });
+
   it("keeps the face box as given", () => {
     expect(z.face).toEqual(DEFAULT_FACE_BOX);
   });
@@ -23,10 +28,10 @@ describe("zonesFor", () => {
   });
 
   it("moves the side zones when the face moves", () => {
-    const moved = zonesFor({ x: 0.2, y: 0.3, w: 0.4, h: 0.4 });
+    const moved = zonesFor({ x: 0.1, y: 0.3, w: 0.4, h: 0.42 });
     expect(moved.left.w).toBeLessThan(z.left.w);
     expect(moved.right.w).toBeGreaterThan(z.right.w);
-    expect(moved.captions.y).toBeCloseTo(0.72, 5);
+    expect(moved.captions.y).toBeCloseTo(0.74, 5);
   });
 
   it("clamps so a face at the edge still yields non-negative zones", () => {

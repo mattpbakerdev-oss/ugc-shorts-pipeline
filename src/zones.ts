@@ -1,17 +1,18 @@
 import type { CSSProperties } from "react";
 import type { Rect, Zones } from "./types";
 
-export const DEFAULT_FACE_BOX: Rect = { x: 0.33, y: 0.22, w: 0.42, h: 0.52 };
+export const DEFAULT_FACE_BOX: Rect = { x: 0.2, y: 0.36, w: 0.56, h: 0.42 };
 
 const GAP = 0.02;
 const SIDE_MARGIN = 0.03;
-const CAPTION_HEIGHT = 0.12;
-const PLATFORM_UI_HEIGHT = 0.12;
+const CAPTION_HEIGHT = 0.1;
+const PLATFORM_UI_HEIGHT = 0.1;
 
 export const zonesFor = (face: Rect): Zones => {
-  if (face.y + face.h > 1 - PLATFORM_UI_HEIGHT - CAPTION_HEIGHT - GAP) {
+  const maxBottom = 1 - PLATFORM_UI_HEIGHT - CAPTION_HEIGHT - GAP;
+  if (face.y + face.h > maxBottom + 1e-9) {
     throw new Error(
-      `Face box bottom ${(face.y + face.h).toFixed(2)} leaves no room for captions; keep y + h <= 0.74 or raise the chin line`
+      `Face box bottom ${(face.y + face.h).toFixed(2)} leaves no room for captions; keep y + h <= ${maxBottom.toFixed(2)} or raise the chin line`
     );
   }
   const leftW = Math.max(0, face.x - GAP - SIDE_MARGIN);

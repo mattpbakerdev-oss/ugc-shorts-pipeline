@@ -4,6 +4,7 @@ import { TalkingHead, calculateMetadata } from "./TalkingHead";
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      {/* Remotion disallows underscores in composition ids; props.id keeps the underscore (data folder name). */}
       <Composition
         id="v2-ai-b"
         component={TalkingHead}
