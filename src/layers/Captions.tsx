@@ -46,6 +46,8 @@ const Group: React.FC<{ group: CaptionGroup; absoluteStart: number; emphasis?: G
             style={{
               display: "inline-block",
               margin: "0 0.4em",
+              paddingLeft: current ? `${(pop - 1) * w.text.length * 0.5}em` : 0,
+              paddingRight: current ? `${(pop - 1) * w.text.length * 0.5}em` : 0,
               color: current ? COLORS.accent : COLORS.text,
               scale: current ? pop : 1,
             }}
