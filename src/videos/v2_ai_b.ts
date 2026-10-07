@@ -1,4 +1,4 @@
-import { bigNumber, iconStack, video } from "../storyboard/dsl";
+import { bigNumber, iconStack, punchList, video } from "../storyboard/dsl";
 
 export default video({
   id: "v2_ai_b",
@@ -10,8 +10,16 @@ export default video({
     { take: 5, title: "Save this" },
   ],
   moments: [
+    { at: 0, sfx: "riser" },
     { on: "already behind", emphasis: "shake" },
+    { on: "three ways", show: bigNumber(3, "WAYS I USE AI"), sfx: "slam", hold: 2.5 },
     { on: "10 hook ideas", show: bigNumber(10, "HOOK IDEAS"), sfx: "slam", hold: "until:pick the best one" },
-    { on: "YouTube, TikTok, Facebook and Instagram", show: iconStack(["yt", "tt", "fb", "ig"]), sfx: "pop", hold: 3 },
+    { on: "pick the best one", show: punchList(["Why nobody watches", "Stop doing this", "You're already behind"], { pick: 2 }), sfx: "tick", hold: 3 },
+    { on: "30 seconds", show: bigNumber(30, "SECONDS"), sfx: "slam", hold: 2.5 },
+    { on: "one idea becomes", show: punchList(["Video", "Carousel", "Caption"]), sfx: "tick", hold: 4 },
+    { on: "rewrite it for each format", emphasis: "pulse" },
+    { on: "YouTube, TikTok, Facebook and Instagram", show: iconStack(["yt", "tt", "fb", "ig"]), sfx: "pop", hold: 4 },
+    { on: "hit approve", show: punchList(["Approve"], { pick: 0 }), sfx: "tick", hold: 2 },
+    { on: "save this", emphasis: "pulse" },
   ],
 });
