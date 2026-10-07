@@ -94,9 +94,17 @@ describe("zonesFor overrides", () => {
   it("throws when graphicsBox overlaps the face", () => {
     expect(() => zonesFor(face, { graphicsBox: { x: 0.4, y: 0.2, w: 0.5, h: 0.3 } })).toThrow(/graphicsBox/);
   });
+  it("throws when graphicsBox is closer than the 0.02 gap to the face", () => {
+    expect(() => zonesFor(face, { graphicsBox: { x: 0.49, y: 0.22, w: 0.45, h: 0.3 } })).toThrow(/graphicsBox/);
+    expect(() => zonesFor(face, { graphicsBox: { x: 0.5, y: 0.22, w: 0.45, h: 0.4 }, captionY: 0.66 })).not.toThrow();
+  });
+  it("throws when graphicsBox overlaps the captions band or top band", () => {
+    expect(() => zonesFor(face, { captionY: 0.66, graphicsBox: { x: 0.5, y: 0.5, w: 0.45, h: 0.3 } })).toThrow(/captions band/);
+    expect(() => zonesFor(face, { captionY: 0.66, graphicsBox: { x: 0.5, y: 0.05, w: 0.45, h: 0.3 } })).toThrow(/top band/);
+  });
   it("exposes a non-overlapping graphicsBox", () => {
     const box = { x: 0.52, y: 0.22, w: 0.43, h: 0.4 };
-    const z = zonesFor(face, { graphicsBox: box });
+    const z = zonesFor(face, { graphicsBox: box, captionY: 0.66 });
     expect(z.graphicsBox).toEqual(box);
     expect(overlaps(z.graphicsBox!, face)).toBe(false);
   });

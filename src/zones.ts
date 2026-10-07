@@ -35,16 +35,24 @@ export const zonesFor = (face: Rect, overrides: ZoneOverrides = {}): Zones => {
       `captionY ${overrides.captionY.toFixed(2)} is above the chin line; it must be >= ${minCaptionsY.toFixed(2)} (face bottom + gap)`
     );
   }
-  if (overrides.graphicsBox && overlapsRect(overrides.graphicsBox, face)) {
-    throw new Error("graphicsBox overlaps the face box; move it clear of the face or shrink it");
-  }
   const captionsY = overrides.captionY ?? minCaptionsY;
+  const topBand: Rect = { x: 0.06, y: 0.03, w: 0.88, h: Math.min(0.19, rawBand) };
+  const captions: Rect = { x: 0.04, y: captionsY, w: 0.92, h: CAPTION_HEIGHT };
+  const gb = overrides.graphicsBox;
+  if (gb) {
+    const grown: Rect = { x: face.x - GAP, y: face.y - GAP, w: face.w + 2 * GAP, h: face.h + 2 * GAP };
+    if (overlapsRect(gb, grown)) {
+      throw new Error(`graphicsBox overlaps or is within ${GAP} of the face box; leave a gap of at least ${GAP}`);
+    }
+    if (overlapsRect(gb, captions)) throw new Error("graphicsBox overlaps the captions band; move it up or move captionY down");
+    if (overlapsRect(gb, topBand)) throw new Error("graphicsBox overlaps the top band (titles/hook); move it down");
+  }
   return {
-    topBand: { x: 0.06, y: 0.03, w: 0.88, h: Math.min(0.19, rawBand) },
+    topBand,
     face,
     left: { x: SIDE_MARGIN, y: face.y, w: leftW, h: face.h },
     right: { x: rightX, y: face.y, w: rightW, h: face.h },
-    captions: { x: 0.04, y: captionsY, w: 0.92, h: CAPTION_HEIGHT },
+    captions,
     platformUi: { x: 0, y: 1 - PLATFORM_UI_HEIGHT, w: 1, h: PLATFORM_UI_HEIGHT },
     full: { x: 0, y: 0, w: 1, h: 1 },
     ...(overrides.graphicsBox ? { graphicsBox: overrides.graphicsBox } : {}),

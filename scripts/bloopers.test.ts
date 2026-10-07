@@ -7,6 +7,14 @@ const mk = (list: [string, number][]): Word[] =>
   list.map(([text, s]) => ({ text, startFrame: s * fps, endFrame: s * fps + 5 }));
 const takes: Take[] = [{ file: "a.mp4", startFrame: 0, endFrame: 60 * fps }];
 
+describe("findRestarts guards", () => {
+  it("rejects non-integer or < 1 minWords", () => {
+    for (const m of [0, -1, 2.5, NaN]) {
+      expect(() => findRestarts([], [], 30, { minWords: m, windowSeconds: 4 })).toThrow(/minWords/);
+    }
+  });
+});
+
 describe("findRestarts", () => {
   it("proposes cutting the first attempt of a repeated 3-gram", () => {
     const words = mk([["So", 0], ["the", 1], ["first", 1.5], ["thing", 2], ["The", 3], ["first", 3.5], ["thing", 4], ["is", 4.5]]);

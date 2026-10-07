@@ -6,8 +6,7 @@ export const BigNumber: React.FC<{ spec: { value: string; label: string }; lengt
   const { enter, exit } = useEnterExit(length);
   const chars = Math.max(2, spec.value.length);
   const fontSize = Math.min(260, (zoneWidth * 0.95 * 2) / chars);
-  const longestWord = Math.max(1, ...spec.label.split(/\s+/).map((w) => w.length));
-  const labelSize = Math.min(56, zoneWidth * 0.26, (zoneWidth * 0.9) / (0.75 * longestWord));
+  const labelSize = Math.min(56, (zoneWidth * 0.95) / (Math.max(1, spec.label.length) * 0.62));
   return (
     <div
       style={{
@@ -25,7 +24,7 @@ export const BigNumber: React.FC<{ spec: { value: string; label: string }; lengt
       }}
     >
       <div style={{ fontSize }}>{spec.value}</div>
-      <div style={{ fontSize: labelSize, color: COLORS.text, WebkitTextStroke: `${labelSize * 0.07}px ${COLORS.ink}`, lineHeight: 1, marginTop: labelSize * 0.18, letterSpacing: "0.02em" }}>
+      <div style={{ fontSize: labelSize, color: COLORS.text, WebkitTextStroke: `${labelSize * 0.07}px ${COLORS.ink}`, paintOrder: "stroke fill", textShadow: `0 ${labelSize * 0.07}px 0 ${COLORS.ink}`, lineHeight: 1.1, marginTop: labelSize * 0.18, letterSpacing: "0.02em" }}>
         {spec.label}
       </div>
     </div>

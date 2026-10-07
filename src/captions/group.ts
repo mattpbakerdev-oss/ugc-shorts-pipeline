@@ -23,7 +23,6 @@ const packLines = (words: Word[]): Word[][] | null => {
 };
 
 const MAX_WORDS = 4;
-const MAX_CHARS = 30;
 const PAUSE_SECONDS = 0.6;
 const HOLD_SECONDS = 1;
 
@@ -39,12 +38,10 @@ export const groupWords = (
 
   const chunks: Word[][] = [];
   let current: Word[] = [];
-  let chars = 0;
   for (const w of words) {
     const prev = current[current.length - 1];
     const wouldBreak =
       current.length >= MAX_WORDS ||
-      chars + w.text.length + (current.length ? 1 : 0) > MAX_CHARS ||
       (prev && w.startFrame - prev.endFrame > pause) ||
       (prev && crossesBoundary(prev, w)) ||
       (prev && /[.!?]$/.test(prev.text)) ||
@@ -52,10 +49,8 @@ export const groupWords = (
     if (current.length && wouldBreak) {
       chunks.push(current);
       current = [];
-      chars = 0;
     }
     current.push(w);
-    chars += w.text.length + (current.length > 1 ? 1 : 0);
   }
   if (current.length) chunks.push(current);
 

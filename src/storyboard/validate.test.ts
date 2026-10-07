@@ -35,9 +35,11 @@ describe("validateStoryboard", () => {
     expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: -1, to: 1 }] })).toThrow(/cut 0.*from/);
     expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: 2, to: 2 }] })).toThrow(/cut 0.*to/);
   });
-  it("rejects captionY outside 0.3 to 0.88", () => {
+  it("rejects captionY outside 0.3 to 0.80", () => {
     expect(() => validateStoryboard({ ...base, captionY: 0.2 })).toThrow(/captionY/);
     expect(() => validateStoryboard({ ...base, captionY: 0.95 })).toThrow(/captionY/);
+    expect(() => validateStoryboard({ ...base, captionY: 0.85 })).toThrow(/captionY/);
+    expect(() => validateStoryboard({ ...base, captionY: 0.8 })).not.toThrow();
     expect(() => validateStoryboard({ ...base, captionY: 0.66 })).not.toThrow();
   });
   it("rejects a graphicsBox outside the frame", () => {

@@ -33,6 +33,7 @@ const main = async () => {
     .sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
   if (files.length === 0) throw new Error(`No numbered takes found in ${sourceDir}`);
 
+  if (!storyboards[id]) console.log(`No storyboard registered for ${id}; no cuts applied.`);
   const cuts = storyboards[id]?.cuts ?? [];
   for (const c of cuts) {
     if (c.take > files.length) throw new Error(`${id}: cut references take ${c.take} but only ${files.length} takes exist`);

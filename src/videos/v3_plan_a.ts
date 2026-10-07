@@ -8,7 +8,7 @@ export default video({
   // Take 2 opens with a false start ("First thing, hmm,") before the clean "the first thing".
   cuts: [{ take: 2, from: 0, to: 2.65 }],
   captionY: 0.66,
-  graphicsBox: { x: 0.48, y: 0.22, w: 0.47, h: 0.40 },
+  graphicsBox: { x: 0.50, y: 0.22, w: 0.45, h: 0.40 },
   sections: [
     { take: 2, title: "1. One topic" },
     { take: 3, title: "2. Engage" },

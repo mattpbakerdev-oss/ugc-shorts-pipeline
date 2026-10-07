@@ -17,6 +17,7 @@ export const findRestartsDetailed = (
   opts: RestartOptions = { minWords: 3, windowSeconds: 4 },
 ): { restarts: Restart[]; skipped: SkippedRestart[] } => {
   const { minWords: n, windowSeconds } = opts;
+  if (!Number.isInteger(n) || n < 1) throw new Error(`minWords must be an integer >= 1, got ${n}`);
   const window = windowSeconds * fps;
   const tokens = words.map((w) => normaliseToken(w.text));
   const takeIndexAt = (frame: number) => takes.findIndex((t) => frame >= t.startFrame && frame < t.endFrame);
@@ -72,7 +73,11 @@ const main = () => {
     args.splice(k, 2);
     return v;
   };
-  const minWords = Math.round(flag("--min-words", 3));
+  const minWords = flag("--min-words", 3);
+  if (!Number.isInteger(minWords) || minWords < 1) {
+    console.error("--min-words needs an integer >= 1");
+    process.exit(1);
+  }
   const windowSeconds = flag("--window", 4);
   const id = args[0];
   if (!id) {
