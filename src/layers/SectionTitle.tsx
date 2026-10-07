@@ -1,6 +1,7 @@
 import { AbsoluteFill, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { COLORS, fonts } from "../theme";
 import { rectToStyle, zonesFor } from "../zones";
+import { HookChips } from "./HookChips";
 import type { ResolvedSection, ResolvedVideo } from "../types";
 
 const Pill: React.FC<{ section: ResolvedSection }> = ({ section }) => {
@@ -42,13 +43,18 @@ export const SectionTitles: React.FC<{ resolved: ResolvedVideo }> = ({ resolved 
   return (
     <AbsoluteFill>
       <div style={{ ...rectToStyle(zone, width, height), display: "flex", alignItems: "center", justifyContent: "center" }}>
-        {resolved.sections.map((s, i) => (
+        {resolved.sections.filter((s) => !s.isHook).map((s) => (
           // premountFor is intentionally omitted: premounted children would occupy layout space in the flex column.
-          <Sequence key={i} name={`Title: ${s.title}`} from={s.startFrame} durationInFrames={s.endFrame - s.startFrame} layout="none">
+          <Sequence key={s.startFrame} name={`Title: ${s.title}`} from={s.startFrame} durationInFrames={s.endFrame - s.startFrame} layout="none">
             <Pill section={s} />
           </Sequence>
         ))}
       </div>
+      {resolved.sections.filter((s) => s.isHook).map((s) => (
+        <Sequence key={s.startFrame} name={`Hook: ${s.title}`} from={s.startFrame} durationInFrames={s.endFrame - s.startFrame} layout="none">
+          <HookChips section={s} zone={zone} />
+        </Sequence>
+      ))}
     </AbsoluteFill>
   );
 };
