@@ -66,7 +66,7 @@ export default video({
 
 Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
-**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `cuts?` (`{ take, from, to }[]`: take-local seconds of `work/<id>/take_NN.mp4` BEFORE cutting; prep removes them), `captionY?` (top of the caption band, 0.3 to 0.80, i.e. 1 - 0.10 platform UI - 0.10 caption height; must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must keep a gap of at least 0.02 from `faceBox`, must not overlap the captions band or the top band, width >= 0.10), `hook` (shown on take 1), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
+**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `cuts?` (`{ take, from, to }[]`: take-local seconds of `work/<id>/take_NN.mp4` BEFORE cutting; prep removes them), `captionY?` (top of the caption band, 0.3 to 0.80, i.e. 1 - 0.10 platform UI - 0.10 caption height; must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must keep a gap of at least 0.02 from `faceBox`, must not overlap the captions band or the top band, width >= 0.10), `hookBox?` (`{ x, y, w, h }` fractions; replaces the top band for the hook chips), `hook` (shown on take 1), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
 
 **Moment** (each needs exactly one of `on` / `at`):
 
@@ -128,7 +128,7 @@ Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeate
 
 ## Setting the face box
 
-There is no face detection. Each video can set `faceBox` as fractions of the frame (`x`, `y`, `w`, `h`); the default is `{ x: 0.22, y: 0.36, w: 0.54, h: 0.42 }`. The box is the face proper (brow to chin, cheek to cheek); hair and shoulders may be overlapped by graphics. `y + h` must be at most 0.78 or the build throws, because captions need room below. Two more guards: `y` must be at least 0.13 (title band) and the wider side zone next to the face must be at least 10% of the frame when the video uses any graphic other than a flash card.
+There is no face detection. Each video can set `faceBox` as fractions of the frame (`x`, `y`, `w`, `h`); the default is `{ x: 0.22, y: 0.36, w: 0.54, h: 0.42 }`. The box is the face proper (brow to chin, cheek to cheek); hair and shoulders may be overlapped by graphics. `y + h` must be at most 0.78 or the build throws, because captions need room below. Two more guards (a high face can instead keep the band for section titles and move the hook with `hookBox`): `y` must be at least 0.13 (title band) and the wider side zone next to the face must be at least 10% of the frame when the video uses any graphic other than a flash card.
 
 Zones derived from it (`src/zones.ts`):
 
@@ -143,7 +143,7 @@ See where they land (Studio: set `showZones` to true in the props panel, or from
 npx remotion still v2-ai-b out/zones.png --frame=100 --props='{"id":"v2_ai_b","showZones":true}'
 ```
 
-Two optional overrides decouple layout from the face box. `captionY` moves the caption band (its top edge as a fraction of frame height, 0.3 to 0.80); it throws if it sits above the chin line (`faceBox.y + h + 0.02`). `graphicsBox` replaces the primary graphics zone (big numbers, counters, punch lists) with an explicit rectangle that must keep a 0.02 gap from the face and stay clear of the captions and top bands; the 10% width rule still applies. Icon stacks stay in the opposite side zone if it is at least 12% wide, otherwise they share the graphics box. Graphics are left-aligned when the box centre is left of the face centre, else right-aligned. With `showZones` the graphics box is drawn in cyan. Example: `captionY: 0.66, graphicsBox: { x: 0.50, y: 0.22, w: 0.45, h: 0.40 }`.
+Two optional overrides decouple layout from the face box. `captionY` moves the caption band (its top edge as a fraction of frame height, 0.3 to 0.80); it throws if it sits above the chin line (`faceBox.y + h + 0.02`). `graphicsBox` replaces the primary graphics zone (big numbers, counters, punch lists) with an explicit rectangle that must keep a 0.02 gap from the face and stay clear of the captions and top bands; the 10% width rule still applies. Icon stacks stay in the opposite side zone if it is at least 12% wide, otherwise they share the graphics box. Graphics are left-aligned when the box centre is left of the face centre, else right-aligned. With `showZones` the graphics box is drawn in cyan. `hookBox` places the hook chips in an explicit rectangle instead of the top band; it must lie inside the frame and keep a 0.02 gap from the face box, but may overlap the top band. Chips size to fit the box (56 px at most, never below 36 px; the build throws naming the hook if they would be smaller, so enlarge the box or shorten the chips). Example: `hookBox: { x: 0.50, y: 0.03, w: 0.48, h: 0.19 }`, `captionY: 0.66, graphicsBox: { x: 0.50, y: 0.22, w: 0.45, h: 0.40 }`.
 
 Adjust `faceBox` in the storyboard and re-check. Big numbers and counters shrink when the chosen side zone is narrow, so a tight face box is worth widening before accepting small graphics.
 

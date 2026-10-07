@@ -3,12 +3,12 @@ import type { Rect, Zones } from "./types";
 
 export const DEFAULT_FACE_BOX: Rect = { x: 0.22, y: 0.36, w: 0.54, h: 0.42 };
 
-const GAP = 0.02;
+export const GAP = 0.02;
 const SIDE_MARGIN = 0.05;
 const CAPTION_HEIGHT = 0.1;
 const PLATFORM_UI_HEIGHT = 0.1;
 
-const overlapsRect = (a: Rect, b: Rect) =>
+export const overlapsRect = (a: Rect, b: Rect) =>
   a.x < b.x + b.w - 1e-9 && a.x + a.w > b.x + 1e-9 && a.y < b.y + b.h - 1e-9 && a.y + a.h > b.y + 1e-9;
 
 export type ZoneOverrides = { captionY?: number; graphicsBox?: Rect };

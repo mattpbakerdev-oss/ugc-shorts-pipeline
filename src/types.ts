@@ -46,13 +46,15 @@ export type Storyboard = {
   /** Top of the caption band as a fraction of frame height (0.3 to 0.88); must sit below the face box. */
   captionY?: number;
   /** Replaces the primary graphics zone; must not overlap the face box. */
-  graphicsBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
+  graphicsBox?: Rect;
+  /** Replaces the top band for the hook chips; keeps a 0.02 gap from the face box, may overlap the top band. */
+  hookBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
 };
 export type ResolvedMoment = { enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName; stack?: boolean };
 export type ResolvedSection = { startFrame: number; endFrame: number; title: string; isHook: boolean };
 export type ResolvedVideo = {
   id: string; fps: number; width: number; height: number; durationInFrames: number;
-  faceBox: Rect; captionY: number; graphicsBox: Rect; takes: Take[]; words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
+  faceBox: Rect; captionY: number; graphicsBox: Rect; hookBox: Rect; takes: Take[]; words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
 };
 
 export const SFX_NAMES: SfxName[] = ["slam", "tick", "pop", "whoosh", "riser", "thud"];

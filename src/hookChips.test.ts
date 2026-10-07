@@ -18,13 +18,19 @@ describe("hookChipFontSize", () => {
   it("keeps 56 in a roomy band", () => {
     expect(hookChipFontSize(365, 3)).toBe(56);
   });
-  it("shrinks so all chips fit a tight band", () => {
-    const band = 211;
-    const fs = hookChipFontSize(band, 3);
-    expect(fs).toBeLessThan(56);
-    for (const n of [1, 2, 3]) {
-      const f = hookChipFontSize(band, n);
-      expect(n * (f * 1.1 + 2 * CHIP_PAD_Y + 8) + (n - 1) * CHIP_GAP).toBeLessThanOrEqual(band + 1e-9);
-    }
+  it("shrinks so chips fit a short band", () => {
+    const band = 190;
+    const f = hookChipFontSize(band, 2);
+    expect(f).toBeLessThan(56);
+    expect(2 * (f * 1.1 + 2 * CHIP_PAD_Y + 8) + CHIP_GAP).toBeLessThanOrEqual(band + 1e-9);
+  });
+  it("is limited by width", () => {
+    const f = hookChipFontSize(365, 3, 518, 12);
+    expect(f).toBeCloseTo((518 - 64 - 56) / (12 * 0.62), 6);
+    expect(f).toBeGreaterThanOrEqual(48);
+  });
+  it("throws naming the hook when below 36px", () => {
+    expect(() => hookChipFontSize(211, 3, 518, 12, "A // B // C")).toThrow(/A \/\/ B \/\/ C.*hookBox/);
+    expect(() => hookChipFontSize(365, 3, 300, 12, "H")).toThrow(/hookBox/);
   });
 });

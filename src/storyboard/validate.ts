@@ -1,3 +1,4 @@
+import { DEFAULT_FACE_BOX, GAP, overlapsRect } from "../zones";
 import { SFX_NAMES, type Moment, type Storyboard } from "../types";
 
 const stringsIn = (m: Moment): string[] => {
@@ -31,6 +32,16 @@ export const validateStoryboard = (sb: Storyboard): void => {
   const g = sb.graphicsBox;
   if (g && !(g.x >= 0 && g.y >= 0 && g.w > 0 && g.h > 0 && g.x + g.w <= 1 + 1e-9 && g.y + g.h <= 1 + 1e-9)) {
     throw new Error(`${sb.id}: graphicsBox must lie inside the frame (x, y >= 0; x + w and y + h <= 1)`);
+  }
+  const h = sb.hookBox;
+  if (h) {
+    if (!(h.x >= 0 && h.y >= 0 && h.w > 0 && h.h > 0 && h.x + h.w <= 1 + 1e-9 && h.y + h.h <= 1 + 1e-9)) {
+      throw new Error(`${sb.id}: hookBox must lie inside the frame (x, y >= 0; x + w and y + h <= 1)`);
+    }
+    const f = sb.faceBox ?? DEFAULT_FACE_BOX;
+    if (overlapsRect(h, { x: f.x - GAP, y: f.y - GAP, w: f.w + 2 * GAP, h: f.h + 2 * GAP })) {
+      throw new Error(`${sb.id}: hookBox overlaps or is within ${GAP} of the face box; move it clear of the face`);
+    }
   }
   sb.moments.forEach((m, i) => {
     const label = `${sb.id}: moment ${i}`;

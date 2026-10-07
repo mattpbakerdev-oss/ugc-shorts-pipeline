@@ -2,12 +2,13 @@ import { bigNumber, counter, ctaSaveShare, flashCard, iconStack, punchList, vide
 
 export default video({
   id: "v3_plan_a",
-  hook: "33 followers // → 1,000 // my 5-step plan",
+  hook: "33 followers // → 1,000 // 5-step plan",
   // Desk framing: face top-left (x 0.04-0.48 incl. hair), chin at ~0.50; right side of frame is empty.
   faceBox: { x: 0.04, y: 0.16, w: 0.44, h: 0.34 },
   // Take 2 opens with a false start ("First thing, hmm,") before the clean "the first thing".
   cuts: [{ take: 2, from: 0, to: 2.65 }],
   captionY: 0.66,
+  hookBox: { x: 0.50, y: 0.03, w: 0.48, h: 0.19 },
   graphicsBox: { x: 0.50, y: 0.22, w: 0.45, h: 0.40 },
   sections: [
     { take: 2, title: "1. One topic" },

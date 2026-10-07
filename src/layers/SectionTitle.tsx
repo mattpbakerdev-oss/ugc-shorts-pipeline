@@ -52,7 +52,7 @@ export const SectionTitles: React.FC<{ resolved: ResolvedVideo; forceHookIn?: bo
       </div>
       {resolved.sections.filter((s) => s.isHook).map((s) => (
         <Sequence key={s.startFrame} name={`Hook: ${s.title}`} from={s.startFrame} durationInFrames={s.endFrame - s.startFrame} layout="none">
-          <HookChips section={s} zone={zone} forceIn={forceHookIn} />
+          <HookChips section={s} zone={resolved.hookBox} forceIn={forceHookIn} />
         </Sequence>
       ))}
     </AbsoluteFill>

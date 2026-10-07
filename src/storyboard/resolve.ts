@@ -111,5 +111,5 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
     if (next && next.enterFrame < m.exitFrame) m.exitFrame = next.enterFrame;
   });
 
-  return { id: sb.id, fps, width, height, durationInFrames, faceBox, captionY: z.captions.y, graphicsBox: primaryRect, takes, words, sections, moments };
+  return { id: sb.id, fps, width, height, durationInFrames, faceBox, captionY: z.captions.y, graphicsBox: primaryRect, hookBox: sb.hookBox ?? z.topBand, takes, words, sections, moments };
 };

@@ -42,6 +42,11 @@ describe("validateStoryboard", () => {
     expect(() => validateStoryboard({ ...base, captionY: 0.8 })).not.toThrow();
     expect(() => validateStoryboard({ ...base, captionY: 0.66 })).not.toThrow();
   });
+  it("validates hookBox", () => {
+    expect(() => validateStoryboard({ ...base, hookBox: { x: 0.8, y: 0.03, w: 0.4, h: 0.19 } })).toThrow(/hookBox/);
+    expect(() => validateStoryboard({ ...base, hookBox: { x: 0.2, y: 0.3, w: 0.4, h: 0.19 } })).toThrow(/hookBox/);
+    expect(() => validateStoryboard({ ...base, faceBox: { x: 0.04, y: 0.16, w: 0.44, h: 0.34 }, hookBox: { x: 0.5, y: 0.03, w: 0.48, h: 0.19 } })).not.toThrow();
+  });
   it("rejects a graphicsBox outside the frame", () => {
     expect(() => validateStoryboard({ ...base, graphicsBox: { x: 0.8, y: 0.2, w: 0.4, h: 0.3 } })).toThrow(/graphicsBox/);
     expect(() => validateStoryboard({ ...base, graphicsBox: { x: 0.5, y: 0.2, w: 0.4, h: 0.3 } })).not.toThrow();

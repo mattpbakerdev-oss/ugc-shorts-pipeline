@@ -11,6 +11,20 @@ export const CHIP_PAD_Y = 14;
 export const CHIP_GAP = 14;
 const CHIP_SHADOW = 8;
 
-/** Largest chip font size (<= 56) at which n stacked chips fit in a band of bandPx pixels. */
-export const hookChipFontSize = (bandPx: number, n: number): number =>
-  Math.max(1, Math.min(CHIP_BASE_FONT, (bandPx - (n - 1) * CHIP_GAP - n * (CHIP_PAD_Y * 2 + CHIP_SHADOW)) / (n * 1.1)));
+export const CHIP_PAD_X = 28;
+export const CHIP_MIN_FONT = 36;
+export const CHIP_STEP_PX = 32;
+
+/**
+ * Largest chip font size (<= 56) at which n stacked, staircased chips fit a box of
+ * boxWidthPx x bandPx. Throws if it would be below 36.
+ */
+export const hookChipFontSize = (bandPx: number, n: number, boxWidthPx = Infinity, longestChipChars = 0, hook = ""): number => {
+  const byHeight = (bandPx - (n - 1) * CHIP_GAP - n * (CHIP_PAD_Y * 2 + CHIP_SHADOW)) / (n * 1.1);
+  const byWidth = longestChipChars > 0 ? (boxWidthPx - (n - 1) * CHIP_STEP_PX - 2 * CHIP_PAD_X) / (longestChipChars * 0.62) : Infinity;
+  const fs = Math.min(CHIP_BASE_FONT, byHeight, byWidth);
+  if (fs < CHIP_MIN_FONT - 1e-9) {
+    throw new Error(`Hook "${hook}" would need ${fs.toFixed(0)}px chips (< ${CHIP_MIN_FONT}); give the storyboard a bigger hookBox or use shorter chips`);
+  }
+  return fs;
+};

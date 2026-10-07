@@ -21,7 +21,9 @@ export const HookChips: React.FC<{ section: ResolvedSection; zone: Rect; forceIn
   const chips = splitHook(section.title);
   const exit = forceIn ? 1 : interpolate(frame, [length - 6, length - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const left = 0.02 * width;
-  const bandFont = hookChipFontSize(zone.h * height, chips.length);
+  const bandFont = hookChipFontSize(zone.h * height, chips.length, zone.w * width, Math.max(...chips.map((c) => c.length)), section.title);
+  const widest = Math.max(...chips.map((c) => c.length * EST_EM_PER_CHAR * bandFont + 2 * 28 * (bandFont / CHIP_BASE_FONT)));
+  const stepPx = chips.length > 1 ? Math.max(0, Math.min(STEP * width, (zone.w * width - left - widest) / (chips.length - 1))) : 0;
   const k = bandFont / CHIP_BASE_FONT;
   const padX = 28 * k;
   const padY = 14 * k;
@@ -30,7 +32,7 @@ export const HookChips: React.FC<{ section: ResolvedSection; zone: Rect; forceIn
     <div style={{ ...rectToStyle(zone, width, height), display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap }}>
       {chips.map((text, i) => {
         const enter = forceIn ? 1 : spring({ frame: frame - i * 8, fps, config: { damping: 10, stiffness: 180 } });
-        const offset = left + i * STEP * width;
+        const offset = left + i * stepPx;
         const maxW = zone.w * width - offset;
         const est = text.length * EST_EM_PER_CHAR * bandFont + 2 * padX;
         const fontSize = est > maxW ? Math.floor(bandFont * (maxW - 2 * padX) / (est - 2 * padX)) : bandFont;
