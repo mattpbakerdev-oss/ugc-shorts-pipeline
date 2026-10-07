@@ -70,16 +70,22 @@ export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
 /**
  * Whisper starts a take's first word at the previous word's end, so the silence of the join
  * (tail pad + head pad) is absorbed into its start. A word that straddles a take boundary is
- * pulled forward to just before where speech really begins (boundary + head pad - 2 frames).
+ * classified by where it ends: a word ending within the head pad belongs to the previous take (end
+ * clamped to the boundary); a longer one opens the next take (start pulled to boundary + head pad - 2).
  */
 export const snapWordsToTakes = (words: Word[], takes: Take[], headPadFrames: number): Word[] =>
   words.map((w) => {
-    let startFrame = w.startFrame;
+    let { startFrame, endFrame } = w;
     for (const t of takes.slice(1)) {
       const b = t.startFrame;
       if (w.startFrame < b && w.endFrame > b) {
-        startFrame = Math.min(b + headPadFrames - 2, w.endFrame - 1);
+        if (w.endFrame <= b + headPadFrames) {
+          // Ends within the new take's head pad: it is the previous take's last word, smeared over the join.
+          endFrame = Math.max(startFrame + 1, b - 1);
+        } else {
+          startFrame = Math.min(b + headPadFrames - 2, w.endFrame - 1);
+        }
       }
     }
-    return startFrame === w.startFrame ? w : { ...w, startFrame };
+    return startFrame === w.startFrame && endFrame === w.endFrame ? w : { ...w, startFrame, endFrame };
   });

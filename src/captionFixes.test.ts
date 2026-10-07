@@ -74,23 +74,30 @@ describe("captionsToWords", () => {
 
 describe("snapWordsToTakes", () => {
   const takes = [
-    { file: "a", startFrame: 0, endFrame: 423 },
-    { file: "b", startFrame: 423, endFrame: 900 },
+    { file: "a", startFrame: 0, endFrame: 153 },
+    { file: "b", startFrame: 153, endFrame: 900 },
   ];
-  it("snaps a word straddling a boundary to boundary + headPad - 2 frames", () => {
-    const out = snapWordsToTakes([{ text: "Repurposing.", startFrame: 410, endFrame: 432 }], takes, 9);
-    expect(out).toEqual([{ text: "Repurposing.", startFrame: 430, endFrame: 432 }]);
+  it("clamps the end of the previous take's last word that smears over the join", () => {
+    const out = snapWordsToTakes([{ text: "it.", startFrame: 139, endFrame: 155 }], takes, 9);
+    expect(out).toEqual([{ text: "it.", startFrame: 139, endFrame: 152 }]);
+  });
+  it("treats a word ending exactly at boundary + headPad as the previous take's", () => {
+    const out = snapWordsToTakes([{ text: "x", startFrame: 140, endFrame: 162 }], takes, 9);
+    expect(out).toEqual([{ text: "x", startFrame: 140, endFrame: 152 }]);
+  });
+  it("snaps the next take's first word to boundary + headPad - 2 frames", () => {
+    const out = snapWordsToTakes([{ text: "Repurposing.", startFrame: 140, endFrame: 187 }], takes, 9);
+    expect(out).toEqual([{ text: "Repurposing.", startFrame: 160, endFrame: 187 }]);
   });
   it("leaves words entirely before or after a boundary alone", () => {
     const ws = [
-      { text: "a", startFrame: 400, endFrame: 423 },
-      { text: "b", startFrame: 423, endFrame: 440 },
+      { text: "a", startFrame: 130, endFrame: 153 },
+      { text: "b", startFrame: 153, endFrame: 170 },
     ];
     expect(snapWordsToTakes(ws, takes, 9)).toEqual(ws);
   });
   it("keeps at least one frame for short straddling words", () => {
-    const out = snapWordsToTakes([{ text: "x", startFrame: 420, endFrame: 425 }], takes, 9);
+    const out = snapWordsToTakes([{ text: "x", startFrame: 152, endFrame: 154 }], takes, 9);
     expect(out[0].endFrame - out[0].startFrame).toBeGreaterThanOrEqual(1);
-    expect(out[0].startFrame).toBe(424);
   });
 });
