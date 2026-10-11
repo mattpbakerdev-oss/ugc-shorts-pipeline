@@ -45,6 +45,16 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{ id: "v4_ai_a", showZones: false, cover: false }}
         calculateMetadata={calculateMetadata}
       />
+      <Composition
+        id="w1-viral"
+        component={TalkingHead}
+        durationInFrames={30}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ id: "w1_viral", showZones: false, cover: false }}
+        calculateMetadata={calculateMetadata}
+      />
     </>
   );
 };

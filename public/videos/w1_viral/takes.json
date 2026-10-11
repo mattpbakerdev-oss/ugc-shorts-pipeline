@@ -1,0 +1,82 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "takes": [
+    {
+      "file": "v00_cold",
+      "startFrame": 0,
+      "endFrame": 14
+    },
+    {
+      "file": "v01_hook_a",
+      "startFrame": 14,
+      "endFrame": 82
+    },
+    {
+      "file": "v02b_money",
+      "startFrame": 82,
+      "endFrame": 112
+    },
+    {
+      "file": "v03_hook_b",
+      "startFrame": 112,
+      "endFrame": 216
+    },
+    {
+      "file": "v04_tip1",
+      "startFrame": 216,
+      "endFrame": 432
+    },
+    {
+      "file": "v05_tip2_a",
+      "startFrame": 432,
+      "endFrame": 761
+    },
+    {
+      "file": "v06_money",
+      "startFrame": 761,
+      "endFrame": 792
+    },
+    {
+      "file": "v07_tip2_b",
+      "startFrame": 792,
+      "endFrame": 824
+    },
+    {
+      "file": "v08_tip3_a",
+      "startFrame": 824,
+      "endFrame": 910
+    },
+    {
+      "file": "v09_morethanyou",
+      "startFrame": 910,
+      "endFrame": 962
+    },
+    {
+      "file": "v10_tip3_b",
+      "startFrame": 962,
+      "endFrame": 1090
+    },
+    {
+      "file": "v11_close_a",
+      "startFrame": 1090,
+      "endFrame": 1244
+    },
+    {
+      "file": "v02_nomoney",
+      "startFrame": 1244,
+      "endFrame": 1273
+    },
+    {
+      "file": "v13b_close_b",
+      "startFrame": 1273,
+      "endFrame": 1330
+    },
+    {
+      "file": "v14_endflash",
+      "startFrame": 1330,
+      "endFrame": 1338
+    }
+  ]
+}

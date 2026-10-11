@@ -5,7 +5,8 @@ import { keptSegments } from "./cuts";
 import { storyboards } from "../src/videos";
 import { parseSilence } from "./silence";
 import { buildTakes } from "./takes";
-import type { TakesFile } from "../src/types";
+import { partsPlan } from "./parts";
+import type { CutawaysFile, TakesFile } from "../src/types";
 
 const FPS = 30;
 const WIDTH = 1080;
@@ -20,28 +21,83 @@ if (!id) {
 }
 
 const sourceDir = path.join(sourceRootArg ?? DEFAULT_SOURCE_ROOT, id);
+const sb = storyboards[id];
 const workDir = path.resolve("work", id);
 const outDir = path.resolve("public", "videos", id);
 
+/** Convert every *.mp4 in the cutaway folder to public/videos/<id>/cutaways/<label>.mp4 (SDR, same encode, untrimmed) and write cutaways.json. */
+const convertCutaways = async (dir: string) => {
+  let names: string[];
+  try {
+    names = (await fs.readdir(dir)).filter((f) => /\.mp4$/i.test(f)).sort();
+  } catch {
+    throw new Error(`${id}: cutaway directory not found: ${dir}`);
+  }
+  if (names.length === 0) throw new Error(`${id}: no .mp4 cutaway clips in ${dir}`);
+  const outCut = path.join(outDir, "cutaways");
+  await fs.mkdir(outCut, { recursive: true });
+  const clips: CutawaysFile["clips"] = {};
+  for (const name of names) {
+    const src = path.join(dir, name);
+    const label = path.basename(name, path.extname(name));
+    const info = await probe(src);
+    const isHdr = info.colorTrc === "arib-std-b67" || info.colorTrc === "smpte2084";
+    const out = path.join(outCut, `${label}.mp4`);
+    await ffmpeg([
+      "-i", src,
+      ...(isHdr ? ["-vf", SDR_FILTER] : ["-vf", "format=yuv420p"]),
+      "-r", String(FPS), "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+      "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
+      "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+      "-movflags", "+faststart", out,
+    ]);
+    const o = await probe(out);
+    clips[label] = { file: `cutaways/${label}.mp4`, durationSeconds: Math.round(o.duration * 1000) / 1000 };
+    console.log(`cutaway ${label}: ${o.duration.toFixed(2)}s${isHdr ? " (HDR→SDR)" : ""}`);
+  }
+  const file: CutawaysFile = { fps: FPS, clips };
+  await fs.writeFile(path.join(outDir, "cutaways.json"), JSON.stringify(file, null, 2));
+  console.log(`Wrote cutaways.json (${names.length} clips)`);
+};
+
 const main = async () => {
+  if (sb?.music?.file) {
+    const musicPath = path.resolve("public", "music", sb.music.file);
+    try {
+      await fs.access(musicPath);
+    } catch {
+      throw new Error(`${id}: music file not found: ${musicPath}`);
+    }
+  }
+
   await fs.mkdir(workDir, { recursive: true });
   await fs.mkdir(outDir, { recursive: true });
 
-  // Numbered takes only: "1 hook_b.mp4", "2 tip1.mp4", ... sorted by the leading number.
-  const files = (await fs.readdir(sourceDir))
-    .filter((f) => /^\d+ .+\.(mp4|mov)$/i.test(f))
-    .sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
-  if (files.length === 0) throw new Error(`No numbered takes found in ${sourceDir}`);
+  // Either the storyboard's explicit ordered `source.parts` (pre-cut clips) or numbered takes: "1 hook_b.mp4", "2 tip1.mp4", ...
+  const plan: { name: string; src: string }[] = sb?.source
+    ? partsPlan(sb.source).map((p) => ({ name: p.label, src: p.absPath }))
+    : (await fs.readdir(sourceDir))
+        .filter((f) => /^\d+ .+\.(mp4|mov)$/i.test(f))
+        .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
+        .map((f) => ({ name: f, src: path.join(sourceDir, f) }));
+  if (plan.length === 0) throw new Error(`No numbered takes found in ${sourceDir}`);
+  for (const p of plan) {
+    try {
+      await fs.access(p.src);
+    } catch {
+      throw new Error(`${id}: source file not found: ${p.src}`);
+    }
+  }
+  const noTrim = sb?.source?.trim === false;
 
-  if (!storyboards[id]) console.log(`No storyboard registered for ${id}; no cuts applied.`);
-  const cuts = storyboards[id]?.cuts ?? [];
+  if (!sb) console.log(`No storyboard registered for ${id}; no cuts applied.`);
+  const cuts = sb?.cuts ?? [];
   for (const c of cuts) {
-    if (c.take > files.length) throw new Error(`${id}: cut references take ${c.take} but only ${files.length} takes exist`);
+    if (c.take > plan.length) throw new Error(`${id}: cut references take ${c.take} but only ${plan.length} takes exist`);
   }
 
   const trimmed: { file: string; frames: number; path: string }[] = [];
-  for (const [i, file] of files.entries()) {
-    const src = path.join(sourceDir, file);
+  for (const [i, { name: file, src }] of plan.entries()) {
     const info = await probe(src);
     if (info.width !== WIDTH || info.height !== HEIGHT) {
       throw new Error(`${file} is ${info.width}x${info.height}; expected ${WIDTH}x${HEIGHT}`);
@@ -51,12 +107,16 @@ const main = async () => {
     }
     const isHdr = info.colorTrc === "arib-std-b67" || info.colorTrc === "smpte2084";
 
-    const { stderr } = await ffmpeg(["-i", src, "-map", "0:a", "-af", "silencedetect=noise=-35dB:d=0.3", "-f", "null", "-"]);
-    // Audio ends ~0.3s before video on iPhone takes; detect trailing silence against the audio length.
-    const audioLen = (await streamDurations(src)).audio ?? info.duration;
-    const parsed = parseSilence(stderr, audioLen);
-    const speechStart = parsed.speechStart;
-    const speechEnd = Math.min(parsed.speechEnd, info.duration);
+    let speechStart = 0;
+    let speechEnd = info.duration;
+    if (!noTrim) {
+      const { stderr } = await ffmpeg(["-i", src, "-map", "0:a", "-af", "silencedetect=noise=-35dB:d=0.3", "-f", "null", "-"]);
+      // Audio ends ~0.3s before video on iPhone takes; detect trailing silence against the audio length.
+      const audioLen = (await streamDurations(src)).audio ?? info.duration;
+      const parsed = parseSilence(stderr, audioLen);
+      speechStart = parsed.speechStart;
+      speechEnd = Math.min(parsed.speechEnd, info.duration);
+    }
 
     const takeSeconds = Math.round((speechEnd - speechStart) * FPS) / FPS;
     const out = path.join(workDir, `take_${String(i + 1).padStart(2, "0")}.mp4`);
@@ -123,6 +183,7 @@ const main = async () => {
     throw new Error(`face.mp4: audio ${fd.audio}s vs video ${fd.video}s differ by more than ${SYNC_TOLERANCE}s`);
   }
 
+  if (sb?.source?.cutawayDir) await convertCutaways(path.join(sb.source.dir, sb.source.cutawayDir));
   const takes: TakesFile = {
     fps: FPS, width: WIDTH, height: HEIGHT,
     takes: buildTakes(trimmed.map(({ file, frames }) => ({ file, frames }))),

@@ -12,3 +12,4 @@ out/
 whisper/
 public/videos/*/audio16k.wav
 final video versions/
+public/videos/*/cutaways/*.mp4

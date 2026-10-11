@@ -52,3 +52,23 @@ describe("validateStoryboard", () => {
     expect(() => validateStoryboard({ ...base, graphicsBox: { x: 0.5, y: 0.2, w: 0.4, h: 0.3 } })).not.toThrow();
   });
 });
+
+describe("validateStoryboard source and music", () => {
+  const b: Storyboard = { id: "t", hook: "Hi", sections: [], moments: [] };
+  it("accepts a valid source and music", () => {
+    expect(() => validateStoryboard({ ...b, source: { dir: "/x", parts: ["a.mp4"], trim: false }, music: { file: "m.mp3", volume: 0.1 } })).not.toThrow();
+  });
+  it("rejects empty source.parts", () => {
+    expect(() => validateStoryboard({ ...b, source: { dir: "/x", parts: [] } })).toThrow(/parts/);
+  });
+  it("rejects non-boolean trim", () => {
+    expect(() => validateStoryboard({ ...b, source: { dir: "/x", parts: ["a.mp4"], trim: "no" as never } })).toThrow(/trim/);
+  });
+  it("rejects music volume outside (0, 1]", () => {
+    expect(() => validateStoryboard({ ...b, music: { file: "m.mp3", volume: 0 } })).toThrow(/volume/);
+    expect(() => validateStoryboard({ ...b, music: { file: "m.mp3", volume: 1.5 } })).toThrow(/volume/);
+  });
+  it("rejects music without a file", () => {
+    expect(() => validateStoryboard({ ...b, music: { file: "" } })).toThrow(/file/);
+  });
+});

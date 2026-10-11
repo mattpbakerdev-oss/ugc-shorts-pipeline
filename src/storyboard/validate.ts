@@ -16,6 +16,15 @@ const stringsIn = (m: Moment): string[] => {
 };
 
 export const validateStoryboard = (sb: Storyboard): void => {
+  if (sb.source) {
+    if (!Array.isArray(sb.source.parts) || sb.source.parts.length === 0) throw new Error(`${sb.id}: source.parts must be a non-empty list`);
+    if (sb.source.trim !== undefined && typeof sb.source.trim !== "boolean") throw new Error(`${sb.id}: source.trim must be a boolean`);
+  }
+  if (sb.music) {
+    if (!sb.music.file) throw new Error(`${sb.id}: music.file is required`);
+    const v = sb.music.volume;
+    if (v !== undefined && !(v > 0 && v <= 1)) throw new Error(`${sb.id}: music.volume ${v} must be in (0, 1]`);
+  }
   sb.sections.forEach((s, i) => {
     if (!Number.isInteger(s.take) || s.take < 1) {
       throw new Error(`${sb.id}: section ${i} has take ${s.take}; takes are numbered from 1`);

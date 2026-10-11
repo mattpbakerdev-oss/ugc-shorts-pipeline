@@ -1,0 +1,53 @@
+{
+  "fps": 30,
+  "clips": {
+    "j_IMG_6156": {
+      "file": "cutaways/j_IMG_6156.mp4",
+      "durationSeconds": 18.133
+    },
+    "j_IMG_6157": {
+      "file": "cutaways/j_IMG_6157.mp4",
+      "durationSeconds": 25.1
+    },
+    "j_IMG_6158": {
+      "file": "cutaways/j_IMG_6158.mp4",
+      "durationSeconds": 13.269
+    },
+    "j_IMG_6159": {
+      "file": "cutaways/j_IMG_6159.mp4",
+      "durationSeconds": 7.701
+    },
+    "j_IMG_6160": {
+      "file": "cutaways/j_IMG_6160.mp4",
+      "durationSeconds": 12.3
+    },
+    "j_IMG_6161": {
+      "file": "cutaways/j_IMG_6161.mp4",
+      "durationSeconds": 63.6
+    },
+    "j_IMG_6162": {
+      "file": "cutaways/j_IMG_6162.mp4",
+      "durationSeconds": 16.5
+    },
+    "j_IMG_6163": {
+      "file": "cutaways/j_IMG_6163.mp4",
+      "durationSeconds": 18.709
+    },
+    "j_IMG_6179": {
+      "file": "cutaways/j_IMG_6179.mp4",
+      "durationSeconds": 0.567
+    },
+    "j_IMG_6190": {
+      "file": "cutaways/j_IMG_6190.mp4",
+      "durationSeconds": 2.581
+    },
+    "j_IMG_6191": {
+      "file": "cutaways/j_IMG_6191.mp4",
+      "durationSeconds": 1.967
+    },
+    "j_IMG_6192": {
+      "file": "cutaways/j_IMG_6192.mp4",
+      "durationSeconds": 7.067
+    }
+  }
+}

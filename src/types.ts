@@ -41,8 +41,13 @@ export type Moment = {
 export type Section = { take: number; title: string };
 /** Remove [from, to) seconds from a take; times are take-local, read off work/<id>/take_NN.mp4. */
 export type Cut = { take: number; from: number; to: number };
+/** Pre-cut clips in play order, instead of scanning numbered takes. Part paths are relative to `dir`; `cutawayDir` too. */
+export type Source = { dir: string; parts: string[]; trim?: boolean; cutawayDir?: string };
+export type Music = { file: string; volume?: number };
+export type CutawaysFile = { fps: number; clips: Record<string, { file: string; durationSeconds: number }> };
 export type Storyboard = {
   id: string; faceBox?: Rect;
+  source?: Source; music?: Music;
   /** Top of the caption band as a fraction of frame height (0.3 to 0.88); must sit below the face box. */
   captionY?: number;
   /** Replaces the primary graphics zone; must not overlap the face box. */
