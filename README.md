@@ -167,3 +167,7 @@ iPhone footage is HLG HDR; it is converted to SDR with the LUT `scripts/lut/hlg_
 - No music track.
 - No screen-recording cutaways.
 - Big numbers and counters get small when the chosen side zone is narrow.
+
+## Music
+
+`public/music/guru-beat.wav` is a synthesised 140 BPM, 8-bar seamless loop (regenerate with `npm run music:guru`); point a storyboard's `music` field at it.

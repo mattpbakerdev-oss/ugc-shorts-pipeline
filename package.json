@@ -36,6 +36,7 @@
     "transcribe": "tsx scripts/transcribe.ts",
     "bloopers": "tsx scripts/bloopers.ts",
     "cover": "tsx scripts/cover.ts",
+    "music:guru": "tsx scripts/make-guru-beat.ts",
     "render": "remotion render"
   }
 }
