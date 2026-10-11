@@ -26,6 +26,8 @@ export default video({
   },
   faceBox: { x: 0.24, y: 0.36, w: 0.5, h: 0.28 },
   graphicsBox: { x: 0.03, y: 0.225, w: 0.5, h: 0.115 },
+  hookTakes: 4,
+  music: { file: "guru-beat.wav", volume: 0.1 },
   hook: "$500,000 // + 1M followers // in ONE week",
   sections: [
     { take: 5, title: "1. Stop being slow" },
@@ -41,7 +43,7 @@ export default video({
     { on: "one million", show: counter(0, 1000000, "FOLLOWERS"), hold: 2 },
     { on: "one week", emphasis: "shake" },
     { on: "slow", cutaway: { file: "j_IMG_6162", from: 8.3, to: 8.9 }, sfx: "record-scratch" },
-    { on: "stop watching", impact: "black", sfx: "bruh" },
+    { at: 6.8, impact: "black", sfx: "bruh" },
     { on: "reply", cutaway: { file: "j_IMG_6163", from: 6.85, to: 7.45 }, sfx: "pop" },
     { on: "other people's", cutaway: { file: "j_IMG_6162", from: 6.0, to: 6.6 }, sfx: "quack" },
     { on: "know who", cutaway: { file: "j_IMG_6161", from: 52.0, to: 52.6 }, sfx: "boomer" },
