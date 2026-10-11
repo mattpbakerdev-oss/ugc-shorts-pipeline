@@ -7,12 +7,11 @@ export const Cutaways: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) =>
   return (
     <>
       {resolved.moments.filter((m) => m.cutaway).map((m, i) => (
-        <Sequence key={i} name={`cutaway ${m.cutaway!.file}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame}>
+        <Sequence key={i} name={`cutaway ${m.cutaway!.file}`} from={m.enterFrame} durationInFrames={m.exitFrame - m.enterFrame} premountFor={fps}>
           <AbsoluteFill style={{ backgroundColor: "#000" }}>
             <Video
               src={staticFile(`videos/${resolved.id}/cutaways/${m.cutaway!.file}.mp4`)}
               trimBefore={m.cutaway!.fromFrame}
-              premountFor={fps}
               muted
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />

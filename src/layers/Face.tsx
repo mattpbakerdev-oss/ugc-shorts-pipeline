@@ -31,17 +31,18 @@ export const Face: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) => {
     }
   }
   const scale = scaleAtFrame(resolved.takes, sourceFrameAt(resolved.freezes, frame)) * crash;
+  // objectFit "cover" assumes 9:16 sources (matches the composition, so nothing is cropped).
   const style = { width: "100%", height: "100%", objectFit: "cover" as const };
 
   return (
     <AbsoluteFill style={{ scale, translate: `${shakeX}px ${shakeY}px`, transformOrigin: `${originX} ${originY}` }}>
       {faceSegments(resolved.freezes, resolved.durationInFrames).map((s, i) => (
-        <Sequence key={i} name={s.kind === "freeze" ? "Face freeze" : "Face"} from={s.from} durationInFrames={s.length} layout="none">
+        <Sequence key={i} name={s.kind === "freeze" ? "Face freeze" : "Face"} from={s.from} durationInFrames={s.length} premountFor={fps}>
           {s.kind === "play" ? (
-            <Video src={src} trimBefore={s.sourceStart} premountFor={fps} style={style} />
+            <Video src={src} trimBefore={s.sourceStart} style={style} />
           ) : (
             <Freeze frame={0}>
-              <Video src={src} trimBefore={s.sourceStart} premountFor={fps} muted style={style} />
+              <Video src={src} trimBefore={s.sourceStart} muted style={style} />
             </Freeze>
           )}
         </Sequence>

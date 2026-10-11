@@ -11,6 +11,8 @@ export const Music: React.FC<{ resolved: ResolvedVideo }> = ({ resolved }) => {
     <Audio
       src={staticFile(`music/${music.file}`)}
       loop
+      // "extend" keeps the ducking curve on the composition timeline across loops (default "repeat" restarts it)
+      loopVolumeCurveBehavior="extend"
       premountFor={fps}
       volume={(f) => musicVolumeAt(f, ducking, music.volume)}
     />
