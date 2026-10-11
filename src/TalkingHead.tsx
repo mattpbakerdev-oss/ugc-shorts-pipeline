@@ -1,7 +1,11 @@
 import { AbsoluteFill, staticFile, type CalculateMetadataFunction } from "remotion";
 import { Captions } from "./layers/Captions";
+import { Cutaways } from "./layers/Cutaways";
 import { Face } from "./layers/Face";
+import { FreezeCaption } from "./layers/FreezeCaption";
 import { Graphics } from "./layers/Graphics";
+import { Impacts } from "./layers/Impacts";
+import { Music } from "./layers/Music";
 import { SectionTitles } from "./layers/SectionTitle";
 import { Sfx } from "./layers/Sfx";
 import { ZonesOverlay } from "./layers/ZonesOverlay";
@@ -46,11 +50,15 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones, c
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <Face resolved={resolved} />
+      {cover ? null : <Cutaways resolved={resolved} />}
+      {cover ? null : <Impacts resolved={resolved} />}
       <SectionTitles resolved={resolved} forceHookIn={cover} />
       {cover ? null : <Graphics resolved={resolved} />}
+      {cover ? null : <FreezeCaption resolved={resolved} />}
       {cover ? null : <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />}
       {showZones ? <ZonesOverlay faceBox={resolved.faceBox} captionY={resolved.captionY} graphicsBox={resolved.graphicsBox} /> : null}
       {cover ? null : <Sfx resolved={resolved} />}
+      {cover ? null : <Music resolved={resolved} />}
     </AbsoluteFill>
   );
 };
