@@ -4,12 +4,15 @@ Turns numbered talking-head takes (iPhone, 9:16) into finished 1080x1920 / 30 fp
 
 Layers, bottom to top (`src/layers/`):
 
-1. **Face**: the takes joined back to back, HLG to SDR through a LUT, with punch-ins and a slow push-in.
-2. **Captions**: Whisper word timings, at most 2 lines of 13 characters each, broken at sentence ends, above the platform UI.
-3. **Section titles and hook chips**: the hook (take 1) is up to three stacked chips (split on `//`, sized to fit the top band); later takes get one title each.
-4. **Graphics**: big numbers, punch lists, icon stacks, counters, flash cards and the save/share CTA, placed in zones around the face.
-5. **SFX**: short sounds fired from storyboard moments.
-6. **Zones overlay** (debug only): shows the face box and zones.
+1. **Face**: the takes joined back to back, HLG to SDR through a LUT, with punch-ins, a slow push-in, crash zooms and freezes (the frame is held while the timeline extends).
+2. **Cutaways** and **impact flashes**: full-frame muted inserts, and 2-frame white/black flashes (see "Comedy / meme edits").
+3. **Section titles and hook chips**: the hook (take 1, or takes 1 to `hookTakes`) is up to three stacked chips (split on `//`, sized to fit the top band); later takes get one title each. Hidden during cutaways.
+4. **Graphics**: big numbers, punch lists, icon stacks, counters, flash cards and the save/share CTA, placed in zones around the face. Hidden during cutaways.
+5. **Freeze captions**: the big chip over a frozen frame.
+6. **Captions**: Whisper word timings, at most 2 lines of 13 characters each, broken at sentence ends, above the platform UI.
+7. **SFX**: short sounds fired from storyboard moments.
+8. **Music**: an optional looping bed that ducks under cutaways, freezes and impacts.
+9. **Zones overlay** (debug only): shows the face box and zones.
 
 Note: any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (root-owned files in `~/.npm`).
 
@@ -60,13 +63,13 @@ export default video({
 });
 ```
 
-`src/videos/v2_ai_b.ts` is a full example; `src/videos/v3_plan_a.ts` is a worked example of a different framing (custom `faceBox`).
+`src/videos/v2_ai_b.ts` is a full example (`src/videos/w1_viral.ts` for the comedy edit); `src/videos/v3_plan_a.ts` is a worked example of a different framing (custom `faceBox`).
 
 ## Storyboard reference
 
 Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
-**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `cuts?` (`{ take, from, to }[]`: take-local seconds of `work/<id>/take_NN.mp4` BEFORE cutting; prep removes them), `captionY?` (top of the caption band, 0.3 to 0.80, i.e. 1 - 0.10 platform UI - 0.10 caption height; must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must keep a gap of at least 0.02 from `faceBox`, must not overlap the captions band or the top band, width >= 0.10), `hookBox?` (`{ x, y, w, h }` fractions; replaces the top band for the hook chips), `hook` (shown on take 1, or takes 1 to `hookTakes` when `hookTakes` is set; sections must then target later takes), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
+**Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `cuts?` (`{ take, from, to }[]`: take-local seconds of `work/<id>/take_NN.mp4` BEFORE cutting; prep removes them), `captionY?` (top of the caption band, 0.3 to 0.80, i.e. 1 - 0.10 platform UI - 0.10 caption height; must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must keep a gap of at least 0.02 from `faceBox`, must not overlap the captions band or the top band, width >= 0.10), `hookBox?` (`{ x, y, w, h }` fractions; replaces the top band for the hook chips), `source?` and `music?` (see "Comedy / meme edits"), `hook` (shown on take 1, or takes 1 to `hookTakes` when `hookTakes` is set; sections must then target later takes), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
 
 **Transcript overrides**: `transcriptOverrides?` (`{ take, text }[]`, takes numbered from 1). When Whisper mishears a short clip, pin its text: `npm run transcribe` replaces that take's words with `text` split on whitespace, spread evenly from the take's first transcribed word start to its last word end (or the whole take minus 0.2 s at each end if Whisper heard nothing), each word at least 2 frames.
 
@@ -78,9 +81,10 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 | `at` | Seconds from the start of the video, instead of `on`. |
 | `show` | A graphic (below). Omit for sfx-only or emphasis moments. |
 | `emphasis` | `"shake"`, `"pulse"` or `"flash"` on the captions at that word. Lasts the matched phrase's duration. |
-| `sfx` | `slam`, `tick`, `pop`, `whoosh`, `riser`, `thud`. |
+| `sfx` | One of the 13 names in the SFX section. A `freeze` moment defaults to `record-scratch`. |
 | `hold` | How long the graphic stays: seconds, or `"until:<phrase>"`. |
 | `stack` | `true` appends the graphic below the previous one in the same zone. |
+| `cutaway`, `crashZoom`, `impact`, `freeze` | Comedy moment kinds; see "Comedy / meme edits". |
 
 **Rules that bite**
 
@@ -124,6 +128,50 @@ Reads `takes.json` and `words.json`, and flags any 3-word phrase that is repeate
 
 `ctaSaveShare()` is a "save and share" call to action: a bookmark tile and a share-arrow tile pop in, then a tick is drawn over each.
 
+## Comedy / meme edits
+
+For a meme-cut edit (crash zooms, impact frames, freeze-frames, hard cutaways, meme SFX, a music bed) from pre-cut clips. `src/videos/w1_viral.ts` is the worked example: 15 hand-trimmed parts, nine cutaways, a crash zoom, impacts, one freeze and the guru beat. Everything below is optional per video.
+
+### `source` mode
+
+```ts
+source: { dir: "/path/to/Batch 16", parts: ["viral/v00_cold.mp4", "viral/v01_hook_a.mp4", /* ... */], trim: false, cutawayDir: "jcuts" }
+```
+
+- `dir`: absolute folder; `parts`: clip paths relative to `dir`, **in play order**. This replaces the numbered-take scan, so there is no `sourceRoot`/`<id>` folder and no `<n> name.mp4` naming. Each part becomes a take, numbered 1..N in list order (so `sections`, `hookTakes`, `cuts` and `transcriptOverrides` all count parts). A part's label is its file name without extension and must be unique. A missing file fails prep.
+- `trim: false` skips silence trimming (default is to trim); audio padding, -16 LUFS normalisation and the A/V guard still apply. `takes.json` lists the parts.
+- `cutawayDir` (relative to `dir`): every `.mp4` in it is converted once (HDR to SDR, same encode, untrimmed) to `public/videos/<id>/cutaways/<clip>.mp4`, and `public/videos/<id>/cutaways.json` records each clip's duration. The converted mp4s are git-ignored; re-run `npm run prep -- <id>` on a fresh checkout.
+- Run `npm run prep -- <id>` and `npm run transcribe -- <id>` as usual.
+
+### Moment kinds
+
+Each moment has exactly one of `on`/`at`, plus optionally `sfx`. The kinds below, together with `show`, are mutually exclusive in one moment, except that `impact` may be combined with `crashZoom`. A violation fails the build.
+
+| Field | Meaning |
+| --- | --- |
+| `cutaway: { file, from, to }` | Muted full-frame insert. `file` is the clip id **without extension** (a name from `cutaways.json`, e.g. `"j_IMG_6162"`); `from`/`to` are seconds **within the clip** (`0 <= from < to`, and `to` must not exceed the clip length). Its length is `to - from`, so `hold` is rejected. The face audio keeps playing underneath. |
+| `crashZoom: { scale?, shake? }` or `true` | 4-frame punch-in on the phrase start, snap back at the phrase end (or at `hold` if given). `scale` default **1.35** (must be > 1), `shake` default **false**. Multiplies with the face's punch-in. |
+| `impact: "white" \| "black"` | 2-frame full-frame flash at the phrase start. May be combined with `crashZoom` (`{ on: "...", crashZoom: true, impact: "white" }`). |
+| `freeze: { seconds, text }` | Holds the face frame at the phrase start for `seconds` (> 0), **extending the video**, and shows `text` (non-empty) as a big chip over it. The face is muted and the voice pauses (it resumes where it left off), and later moments, titles and caption words shift by the freeze length. `sfx` defaults to `record-scratch`. `hold` is rejected. A freeze cannot start inside a cutaway (the build names both moments). |
+
+Notes:
+
+- Titles, hook chips and graphics are hidden while a cutaway is on screen (captions stay). Cutaways never combine with `show`.
+- The matcher still needs moments in spoken order; use `at` for beats that are not words.
+- `bigNumber(value, label, { prefix: "$" })` and `counter(from, to, label, { prefix: "$" })` take an optional prefix, and large values format with thousands separators.
+- `hookTakes` (default 1): the hook chips span takes 1 to `hookTakes`; sections must then target later takes.
+- `transcriptOverrides`: pins a take's text when Whisper mishears a short clip (details in the Storyboard reference). w1_viral uses it for the "I don't have money." part.
+
+### Music
+
+```ts
+music: { file: "guru-beat.wav", volume: 0.1 }   // file in public/music/, volume in (0, 1], default 0.1
+```
+
+The file loops under the whole video; prep fails if it is missing. It ducks to silence (6-frame linear ramps either side) around three kinds of window: every cutaway, every freeze, and every impact (2 frames), each padded by 2 frames and merged when they touch. Voice, SFX and the other moments are never ducked.
+
+`public/music/guru-beat.wav` is a synthesised 140 BPM, 8-bar seamless loop; regenerate it with `npm run music:guru`. It is a placeholder: swap in a licensed track by dropping a file in `public/music/` and pointing `music.file` at it.
+
 ## Cover image
 
 `npm run cover -- <id> [frame]` (e.g. `npm run cover -- v2_ai_b 30`) renders `out/<id>_cover.png` for the platform thumbnail: face and hook chips only, with captions, graphics and SFX hidden and the chips fully in. Default frame is 30. The hook renders larger on covers (box extended down toward 0.60 of the frame height, clear of the face, with chips up to 96 px). It is `remotion still` with props `{"id":"<id>","showZones":false,"cover":true}`; set `cover` in the props panel to preview it in Studio.
@@ -159,15 +207,10 @@ iPhone footage is HLG HDR; it is converted to SDR with the LUT `scripts/lut/hlg_
 
 ## SFX
 
-`public/sfx/*.wav`: `slam`, `tick`, `pop`, `whoosh`, `riser`, `thud`. Licences and sources (Kenney CC0 and remotion.media) are in `public/sfx/LICENSE.md`.
+`public/sfx/*.wav`, 13 names: `slam`, `tick`, `pop`, `whoosh`, `riser`, `thud`, `vine-boom`, `record-scratch`, `bruh`, `xp-error`, `fah`, `boomer`, `quack`. Licences and sources (Kenney CC0 and remotion.media) are in `public/sfx/LICENSE.md`.
 
 ## Known limits
 
 - No automatic face detection; set `faceBox` by hand.
-- No music track.
-- No screen-recording cutaways.
+- Cutaways are muted and full-frame only; there is no beat sync for music.
 - Big numbers and counters get small when the chosen side zone is narrow.
-
-## Music
-
-`public/music/guru-beat.wav` is a synthesised 140 BPM, 8-bar seamless loop (regenerate with `npm run music:guru`); point a storyboard's `music` field at it.
