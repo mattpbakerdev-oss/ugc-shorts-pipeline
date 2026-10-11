@@ -1,5 +1,5 @@
 import { DEFAULT_FACE_BOX, GAP, overlapsRect } from "../zones";
-import { MEME_SFX_NAMES, SFX_NAMES, type Moment, type Storyboard } from "../types";
+import { SFX_NAMES, type Moment, type Storyboard } from "../types";
 
 const stringsIn = (m: Moment): string[] => {
   const out: string[] = [];
@@ -65,7 +65,7 @@ export const validateStoryboard = (sb: Storyboard): void => {
     for (const s of stringsIn(m)) {
       if (/postiz/i.test(s)) throw new Error(`${label} references Postiz ("${s}"); the brand must not be amplified`);
     }
-    const known: string[] = [...SFX_NAMES, ...MEME_SFX_NAMES];
+    const known: string[] = [...SFX_NAMES];
     if (m.sfx && !known.includes(m.sfx)) throw new Error(`${label} uses unknown sfx "${m.sfx}"; known: ${known.join(", ")}`);
     const kinds = (["show", "cutaway", "crashZoom", "impact", "freeze"] as const).filter((k) => m[k] !== undefined);
     const okPair = kinds.length === 2 && kinds.includes("impact") && kinds.includes("crashZoom");

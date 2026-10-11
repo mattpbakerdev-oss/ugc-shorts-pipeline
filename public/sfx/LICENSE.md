@@ -11,3 +11,19 @@
 
 All files converted to 48 kHz stereo WAV and loudness-normalised (`loudnorm=I=-18:TP=-2`).
 The soundcn repository itself is MIT licensed.
+
+## Meme kit (remotion.media)
+
+All seven: remotion.media: "Files may be used royalty-free and without attribution."
+
+| File | Source |
+|---|---|
+| vine-boom.wav | https://remotion.media/vine-boom.wav |
+| record-scratch.wav | https://remotion.media/record-scratch.wav |
+| bruh.wav | https://remotion.media/bruh.wav |
+| xp-error.wav | https://remotion.media/windows-xp-error.wav |
+| fah.wav | https://remotion.media/fah.wav |
+| boomer.wav | https://remotion.media/dramatic-boomer.wav |
+| quack.wav | https://remotion.media/mac-quack.wav |
+
+Converted to 48 kHz stereo WAV, `loudnorm=I=-18:TP=-2`.

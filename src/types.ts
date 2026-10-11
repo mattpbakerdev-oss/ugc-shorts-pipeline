@@ -94,6 +94,4 @@ export type ResolvedVideo = {
 };
 
 /** Sounds whose files exist in public/sfx. */
-export const SFX_NAMES: InstalledSfxName[] = ["slam", "tick", "pop", "whoosh", "riser", "thud"];
-/** Declared sounds; files are added in Task 4. The validator accepts both lists. */
-export const MEME_SFX_NAMES: MemeSfxName[] = ["vine-boom", "record-scratch", "bruh", "xp-error", "fah", "boomer", "quack"];
+export const SFX_NAMES: SfxName[] = ["slam", "tick", "pop", "whoosh", "riser", "thud", "vine-boom", "record-scratch", "bruh", "xp-error", "fah", "boomer", "quack"];
