@@ -1,13 +1,15 @@
 import { DEFAULT_FACE_BOX, GAP, overlapsRect } from "../zones";
-import { SFX_NAMES, type Moment, type Storyboard } from "../types";
+import { MEME_SFX_NAMES, SFX_NAMES, type Moment, type Storyboard } from "../types";
 
 const stringsIn = (m: Moment): string[] => {
   const out: string[] = [];
   if (m.on) out.push(m.on);
   if (typeof m.hold === "string") out.push(m.hold);
+  if (m.freeze) out.push(m.freeze.text);
+  if (m.cutaway) out.push(m.cutaway.file);
   const s = m.show;
   if (s) {
-    if (s.kind === "bigNumber") out.push(s.value, s.label);
+    if (s.kind === "bigNumber") out.push(s.value, s.label, s.prefix ?? "");
     if (s.kind === "punchList") out.push(...s.items);
     if (s.kind === "counter") out.push(s.label);
     if (s.kind === "flashCard") out.push(s.word);
@@ -59,6 +61,26 @@ export const validateStoryboard = (sb: Storyboard): void => {
     for (const s of stringsIn(m)) {
       if (/postiz/i.test(s)) throw new Error(`${label} references Postiz ("${s}"); the brand must not be amplified`);
     }
-    if (m.sfx && !SFX_NAMES.includes(m.sfx)) throw new Error(`${label} uses unknown sfx "${m.sfx}"; known: ${SFX_NAMES.join(", ")}`);
+    const known: string[] = [...SFX_NAMES, ...MEME_SFX_NAMES];
+    if (m.sfx && !known.includes(m.sfx)) throw new Error(`${label} uses unknown sfx "${m.sfx}"; known: ${known.join(", ")}`);
+    const kinds = (["show", "cutaway", "crashZoom", "impact", "freeze"] as const).filter((k) => m[k] !== undefined);
+    const okPair = kinds.length === 2 && kinds.includes("impact") && kinds.includes("crashZoom");
+    if (kinds.length > 1 && !okPair) {
+      throw new Error(`${label} combines ${kinds.join(" + ")}; show, cutaway, crashZoom, impact and freeze are mutually exclusive (only impact + crashZoom may combine)`);
+    }
+    if (m.cutaway) {
+      const c = m.cutaway;
+      if (!c.file) throw new Error(`${label}: cutaway.file is required`);
+      if (!(c.from >= 0) || !(c.to > c.from)) throw new Error(`${label}: cutaway range ${c.from}-${c.to}s must satisfy 0 <= from < to`);
+      if (m.hold !== undefined) throw new Error(`${label}: a cutaway's length is its from/to range; remove "hold"`);
+    }
+    if (m.freeze) {
+      if (!(m.freeze.seconds > 0)) throw new Error(`${label}: freeze.seconds ${m.freeze.seconds} must be > 0`);
+      if (!m.freeze.text || !m.freeze.text.trim()) throw new Error(`${label}: freeze.text must not be empty`);
+      if (m.hold !== undefined) throw new Error(`${label}: a freeze's length is freeze.seconds; remove "hold"`);
+    }
+    if (typeof m.crashZoom === "object" && m.crashZoom.scale !== undefined && !(m.crashZoom.scale > 1)) {
+      throw new Error(`${label}: crashZoom.scale ${m.crashZoom.scale} must be > 1`);
+    }
   });
 };

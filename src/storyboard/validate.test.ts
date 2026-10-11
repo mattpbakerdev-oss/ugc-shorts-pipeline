@@ -72,3 +72,29 @@ describe("validateStoryboard source and music", () => {
     expect(() => validateStoryboard({ ...b, music: { file: "" } })).toThrow(/file/);
   });
 });
+
+describe("meme moment validation", () => {
+  const v = (m: Storyboard["moments"][number]) => () => validateStoryboard({ ...base, moments: [m] });
+  it("accepts each kind and impact + crashZoom", () => {
+    expect(v({ at: 1, cutaway: { file: "a", from: 0, to: 1 } })).not.toThrow();
+    expect(v({ at: 1, crashZoom: true })).not.toThrow();
+    expect(v({ at: 1, impact: "white", crashZoom: { scale: 1.5 } })).not.toThrow();
+    expect(v({ at: 1, freeze: { seconds: 1, text: "WAIT" }, sfx: "record-scratch" })).not.toThrow();
+  });
+  it("rejects mutually exclusive combinations", () => {
+    const show = { kind: "flashCard", word: "x" } as const;
+    expect(v({ at: 1, show, crashZoom: true })).toThrow(/mutually exclusive/);
+    expect(v({ at: 1, cutaway: { file: "a", from: 0, to: 1 }, impact: "white" })).toThrow(/mutually exclusive/);
+    expect(v({ at: 1, freeze: { seconds: 1, text: "x" }, crashZoom: true })).toThrow(/mutually exclusive/);
+    expect(v({ at: 1, show, freeze: { seconds: 1, text: "x" } })).toThrow(/mutually exclusive/);
+  });
+  it("checks cutaway range and freeze values", () => {
+    expect(v({ at: 1, cutaway: { file: "a", from: 1, to: 1 } })).toThrow(/range/);
+    expect(v({ at: 1, cutaway: { file: "a", from: -1, to: 1 } })).toThrow(/range/);
+    expect(v({ at: 1, freeze: { seconds: 0, text: "x" } })).toThrow(/> 0/);
+    expect(v({ at: 1, freeze: { seconds: 1, text: " " } })).toThrow(/empty/);
+  });
+  it("accepts the meme sfx names", () => {
+    for (const s of ["vine-boom", "record-scratch", "bruh", "xp-error", "fah", "boomer", "quack"] as const) expect(v({ at: 1, sfx: s })).not.toThrow();
+  });
+});

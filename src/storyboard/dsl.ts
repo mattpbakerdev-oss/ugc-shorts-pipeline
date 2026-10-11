@@ -6,8 +6,8 @@ export const video = (sb: Storyboard): Storyboard => {
   return sb;
 };
 
-export const bigNumber = (value: string | number, label: string): GraphicSpec =>
-  ({ kind: "bigNumber", value: String(value), label });
+export const bigNumber = (value: string | number, label: string, opts: { prefix?: string } = {}): GraphicSpec =>
+  ({ kind: "bigNumber", value: String(value), label, ...(opts.prefix ? { prefix: opts.prefix } : {}) });
 
 export const punchList = (items: string[], opts: { pick?: number; strike?: number[] } = {}): GraphicSpec =>
   ({ kind: "punchList", items, ...opts });
@@ -16,7 +16,7 @@ export const iconStack = (icons: IconName[]): GraphicSpec => ({ kind: "iconStack
 
 export const ctaSaveShare = (): GraphicSpec => ({ kind: "ctaSaveShare" });
 
-export const counter = (from: number, to: number, label: string): GraphicSpec =>
-  ({ kind: "counter", from, to, label });
+export const counter = (from: number, to: number, label: string, opts: { prefix?: string } = {}): GraphicSpec =>
+  ({ kind: "counter", from, to, label, ...(opts.prefix ? { prefix: opts.prefix } : {}) });
 
 export const flashCard = (word: string): GraphicSpec => ({ kind: "flashCard", word });

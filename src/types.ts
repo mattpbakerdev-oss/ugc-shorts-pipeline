@@ -22,14 +22,17 @@ export type Zones = {
   graphicsBox?: Rect;
 };
 
-export type SfxName = "slam" | "tick" | "pop" | "whoosh" | "riser" | "thud";
+export type InstalledSfxName = "slam" | "tick" | "pop" | "whoosh" | "riser" | "thud";
+/** Declared and validated now; the wav files land in Task 4 of the comedy edit. */
+export type MemeSfxName = "vine-boom" | "record-scratch" | "bruh" | "xp-error" | "fah" | "boomer" | "quack";
+export type SfxName = InstalledSfxName | MemeSfxName;
 export type IconName = "tt" | "ig" | "yt" | "fb";
 export type GraphicSpec =
-  | { kind: "bigNumber"; value: string; label: string }
+  | { kind: "bigNumber"; value: string; label: string; prefix?: string }
   | { kind: "punchList"; items: string[]; pick?: number; strike?: number[] }
   | { kind: "iconStack"; icons: IconName[] }
   | { kind: "ctaSaveShare" }
-  | { kind: "counter"; from: number; to: number; label: string }
+  | { kind: "counter"; from: number; to: number; label: string; prefix?: string }
   | { kind: "flashCard"; word: string };
 export type Emphasis = "shake" | "pulse" | "flash";
 export type Moment = {
@@ -37,6 +40,14 @@ export type Moment = {
   hold?: number | `until:${string}`;
   /** Append below the previous graphic in the same zone instead of replacing it. */
   stack?: boolean;
+  /** Muted full-frame insert of a cutaway clip (id without extension; seconds within the clip). Excludes show/crashZoom/impact/freeze. */
+  cutaway?: { file: string; from: number; to: number };
+  /** 4-frame punch-in on the phrase start, snap back at the phrase end (or `hold`). Default scale 1.35, no shake. */
+  crashZoom?: { scale?: number; shake?: boolean } | true;
+  /** 2-frame full-frame flash at the phrase start. May combine with crashZoom only. */
+  impact?: "white" | "black";
+  /** Freeze the frame for `seconds`, extending the timeline, with a big caption. */
+  freeze?: { seconds: number; text: string };
 };
 export type Section = { take: number; title: string };
 /** Remove [from, to) seconds from a take; times are take-local, read off work/<id>/take_NN.mp4. */
@@ -55,11 +66,32 @@ export type Storyboard = {
   /** Replaces the top band for the hook chips; keeps a 0.02 gap from the face box, may overlap the top band. */
   hookBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
 };
-export type ResolvedMoment = { enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName; stack?: boolean };
+export type ResolvedMoment = {
+  enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName; stack?: boolean;
+  /** fromFrame/toFrame are clip-local (not on the video timeline); enterFrame/exitFrame are. Zone is "full". */
+  cutaway?: { file: string; fromFrame: number; toFrame: number };
+  crashZoom?: { scale: number; shake: boolean };
+  /** Window is enterFrame to enterFrame + IMPACT_FRAMES (exitFrame may be later when combined with crashZoom). */
+  impact?: "white" | "black";
+  /** enterFrame is the frozen frame; exitFrame = enterFrame + lengthFrames. */
+  freeze?: { lengthFrames: number; text: string };
+};
 export type ResolvedSection = { startFrame: number; endFrame: number; title: string; isHook: boolean };
 export type ResolvedVideo = {
   id: string; fps: number; width: number; height: number; durationInFrames: number;
-  faceBox: Rect; captionY: number; graphicsBox: Rect; hookBox: Rect; takes: Take[]; words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
+  faceBox: Rect; captionY: number; graphicsBox: Rect; hookBox: Rect;
+  /** Source-clip timeline (NOT shifted by freezes); map to video frames with `freezes`. */
+  takes: Take[];
+  /** Video timeline, already shifted by freezes. */
+  words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
+  /** Video-timeline frame where each freeze starts (the face is held there), in order. */
+  freezes: { atFrame: number; lengthFrames: number; text: string }[];
+  /** Merged windows (video timeline, +-2 frames) where music should duck. */
+  ducking: { from: number; to: number }[];
+  music?: { file: string; volume: number };
 };
 
-export const SFX_NAMES: SfxName[] = ["slam", "tick", "pop", "whoosh", "riser", "thud"];
+/** Sounds whose files exist in public/sfx. */
+export const SFX_NAMES: InstalledSfxName[] = ["slam", "tick", "pop", "whoosh", "riser", "thud"];
+/** Declared sounds; files are added in Task 4. The validator accepts both lists. */
+export const MEME_SFX_NAMES: MemeSfxName[] = ["vine-boom", "record-scratch", "bruh", "xp-error", "fah", "boomer", "quack"];

@@ -7,7 +7,7 @@ import { Sfx } from "./layers/Sfx";
 import { ZonesOverlay } from "./layers/ZonesOverlay";
 import { resolveStoryboard } from "./storyboard/resolve";
 import { storyboards } from "./videos";
-import type { ResolvedVideo, TakesFile, WordsFile } from "./types";
+import type { CutawaysFile, ResolvedVideo, TakesFile, WordsFile } from "./types";
 
 export type TalkingHeadProps = {
   id: string;
@@ -27,7 +27,10 @@ export const calculateMetadata: CalculateMetadataFunction<TalkingHeadProps> = as
   if (!sb) throw new Error(`No storyboard for "${props.id}" in src/videos/index.ts`);
   const takes = await loadJson<TakesFile>(staticFile(`videos/${props.id}/takes.json`), abortSignal, `Run: npm run prep -- ${props.id}`);
   const words = await loadJson<WordsFile>(staticFile(`videos/${props.id}/words.json`), abortSignal, `Run: npm run transcribe -- ${props.id}`);
-  const resolved = resolveStoryboard(sb, takes, words);
+  const cutaways = sb.source?.cutawayDir
+    ? await loadJson<CutawaysFile>(staticFile(`videos/${props.id}/cutaways.json`), abortSignal, `Run: npm run prep -- ${props.id}`)
+    : undefined;
+  const resolved = resolveStoryboard(sb, takes, words, cutaways);
   return {
     durationInFrames: resolved.durationInFrames,
     width: resolved.width,

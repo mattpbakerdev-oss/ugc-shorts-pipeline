@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { resolveStoryboard } from "./resolve";
 import { bigNumber, ctaSaveShare, iconStack, flashCard } from "./dsl";
-import type { Storyboard, TakesFile, Word, WordsFile } from "../types";
+import type { CutawaysFile, Moment, Storyboard, TakesFile, Word, WordsFile } from "../types";
 import { DEFAULT_FACE_BOX } from "../zones";
 
 const words: Word[] = "not using AI yet hooks ten hook ideas pick the best one".split(" ")
@@ -181,5 +181,72 @@ describe("resolver overrides", () => {
   });
   it("applies the 10% width rule to graphicsBox", () => {
     expect(() => resolveStoryboard({ ...base, graphicsBox: { x: 0.6, y: 0.2, w: 0.08, h: 0.3 }, moments: [{ at: 1, show: bigNumber(3, "X") }] }, takes, wordsFile)).toThrow(/10%/);
+  });
+});
+
+describe("meme moments", () => {
+  const cut: CutawaysFile = { fps: 30, clips: { a: { file: "a.mp4", durationSeconds: 2 }, b: { file: "b.mp4", durationSeconds: 1 } } };
+  const base = { id: "m", hook: "H", sections: [{ take: 2, title: "T" }] };
+  const run = (moments: Moment[], c: CutawaysFile = cut) => resolveStoryboard({ ...base, moments }, takes, wordsFile, c);
+
+  it("resolves crashZoom with defaults, exiting at the phrase end", () => {
+    const m = run([{ on: "ten hook", crashZoom: true }]).moments[0];
+    expect(m.crashZoom).toEqual({ scale: 1.35, shake: false });
+    expect([m.enterFrame, m.exitFrame]).toEqual([50, 68]);
+  });
+  it("honours crashZoom options and hold", () => {
+    const m = run([{ on: "ten", crashZoom: { scale: 1.6, shake: true }, hold: 1 }]).moments[0];
+    expect(m.crashZoom).toEqual({ scale: 1.6, shake: true });
+    expect(m.exitFrame - m.enterFrame).toBe(30);
+  });
+  it("resolves impact as 2 frames, and with crashZoom keeps the zoom exit", () => {
+    const m = run([{ on: "ten", impact: "white" }]).moments[0];
+    expect([m.impact, m.exitFrame - m.enterFrame]).toEqual(["white", 2]);
+    const both = run([{ on: "ten hook", impact: "black", crashZoom: true }]).moments[0];
+    expect([both.impact, both.crashZoom?.scale, both.exitFrame]).toEqual(["black", 1.35, 68]);
+  });
+  it("resolves a cutaway into the full zone with the range as its hold", () => {
+    const m = run([{ at: 1, cutaway: { file: "a", from: 0.5, to: 1.5 } }]).moments[0];
+    expect(m.cutaway).toEqual({ file: "a", fromFrame: 15, toFrame: 45 });
+    expect([m.zone, m.enterFrame, m.exitFrame]).toEqual(["full", 30, 60]);
+  });
+  it("throws for a cutaway past the clip end, an unknown clip, or missing cutaways.json", () => {
+    expect(() => run([{ at: 1, cutaway: { file: "b", from: 0.5, to: 1.5 } }])).toThrow(/only 1s/);
+    expect(() => run([{ at: 1, cutaway: { file: "zzz", from: 0, to: 1 } }])).toThrow(/zzz.*npm run prep/);
+    expect(() => resolveStoryboard({ ...base, moments: [{ at: 1, cutaway: { file: "a", from: 0, to: 1 } }] }, takes, wordsFile)).toThrow(/npm run prep/);
+  });
+  it("expands a freeze: shifts later moments, sections, words and the duration", () => {
+    const r = run([{ on: "using", freeze: { seconds: 1, text: "WAIT" } }, { on: "pick", show: bigNumber(1, "X"), hold: 1 }]);
+    expect(r.freezes).toEqual([{ atFrame: 10, lengthFrames: 30, text: "WAIT" }]);
+    expect(r.moments[0]).toMatchObject({ enterFrame: 10, exitFrame: 40, zone: "full", sfx: "record-scratch" });
+    expect(r.moments[1].enterFrame).toBe(80 + 30);
+    expect(r.durationInFrames).toBe(150);
+    expect(r.sections.map((s) => [s.startFrame, s.endFrame])).toEqual([[0, 70], [70, 150]]);
+    const ai = r.words.find((w) => w.text === "AI")!;
+    expect(ai.startFrame).toBe(20 + 30);
+    expect(r.words[0].startFrame).toBe(0);
+    expect(r.takes[1].startFrame).toBe(40); // source timeline stays unshifted
+  });
+  it("shifts a cutaway that follows a freeze but keeps its clip range", () => {
+    const r = run([{ on: "using", freeze: { seconds: 1, text: "W" } }, { at: 2, cutaway: { file: "a", from: 0, to: 1 } }]);
+    expect([r.moments[1].enterFrame, r.moments[1].exitFrame]).toEqual([90, 120]);
+    expect(r.moments[1].cutaway).toEqual({ file: "a", fromFrame: 0, toFrame: 30 });
+  });
+  it("throws when a freeze starts inside a cutaway", () => {
+    expect(() => run([{ at: 0.5, cutaway: { file: "a", from: 0, to: 1 } }, { on: "AI", freeze: { seconds: 1, text: "W" } }])).toThrow(/overlaps the freeze/);
+  });
+  it("accumulates multiple freezes in frame order", () => {
+    const r = run([{ on: "using", freeze: { seconds: 1, text: "A" } }, { on: "ten", freeze: { seconds: 0.5, text: "B" } }]);
+    expect(r.freezes.map((f) => f.atFrame)).toEqual([10, 50 + 30]);
+    expect(r.durationInFrames).toBe(120 + 45);
+  });
+  it("merges overlapping ducking windows with a 2 frame pad", () => {
+    const r = run([{ at: 1, impact: "white" }, { at: 1.1, cutaway: { file: "a", from: 0, to: 1 } }, { at: 3, impact: "black" }]);
+    expect(r.ducking).toEqual([{ from: 28, to: 65 }, { from: 88, to: 94 }]);
+  });
+  it("ducks around a freeze and passes music through", () => {
+    const r = resolveStoryboard({ ...base, music: { file: "m.mp3" }, moments: [{ on: "using", freeze: { seconds: 1, text: "W" } }] }, takes, wordsFile, cut);
+    expect(r.ducking).toEqual([{ from: 8, to: 42 }]);
+    expect(r.music).toEqual({ file: "m.mp3", volume: 0.1 });
   });
 });
