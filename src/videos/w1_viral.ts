@@ -32,4 +32,5 @@ export default video({
     { take: 12, title: "Comment P" },
   ],
   moments: [],
+  transcriptOverrides: [{ take: 13, text: "I don't have money." }],
 });

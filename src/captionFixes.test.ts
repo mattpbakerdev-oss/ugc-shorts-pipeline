@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFixes, captionsToWords, offsetWords, dropAfterSpeechEnd } from "./captionFixes";
+import { applyFixes, captionsToWords, offsetWords, dropAfterSpeechEnd, spreadWords } from "./captionFixes";
 
 describe("applyFixes", () => {
   it("corrects known mis-hearings case-insensitively, keeping punctuation", () => {
@@ -156,5 +156,60 @@ describe("dropAfterSpeechEnd", () => {
   });
   it("leaves words before speech end unchanged", () => {
     expect(dropAfterSpeechEnd([w("a", 10, 20), w("b", 20, 27)], 25)).toEqual([w("a", 10, 20), w("b", 20, 27)]);
+  });
+});
+
+describe("glued token splitting", () => {
+  it("applies the cloth -> Claude fix", () => {
+    expect(applyFixes("cloth")).toBe("Claude");
+  });
+  it("splits at a lowercase-to-digit boundary, proportionally", () => {
+    expect(captionsToWords([{ text: " make", startMs: 0, endMs: 300 }, { text: "500,000", startMs: 300, endMs: 1200 }], 30)).toEqual([
+      { text: "make", startFrame: 0, endFrame: 13 },
+      { text: "500,000", startFrame: 13, endFrame: 36 },
+    ]);
+  });
+  it("splits a lowercase to single capital letter before punctuation", () => {
+    const out = captionsToWords([{ text: " Comment", startMs: 0, endMs: 600 }, { text: 'P"', startMs: 600, endMs: 900 }], 30);
+    expect(out.map((w) => w.text)).toEqual(["Comment", "P"]);
+    expect(out[0].endFrame).toBe(out[1].startFrame);
+    expect(out.every((w) => w.endFrame > w.startFrame)).toBe(true);
+  });
+  it("does not split ordinary words or camel-case brands", () => {
+    expect(captionsToWords([{ text: " YouTube", startMs: 0, endMs: 300 }, { text: " iPhone", startMs: 300, endMs: 600 }, { text: " 3D", startMs: 600, endMs: 900 }], 30).map((w) => w.text)).toEqual(["YouTube", "iPhone", "3D"]);
+  });
+  it("gives each part at least one frame", () => {
+    const out = captionsToWords([{ text: " a", startMs: 0, endMs: 33 }, { text: "1", startMs: 33, endMs: 66 }], 30);
+    expect(out.map((w) => w.text)).toEqual(["a", "1"]);
+    expect(out.every((w) => w.endFrame - w.startFrame >= 1)).toBe(true);
+  });
+});
+
+describe("stray quotes", () => {
+  it("strips unmatched double quotes but keeps apostrophes", () => {
+    expect(captionsToWords([{ text: " I'll", startMs: 0, endMs: 300 }, { text: ' you."', startMs: 300, endMs: 600 }], 30).map((w) => w.text)).toEqual(["I'll", "you."]);
+  });
+  it("keeps matched quote pairs", () => {
+    expect(captionsToWords([{ text: ' "hi"', startMs: 0, endMs: 300 }], 30).map((w) => w.text)).toEqual(['"hi"']);
+  });
+  it("drops a token that is only a quote", () => {
+    expect(captionsToWords([{ text: " yes", startMs: 0, endMs: 300 }, { text: ' "', startMs: 300, endMs: 400 }], 30).map((w) => w.text)).toEqual(["yes"]);
+  });
+});
+
+describe("spreadWords", () => {
+  it("spreads words evenly across the span", () => {
+    expect(spreadWords("I don't have money.", 0, 80)).toEqual([
+      { text: "I", startFrame: 0, endFrame: 20 },
+      { text: "don't", startFrame: 20, endFrame: 40 },
+      { text: "have", startFrame: 40, endFrame: 60 },
+      { text: "money.", startFrame: 60, endFrame: 80 },
+    ]);
+  });
+  it("gives each word at least 2 frames even when the span is tiny", () => {
+    const out = spreadWords("a b c", 10, 12);
+    expect(out).toHaveLength(3);
+    expect(out.every((w) => w.endFrame - w.startFrame >= 2)).toBe(true);
+    expect(out[0].startFrame).toBe(10);
   });
 });

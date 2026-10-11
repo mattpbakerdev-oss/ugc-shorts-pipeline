@@ -7,7 +7,8 @@ import {
   transcribe,
 } from "@remotion/install-whisper-cpp";
 import { ffmpeg } from "./ffmpeg";
-import { captionsToWords, dropAfterSpeechEnd, offsetWords } from "../src/captionFixes";
+import { captionsToWords, dropAfterSpeechEnd, offsetWords, spreadWords } from "../src/captionFixes";
+import { storyboards } from "../src/videos";
 import type { TakesFile, Word, WordsFile } from "../src/types";
 
 const WHISPER_VERSION = "1.5.5";
@@ -57,6 +58,7 @@ const main = async () => {
 
   // Transcribe each take on its own: whisper smears a word across silence, so on the joined audio
   // a take's first word can start inside the previous take. Per take, words cannot cross a join.
+  const overrides = (storyboards as Record<string, { transcriptOverrides?: { take: number; text: string }[] }>)[id]?.transcriptOverrides ?? [];
   const words: Word[] = [];
   for (const [i, take] of takes.entries()) {
     const wav = path.join(dir, `take_${String(i + 1).padStart(2, "0")}_16k.wav`);
@@ -89,7 +91,18 @@ const main = async () => {
     if (kept.length < takeWords.length) {
       console.log(`take ${i + 1}: dropped after speech end (frame ${speechEndFrame}): ${takeWords.slice(kept.length).map((w) => w.text).join(" ")}`);
     }
-    words.push(...offsetWords(kept, take.startFrame, take.endFrame));
+    const override = overrides.find((o) => o.take === i + 1);
+    if (override) {
+      const len = take.endFrame - take.startFrame;
+      const pad = Math.round(0.2 * fps);
+      const from = kept.length ? kept[0].startFrame : pad;
+      const to = kept.length ? kept[kept.length - 1].endFrame : len - pad;
+      const pinned = spreadWords(override.text, from, Math.max(to, from + 2));
+      console.log(`take ${i + 1}: transcript pinned: ${override.text}`);
+      words.push(...pinned.map((w) => ({ ...w, startFrame: w.startFrame + take.startFrame, endFrame: Math.min(w.endFrame + take.startFrame, take.endFrame) })));
+    } else {
+      words.push(...offsetWords(kept, take.startFrame, take.endFrame));
+    }
     await fs.rm(wav);
   }
   if (words.length === 0) throw new Error("Whisper returned no words");

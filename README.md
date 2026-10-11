@@ -68,6 +68,8 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
 **Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `cuts?` (`{ take, from, to }[]`: take-local seconds of `work/<id>/take_NN.mp4` BEFORE cutting; prep removes them), `captionY?` (top of the caption band, 0.3 to 0.80, i.e. 1 - 0.10 platform UI - 0.10 caption height; must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must keep a gap of at least 0.02 from `faceBox`, must not overlap the captions band or the top band, width >= 0.10), `hookBox?` (`{ x, y, w, h }` fractions; replaces the top band for the hook chips), `hook` (shown on take 1), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
 
+**Transcript overrides**: `transcriptOverrides?` (`{ take, text }[]`, takes numbered from 1). When Whisper mishears a short clip, pin its text: `npm run transcribe` replaces that take's words with `text` split on whitespace, spread evenly from the take's first transcribed word start to its last word end (or the whole take minus 0.2 s at each end if Whisper heard nothing), each word at least 2 frames.
+
 **Moment** (each needs exactly one of `on` / `at`):
 
 | Field | Meaning |

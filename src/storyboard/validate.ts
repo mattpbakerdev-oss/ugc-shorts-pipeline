@@ -37,6 +37,10 @@ export const validateStoryboard = (sb: Storyboard): void => {
     if (!(c.from >= 0)) throw new Error(`${sb.id}: cut ${i} has from ${c.from}; must be >= 0`);
     if (!(c.to > c.from)) throw new Error(`${sb.id}: cut ${i} has to ${c.to} <= from ${c.from}`);
   });
+  (sb.transcriptOverrides ?? []).forEach((o, i) => {
+    if (!Number.isInteger(o.take) || o.take < 1) throw new Error(`${sb.id}: transcriptOverride ${i} has take ${o.take}; takes are numbered from 1`);
+    if (typeof o.text !== "string" || !o.text.trim()) throw new Error(`${sb.id}: transcriptOverride ${i} has empty text`);
+  });
   if (sb.captionY !== undefined && !(sb.captionY >= 0.3 && sb.captionY <= 0.8)) {
     throw new Error(`${sb.id}: captionY ${sb.captionY} must be between 0.3 and 0.80 (leaves room for the caption band above the platform UI)`);
   }

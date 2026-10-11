@@ -65,6 +65,8 @@ export type Storyboard = {
   graphicsBox?: Rect;
   /** Replaces the top band for the hook chips; keeps a 0.02 gap from the face box, may overlap the top band. */
   hookBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
+  /** Pins a take's transcript text when Whisper mishears it (takes numbered from 1). */
+  transcriptOverrides?: { take: number; text: string }[];
 };
 export type ResolvedMoment = {
   enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName; stack?: boolean;

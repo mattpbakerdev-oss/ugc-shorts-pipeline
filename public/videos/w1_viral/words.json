@@ -21,8 +21,13 @@
       "endFrame": 33
     },
     {
-      "text": "make500,000",
+      "text": "make",
       "startFrame": 33,
+      "endFrame": 50
+    },
+    {
+      "text": "500,000",
+      "startFrame": 50,
       "endFrame": 81
     },
     {
@@ -366,7 +371,7 @@
       "endFrame": 518
     },
     {
-      "text": "cloth",
+      "text": "Claude",
       "startFrame": 518,
       "endFrame": 535
     },
@@ -861,43 +866,43 @@
       "endFrame": 1199
     },
     {
-      "text": "make500,000",
+      "text": "make",
       "startFrame": 1199,
+      "endFrame": 1215
+    },
+    {
+      "text": "500,000",
+      "startFrame": 1215,
       "endFrame": 1243
     },
     {
       "text": "I",
       "startFrame": 1245,
-      "endFrame": 1247
+      "endFrame": 1251
     },
     {
-      "text": "made",
-      "startFrame": 1247,
-      "endFrame": 1249
+      "text": "don't",
+      "startFrame": 1251,
+      "endFrame": 1257
     },
     {
-      "text": "more",
-      "startFrame": 1249,
-      "endFrame": 1253
-    },
-    {
-      "text": "money",
-      "startFrame": 1253,
-      "endFrame": 1258
-    },
-    {
-      "text": "than",
-      "startFrame": 1258,
+      "text": "have",
+      "startFrame": 1257,
       "endFrame": 1263
     },
     {
-      "text": "you.",
+      "text": "money.",
       "startFrame": 1263,
       "endFrame": 1269
     },
     {
-      "text": "CommentP\"",
+      "text": "Comment",
       "startFrame": 1273,
+      "endFrame": 1295
+    },
+    {
+      "text": "P",
+      "startFrame": 1295,
       "endFrame": 1301
     },
     {

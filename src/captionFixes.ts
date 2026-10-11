@@ -15,6 +15,7 @@ export const FIXES: Record<string, string> = {
   youtube: "YouTube",
   instagram: "Instagram",
   facebook: "Facebook",
+  cloth: "Claude",
 };
 
 export const applyFixes = (text: string): string => {
@@ -104,13 +105,50 @@ export const captionsToWords = (captions: Caption[], fps: number): Word[] => {
       c = { text: FIXES[hit.join(" ")] + trail, startMs: c.startMs, endMs: last.endMs };
       i += hit.length - 1;
     }
-    const text = applyFixes(c.text.trim());
-    if (!text) continue;
     const startFrame = Math.round((c.startMs / 1000) * fps);
     const endFrame = Math.max(startFrame + 1, Math.round((c.endMs / 1000) * fps));
-    out.push({ text, startFrame, endFrame });
+    for (const part of splitGlued(c.text.trim(), startFrame, endFrame)) {
+      const text = applyFixes(stripStrayQuotes(part.text));
+      if (!text) continue;
+      out.push({ ...part, text });
+    }
   }
   return out;
+};
+
+/** Removes `"` characters that are not part of a matched pair; apostrophes are kept. */
+const stripStrayQuotes = (t: string): string => {
+  const n = (t.match(/"/g) ?? []).length;
+  return n % 2 === 0 ? t : t.replace(/"/g, "");
+};
+
+/**
+ * Splits a merged word at a lowercase-letter to digit boundary ("make500,000") or at a lowercase to
+ * single-capital boundary followed by punctuation/end ("CommentP\""), dividing the frame span in
+ * proportion to character counts (each part at least 1 frame).
+ */
+const splitGlued = (text: string, startFrame: number, endFrame: number): Word[] => {
+  const m = text.match(/^(.*?[a-z])(\d.*)$/) ?? text.match(/^(.*?[a-z])([A-Z](?:[^\p{L}\p{N}].*)?)$/u);
+  if (!m) return [{ text, startFrame, endFrame }];
+  const [, a, b] = m;
+  const total = Math.max(endFrame - startFrame, 2);
+  const cut = Math.min(total - 1, Math.max(1, Math.round((total * a.length) / text.length)));
+  const mid = startFrame + cut;
+  return [
+    { text: a, startFrame, endFrame: mid },
+    ...splitGlued(b, mid, Math.max(endFrame, mid + 1)),
+  ];
+};
+
+/** Spreads whitespace-separated words evenly over [startFrame, endFrame); each word lasts at least 2 frames. */
+export const spreadWords = (text: string, startFrame: number, endFrame: number): Word[] => {
+  const tokens = text.split(/\s+/).filter(Boolean);
+  const step = Math.max(2, (endFrame - startFrame) / Math.max(tokens.length, 1));
+  return tokens.map((t, i) => {
+    const s = Math.round(startFrame + i * step);
+    const e = Math.max(s + 2, Math.round(startFrame + (i + 1) * step));
+    return { text: t, startFrame: s, endFrame: e };
+  });
 };
 
 /**

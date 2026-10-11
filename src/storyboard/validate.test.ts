@@ -27,6 +27,11 @@ describe("validateStoryboard", () => {
   it("rejects a section on take 0", () => {
     expect(() => validateStoryboard({ ...base, sections: [{ take: 0, title: "x" }] })).toThrow(/take/);
   });
+  it("validates transcriptOverrides", () => {
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 2, text: "hi there" }] })).not.toThrow();
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 0, text: "hi" }] })).toThrow(/transcriptOverride 0.*take/);
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, text: "  " }] })).toThrow(/transcriptOverride 0.*empty/);
+  });
   it("accepts valid cuts", () => {
     expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: 0, to: 1.5 }] })).not.toThrow();
   });
