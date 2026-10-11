@@ -3,6 +3,7 @@ import { resolveStoryboard } from "./resolve";
 import { bigNumber, ctaSaveShare, iconStack, flashCard } from "./dsl";
 import type { CutawaysFile, Moment, Storyboard, TakesFile, Word, WordsFile } from "../types";
 import { DEFAULT_FACE_BOX } from "../zones";
+import { groupWords } from "../captions/group";
 
 const words: Word[] = "not using AI yet hooks ten hook ideas pick the best one".split(" ")
   .map((text, i) => ({ text, startFrame: i * 10, endFrame: i * 10 + 8 }));
@@ -239,6 +240,25 @@ describe("meme moments", () => {
     const r = run([{ on: "using", freeze: { seconds: 1, text: "A" } }, { on: "ten", freeze: { seconds: 0.5, text: "B" } }]);
     expect(r.freezes.map((f) => f.atFrame)).toEqual([10, 50 + 30]);
     expect(r.durationInFrames).toBe(120 + 45);
+  });
+  it("shifts takeBoundaries by a preceding freeze so a straddling phrase stays whole", () => {
+    const r = run([{ on: "using", freeze: { seconds: 1, text: "W" } }]);
+    expect(r.takes[1].startFrame).toBe(40);
+    expect(r.takeBoundaries).toEqual([70]);
+    // "hook" starts at source frame 50 (video 80): after the shifted boundary; "best" ... use words around the boundary
+    const w = (text: string, s: number) => ({ text, startFrame: s, endFrame: s + 5 });
+    const straddle = [w("so", 60), w("it", 65), w("goes", 72), w("on", 78)];
+    expect(groupWords(straddle, { fps: 30, takeBoundaries: [40] }).length).toBe(1); // old (unshifted) boundary: no split here
+    expect(groupWords(straddle, { fps: 30, takeBoundaries: [70] }).length).toBe(2); // real boundary splits between it/goes
+    const before = [w("a", 20), w("b", 30), w("c", 45), w("d", 55)];
+    expect(groupWords(before, { fps: 30, takeBoundaries: [40] }).length).toBe(2); // unshifted boundary would split words that precede the real one
+    expect(groupWords(before, { fps: 30, takeBoundaries: r.takeBoundaries }).length).toBe(1);
+  });
+  it("throws when a cutaway would be truncated by the video end", () => {
+    expect(() => run([{ at: 3.5, cutaway: { file: "a", from: 0, to: 1 } }])).toThrow(/moment 0.*past the video end/);
+  });
+  it("throws when two cutaways overlap, naming both", () => {
+    expect(() => run([{ at: 1, cutaway: { file: "a", from: 0, to: 1 } }, { at: 1.5, cutaway: { file: "a", from: 0, to: 0.5 } }])).toThrow(/cutaway moments 0 and 1 overlap/);
   });
   it("merges overlapping ducking windows with a 2 frame pad", () => {
     const r = run([{ at: 1, impact: "white" }, { at: 1.1, cutaway: { file: "a", from: 0, to: 1 } }, { at: 3, impact: "black" }]);

@@ -1,6 +1,8 @@
 import { DEFAULT_FACE_BOX, GAP, overlapsRect } from "../zones";
 import { SFX_NAMES, type Moment, type Storyboard } from "../types";
 
+export const MAX_FREEZE_TEXT = 16;
+
 const stringsIn = (m: Moment): string[] => {
   const out: string[] = [];
   if (m.on) out.push(m.on);
@@ -72,6 +74,9 @@ export const validateStoryboard = (sb: Storyboard): void => {
     if (kinds.length > 1 && !okPair) {
       throw new Error(`${label} combines ${kinds.join(" + ")}; show, cutaway, crashZoom, impact and freeze are mutually exclusive (only impact + crashZoom may combine)`);
     }
+    if (m.impact && m.hold !== undefined && !m.crashZoom) {
+      throw new Error(`${label}: impact with "hold" needs crashZoom (a lone impact is always 2 frames); remove "hold" or add crashZoom`);
+    }
     if (m.cutaway) {
       const c = m.cutaway;
       if (!c.file) throw new Error(`${label}: cutaway.file is required`);
@@ -80,7 +85,9 @@ export const validateStoryboard = (sb: Storyboard): void => {
     }
     if (m.freeze) {
       if (!(m.freeze.seconds > 0)) throw new Error(`${label}: freeze.seconds ${m.freeze.seconds} must be > 0`);
+      if (Math.round(m.freeze.seconds * 30) < 1) throw new Error(`${label}: freeze.seconds ${m.freeze.seconds} rounds to 0 frames; use at least 0.02`);
       if (!m.freeze.text || !m.freeze.text.trim()) throw new Error(`${label}: freeze.text must not be empty`);
+      if (m.freeze.text.length > MAX_FREEZE_TEXT) throw new Error(`${label}: freeze.text "${m.freeze.text}" is ${m.freeze.text.length} characters; the limit is ${MAX_FREEZE_TEXT}`);
       if (m.hold !== undefined) throw new Error(`${label}: a freeze's length is freeze.seconds; remove "hold"`);
     }
     if (typeof m.crashZoom === "object" && m.crashZoom.scale !== undefined && !(m.crashZoom.scale > 1)) {

@@ -85,7 +85,7 @@ export const Captions: React.FC<{ resolved: ResolvedVideo; emphasis: ResolvedMom
   const zone = zonesFor(resolved.faceBox, { captionY: resolved.captionY }).captions;
   const groups = groupWords(resolved.words, {
     fps: resolved.fps,
-    takeBoundaries: resolved.takes.slice(1).map((t) => t.startFrame),
+    takeBoundaries: resolved.takeBoundaries,
   });
   return (
     <AbsoluteFill>

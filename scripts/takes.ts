@@ -11,3 +11,10 @@ export const buildTakes = (items: { file: string; frames: number }[]): Take[] =>
     return take;
   });
 };
+
+/** Throws when a transcriptOverrides entry names a take that does not exist. */
+export const assertOverrideTakes = (id: string, overrides: { take: number }[], takeCount: number): void => {
+  for (const o of overrides) {
+    if (o.take > takeCount) throw new Error(`${id}: transcriptOverrides take ${o.take} but there are only ${takeCount} takes`);
+  }
+};

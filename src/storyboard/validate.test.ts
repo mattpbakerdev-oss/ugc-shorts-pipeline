@@ -102,4 +102,15 @@ describe("meme moment validation", () => {
   it("accepts the meme sfx names", () => {
     for (const s of ["vine-boom", "record-scratch", "bruh", "xp-error", "fah", "boomer", "quack"] as const) expect(v({ at: 1, sfx: s })).not.toThrow();
   });
+  it("rejects impact + hold without crashZoom", () => {
+    expect(() => validateStoryboard({ ...base, moments: [{ at: 1, impact: "white", hold: 1 }] })).toThrow(/crashZoom/);
+    expect(() => validateStoryboard({ ...base, moments: [{ at: 1, impact: "white", crashZoom: true, hold: 1 }] })).not.toThrow();
+  });
+  it("rejects freeze.seconds that rounds to 0 frames", () => {
+    expect(() => validateStoryboard({ ...base, moments: [{ at: 1, freeze: { seconds: 0.01, text: "W" } }] })).toThrow(/0 frames/);
+  });
+  it("rejects freeze text longer than 16 characters", () => {
+    expect(() => validateStoryboard({ ...base, moments: [{ at: 1, freeze: { seconds: 1, text: "A".repeat(17) } }] })).toThrow(/limit is 16/);
+    expect(() => validateStoryboard({ ...base, moments: [{ at: 1, freeze: { seconds: 1, text: "A".repeat(16) } }] })).not.toThrow();
+  });
 });

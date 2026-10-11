@@ -178,9 +178,13 @@ describe("glued token splitting", () => {
   it("does not split ordinary words or camel-case brands", () => {
     expect(captionsToWords([{ text: " YouTube", startMs: 0, endMs: 300 }, { text: " iPhone", startMs: 300, endMs: 600 }, { text: " 3D", startMs: 600, endMs: 900 }], 30).map((w) => w.text)).toEqual(["YouTube", "iPhone", "3D"]);
   });
+  it("leaves mp4, x2, web3 and PhD alone", () => {
+    const one = (t: string) => captionsToWords([{ text: ` ${t}`, startMs: 0, endMs: 600 }], 30).map((w) => w.text);
+    for (const t of ["mp4", "x2", "web3", "PhD"]) expect(one(t)).toEqual([t]);
+  });
   it("gives each part at least one frame", () => {
-    const out = captionsToWords([{ text: " a", startMs: 0, endMs: 33 }, { text: "1", startMs: 33, endMs: 66 }], 30);
-    expect(out.map((w) => w.text)).toEqual(["a", "1"]);
+    const out = captionsToWords([{ text: " make", startMs: 0, endMs: 33 }, { text: "50", startMs: 33, endMs: 66 }], 30);
+    expect(out.map((w) => w.text)).toEqual(["make", "50"]);
     expect(out.every((w) => w.endFrame - w.startFrame >= 1)).toBe(true);
   });
 });

@@ -1,9 +1,10 @@
 import { useCurrentFrame } from "remotion";
-import { inOverlayGap, overlayGaps } from "../storyboard/overlayGaps";
+import { inOverlayGap, overlayGaps, titleGaps } from "../storyboard/overlayGaps";
 import type { ResolvedVideo } from "../types";
 
-/** Renders nothing while a cutaway is on screen. */
-export const HideInGaps: React.FC<{ resolved: ResolvedVideo; children: React.ReactNode }> = ({ resolved, children }) => {
+/** Renders nothing while a cutaway is on screen (and, with `includeFreezes`, during freezes). */
+export const HideInGaps: React.FC<{ resolved: ResolvedVideo; includeFreezes?: boolean; children: React.ReactNode }> = ({ resolved, includeFreezes, children }) => {
   const frame = useCurrentFrame();
-  return inOverlayGap(overlayGaps(resolved.moments), frame) ? null : <>{children}</>;
+  const gaps = includeFreezes ? titleGaps(resolved.moments) : overlayGaps(resolved.moments);
+  return inOverlayGap(gaps, frame) ? null : <>{children}</>;
 };

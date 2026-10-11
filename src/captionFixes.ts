@@ -123,12 +123,12 @@ const stripStrayQuotes = (t: string): string => {
 };
 
 /**
- * Splits a merged word at a lowercase-letter to digit boundary ("make500,000") or at a lowercase to
- * single-capital boundary followed by punctuation/end ("CommentP\""), dividing the frame span in
+ * Splits a merged word at a lowercase-letter to digit boundary ("make500,000": at least 3 lowercase letters before, a digit run of 2+ after) or at a lowercase to
+ * single-capital boundary followed by punctuation ("CommentP\""), dividing the frame span in
  * proportion to character counts (each part at least 1 frame).
  */
 const splitGlued = (text: string, startFrame: number, endFrame: number): Word[] => {
-  const m = text.match(/^(.*?[a-z])(\d.*)$/) ?? text.match(/^(.*?[a-z])([A-Z](?:[^\p{L}\p{N}].*)?)$/u);
+  const m = text.match(/^(.*[a-z]{3})(\d[\d,.]*\d.*)$/) ?? text.match(/^(.*?[a-z])([A-Z][^\p{L}\p{N}].*)$/u);
   if (!m) return [{ text, startFrame, endFrame }];
   const [, a, b] = m;
   const total = Math.max(endFrame - startFrame, 2);

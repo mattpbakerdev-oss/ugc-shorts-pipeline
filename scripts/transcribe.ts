@@ -7,6 +7,7 @@ import {
   transcribe,
 } from "@remotion/install-whisper-cpp";
 import { ffmpeg } from "./ffmpeg";
+import { assertOverrideTakes } from "./takes";
 import { captionsToWords, dropAfterSpeechEnd, offsetWords, spreadWords } from "../src/captionFixes";
 import { storyboards } from "../src/videos";
 import type { TakesFile, Word, WordsFile } from "../src/types";
@@ -59,6 +60,7 @@ const main = async () => {
   // Transcribe each take on its own: whisper smears a word across silence, so on the joined audio
   // a take's first word can start inside the previous take. Per take, words cannot cross a join.
   const overrides = (storyboards as Record<string, { transcriptOverrides?: { take: number; text: string }[] }>)[id]?.transcriptOverrides ?? [];
+  assertOverrideTakes(id, overrides, takes.length);
   const words: Word[] = [];
   for (const [i, take] of takes.entries()) {
     const wav = path.join(dir, `take_${String(i + 1).padStart(2, "0")}_16k.wav`);

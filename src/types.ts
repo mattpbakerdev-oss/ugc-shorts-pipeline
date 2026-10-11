@@ -23,7 +23,6 @@ export type Zones = {
 };
 
 export type InstalledSfxName = "slam" | "tick" | "pop" | "whoosh" | "riser" | "thud";
-/** Declared and validated now; the wav files land in Task 4 of the comedy edit. */
 export type MemeSfxName = "vine-boom" | "record-scratch" | "bruh" | "xp-error" | "fah" | "boomer" | "quack";
 export type SfxName = InstalledSfxName | MemeSfxName;
 export type IconName = "tt" | "ig" | "yt" | "fb";
@@ -59,7 +58,7 @@ export type CutawaysFile = { fps: number; clips: Record<string, { file: string; 
 export type Storyboard = {
   id: string; faceBox?: Rect;
   source?: Source; music?: Music;
-  /** Top of the caption band as a fraction of frame height (0.3 to 0.88); must sit below the face box. */
+  /** Top of the caption band as a fraction of frame height (0.30 to 0.80); must sit below the face box. */
   captionY?: number;
   /** Replaces the primary graphics zone; must not overlap the face box. */
   graphicsBox?: Rect;
@@ -87,6 +86,8 @@ export type ResolvedVideo = {
   faceBox: Rect; captionY: number; graphicsBox: Rect; hookBox: Rect;
   /** Source-clip timeline (NOT shifted by freezes); map to video frames with `freezes`. */
   takes: Take[];
+  /** Video-timeline (freeze-shifted) start frames of takes 2..N, for caption grouping. */
+  takeBoundaries: number[];
   /** Video timeline, already shifted by freezes. */
   words: Word[]; sections: ResolvedSection[]; moments: ResolvedMoment[];
   /** Video-timeline frame where each freeze starts (the face is held there), in order. */

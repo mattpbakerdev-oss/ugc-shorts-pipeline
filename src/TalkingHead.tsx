@@ -53,7 +53,9 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones, c
       <Face resolved={resolved} />
       {cover ? null : <Cutaways resolved={resolved} />}
       {cover ? null : <Impacts resolved={resolved} />}
-      <HideInGaps resolved={resolved}><SectionTitles resolved={resolved} forceHookIn={cover} /></HideInGaps>
+      {cover
+        ? <SectionTitles resolved={resolved} forceHookIn />
+        : <HideInGaps resolved={resolved} includeFreezes><SectionTitles resolved={resolved} forceHookIn={false} /></HideInGaps>}
       {cover ? null : <HideInGaps resolved={resolved}><Graphics resolved={resolved} /></HideInGaps>}
       {cover ? null : <FreezeCaption resolved={resolved} />}
       {cover ? null : <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />}

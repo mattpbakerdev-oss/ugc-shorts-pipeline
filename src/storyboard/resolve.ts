@@ -128,6 +128,9 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
     } else {
       exitFrame = wordEnd ?? enterFrame + Math.round(0.5 * fps);
     }
+    if (cutaway && exitFrame > durationInFrames) {
+      throw new Error(`${sb.id}: moment ${i} (cutaway "${cutaway.file}") would end at frame ${exitFrame}, past the video end (${durationInFrames}); start it earlier or shorten its range`);
+    }
     exitFrame = Math.min(exitFrame, durationInFrames);
     if (exitFrame <= enterFrame) exitFrame = enterFrame + 1;
 
@@ -140,6 +143,15 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
       freeze: m.freeze ? { lengthFrames: Math.round(m.freeze.seconds * fps), text: m.freeze.text } : undefined,
     };
   });
+
+  const cutawayMoments = moments.map((m, idx) => ({ m, idx })).filter((x) => x.m.cutaway).sort((a, b) => a.m.enterFrame - b.m.enterFrame);
+  for (let k = 1; k < cutawayMoments.length; k++) {
+    const a = cutawayMoments[k - 1];
+    const b = cutawayMoments[k];
+    if (b.m.enterFrame < a.m.exitFrame) {
+      throw new Error(`${sb.id}: cutaway moments ${a.idx} and ${b.idx} overlap (frames ${a.m.enterFrame}-${a.m.exitFrame} and ${b.m.enterFrame}-${b.m.exitFrame})`);
+    }
+  }
 
   // A later graphic in the same zone cuts the earlier one short (sfx-only/emphasis moments never do).
   moments.forEach((m, i) => {
@@ -177,6 +189,7 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
       : { ...m, enterFrame: shiftStart(m.enterFrame), exitFrame: shiftEnd(m.exitFrame) },
   );
   const shiftedWords = words.map((w) => ({ ...w, startFrame: shiftStart(w.startFrame), endFrame: shiftEnd(w.endFrame) }));
+  const takeBoundaries = takes.slice(1).map((t) => shiftStart(t.startFrame));
   const shiftedSections = sections.map((x) => ({ ...x, startFrame: shiftStart(x.startFrame), endFrame: shiftEnd(x.endFrame) }));
   const totalFrames = durationInFrames + total;
 
@@ -194,7 +207,7 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
 
   return {
     id: sb.id, fps, width, height, durationInFrames: totalFrames, faceBox, captionY: z.captions.y, graphicsBox: primaryRect, hookBox: sb.hookBox ?? z.topBand,
-    takes, words: shiftedWords, sections: shiftedSections, moments: shiftedMoments, freezes, ducking,
+    takes, takeBoundaries, words: shiftedWords, sections: shiftedSections, moments: shiftedMoments, freezes, ducking,
     music: sb.music ? { file: sb.music.file, volume: sb.music.volume ?? 0.1 } : undefined,
   };
 };
