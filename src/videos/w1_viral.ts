@@ -1,4 +1,4 @@
-import { video } from "../storyboard/dsl";
+import { video, bigNumber, counter, punchList, ctaSaveShare } from "../storyboard/dsl";
 
 export default video({
   id: "w1_viral",
@@ -24,6 +24,8 @@ export default video({
     trim: false,
     cutawayDir: "jcuts",
   },
+  faceBox: { x: 0.24, y: 0.36, w: 0.5, h: 0.28 },
+  graphicsBox: { x: 0.03, y: 0.225, w: 0.5, h: 0.115 },
   hook: "$500,000 // + 1M followers // in ONE week",
   sections: [
     { take: 5, title: "1. Stop being slow" },
@@ -31,6 +33,30 @@ export default video({
     { take: 9, title: "3. Make the robots do it" },
     { take: 12, title: "Comment P" },
   ],
-  moments: [],
+  moments: [
+    { at: 0, sfx: "riser" },
+    { on: "500,000", crashZoom: true, impact: "white", sfx: "slam" },
+    { on: "500,000 Money", show: bigNumber("500,000", "CASH", { prefix: "$" }) },
+    { on: "Money", sfx: "vine-boom" },
+    { on: "one million", show: counter(0, 1000000, "FOLLOWERS"), hold: 2 },
+    { on: "one week", emphasis: "shake" },
+    { on: "slow", cutaway: { file: "j_IMG_6162", from: 8.3, to: 8.9 }, sfx: "record-scratch" },
+    { on: "stop watching", impact: "black", sfx: "bruh" },
+    { on: "reply", cutaway: { file: "j_IMG_6163", from: 6.85, to: 7.45 }, sfx: "pop" },
+    { on: "other people's", cutaway: { file: "j_IMG_6162", from: 6.0, to: 6.6 }, sfx: "quack" },
+    { on: "know who", cutaway: { file: "j_IMG_6161", from: 52.0, to: 52.6 }, sfx: "boomer" },
+    { on: "Claude", cutaway: { file: "j_IMG_6157", from: 13.7, to: 14.3 }, sfx: "xp-error" },
+    { on: "wasting", cutaway: { file: "j_IMG_6158", from: 8.6, to: 9.2 }, sfx: "fah" },
+    { on: "I've got time", cutaway: { file: "j_IMG_6161", from: 33.5, to: 34.1 }, sfx: "bruh" },
+    { on: "MONEY not scheduling", crashZoom: { scale: 1.5 }, sfx: "vine-boom" },
+    { on: "time is money", emphasis: "pulse" },
+    { on: "more money than you", freeze: { seconds: 0.8, text: "WAIT, WHAT?" } },
+    { on: "write captions", cutaway: { file: "j_IMG_6163", from: 10.0, to: 10.6 }, sfx: "pop" },
+    { on: "all done", cutaway: { file: "j_IMG_6157", from: 3.0, to: 3.5 }, sfx: "tick" },
+    { on: "500,000", show: bigNumber("500,000", "CASH", { prefix: "$" }) },
+    { on: "I don't have money", impact: "white", sfx: "xp-error" },
+    { on: "Comment P", show: punchList(["Comment P"], { pick: 0 }), sfx: "pop" },
+    { on: "Comment P and", show: ctaSaveShare(), stack: true },
+  ],
   transcriptOverrides: [{ take: 13, text: "I don't have money." }],
 });
