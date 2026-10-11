@@ -53,10 +53,19 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
       throw new Error(`${sb.id}: section "${s.title}" uses take ${s.take} but there are only ${takes.length} takes`);
     }
   }
+  const hookTakes = sb.hookTakes ?? 1;
+  if (!Number.isInteger(hookTakes) || hookTakes < 1 || hookTakes > takes.length) {
+    throw new Error(`${sb.id}: hookTakes ${hookTakes} must be an integer between 1 and the number of takes (${takes.length})`);
+  }
+  for (const s of sb.sections) {
+    if (s.take <= hookTakes) throw new Error(`${sb.id}: section "${s.title}" targets take ${s.take}, which is covered by the hook (hookTakes ${hookTakes})`);
+  }
   const sections: ResolvedSection[] = takes.map((t, i) => {
+    if (i === 0) return { startFrame: t.startFrame, endFrame: takes[hookTakes - 1].endFrame, title: sb.hook, isHook: true };
+    if (i < hookTakes) return null;
     const s = sb.sections.find((x) => x.take === i + 1);
-    return { startFrame: t.startFrame, endFrame: t.endFrame, title: i === 0 ? sb.hook : s?.title ?? "", isHook: i === 0 };
-  }).filter((s) => s.title !== "");
+    return { startFrame: t.startFrame, endFrame: t.endFrame, title: s?.title ?? "", isHook: false };
+  }).filter((s): s is ResolvedSection => s !== null && s.title !== "");
 
   let cursor = 0;
   let lastPhrase = "";

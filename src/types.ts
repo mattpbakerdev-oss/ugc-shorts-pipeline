@@ -64,7 +64,10 @@ export type Storyboard = {
   /** Replaces the primary graphics zone; must not overlap the face box. */
   graphicsBox?: Rect;
   /** Replaces the top band for the hook chips; keeps a 0.02 gap from the face box, may overlap the top band. */
-  hookBox?: Rect; hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
+  hookBox?: Rect;
+  /** Number of takes the hook chips span (default 1). Sections may only target takes after it. */
+  hookTakes?: number;
+  hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
   /** Pins a take's transcript text when Whisper mishears it (takes numbered from 1). */
   transcriptOverrides?: { take: number; text: string }[];
 };

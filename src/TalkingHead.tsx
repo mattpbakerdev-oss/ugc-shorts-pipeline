@@ -3,6 +3,7 @@ import { Captions } from "./layers/Captions";
 import { Cutaways } from "./layers/Cutaways";
 import { Face } from "./layers/Face";
 import { FreezeCaption } from "./layers/FreezeCaption";
+import { HideInGaps } from "./layers/HideInGaps";
 import { Graphics } from "./layers/Graphics";
 import { Impacts } from "./layers/Impacts";
 import { Music } from "./layers/Music";
@@ -52,8 +53,8 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ resolved, showZones, c
       <Face resolved={resolved} />
       {cover ? null : <Cutaways resolved={resolved} />}
       {cover ? null : <Impacts resolved={resolved} />}
-      <SectionTitles resolved={resolved} forceHookIn={cover} />
-      {cover ? null : <Graphics resolved={resolved} />}
+      <HideInGaps resolved={resolved}><SectionTitles resolved={resolved} forceHookIn={cover} /></HideInGaps>
+      {cover ? null : <HideInGaps resolved={resolved}><Graphics resolved={resolved} /></HideInGaps>}
       {cover ? null : <FreezeCaption resolved={resolved} />}
       {cover ? null : <Captions resolved={resolved} emphasis={resolved.moments.filter((m) => m.emphasis)} />}
       {showZones ? <ZonesOverlay faceBox={resolved.faceBox} captionY={resolved.captionY} graphicsBox={resolved.graphicsBox} /> : null}

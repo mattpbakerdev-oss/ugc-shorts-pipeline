@@ -250,3 +250,18 @@ describe("meme moments", () => {
     expect(r.music).toEqual({ file: "m.mp3", volume: 0.1 });
   });
 });
+
+describe("hookTakes", () => {
+  const t3: TakesFile = { fps: 30, width: 1080, height: 1920, takes: [
+    { file: "1", startFrame: 0, endFrame: 40 }, { file: "2", startFrame: 40, endFrame: 80 },
+    { file: "3", startFrame: 80, endFrame: 100 }, { file: "4", startFrame: 100, endFrame: 120 }, { file: "5", startFrame: 120, endFrame: 140 } ] };
+  const w: WordsFile = { words: [{ text: "hi", startFrame: 0, endFrame: 5 }] };
+  it("spans the hook across takes", () => {
+    const r = resolveStoryboard({ id: "h", hook: "H", hookTakes: 4, sections: [{ take: 5, title: "T" }], moments: [] }, t3, w);
+    expect(r.sections[0]).toMatchObject({ isHook: true, startFrame: 0, endFrame: 120 });
+    expect(r.sections[1]).toMatchObject({ isHook: false, startFrame: 120, title: "T" });
+  });
+  it("throws when a section targets a hook take", () => {
+    expect(() => resolveStoryboard({ id: "h", hook: "H", hookTakes: 4, sections: [{ take: 2, title: "T" }], moments: [] }, t3, w)).toThrow(/take 2/);
+  });
+});
