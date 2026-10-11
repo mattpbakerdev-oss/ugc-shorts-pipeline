@@ -156,7 +156,8 @@ Each moment has exactly one of `on`/`at`, plus optionally `sfx`. The kinds below
 
 Notes:
 
-- Titles, hook chips and graphics are hidden while a cutaway is on screen (captions stay). Cutaways never combine with `show`.
+- Titles, hook chips and graphics are hidden while a cutaway is on screen; titles and hook chips are also hidden during freezes (the freeze chip owns the top band). Captions stay. Cutaways never combine with `show`, render `objectFit: cover`, must fit before the video end, and must not overlap each other. `freeze.text` is at most 16 characters.
+- `at:` seconds and `cuts` times are on the source (pre-freeze) timeline; freezes shift everything after them at render time.
 - The matcher still needs moments in spoken order; use `at` for beats that are not words.
 - `bigNumber(value, label, { prefix: "$" })` and `counter(from, to, label, { prefix: "$" })` take an optional prefix, and large values format with thousands separators.
 - `hookTakes` (default 1): the hook chips span takes 1 to `hookTakes`; sections must then target later takes.
@@ -170,7 +171,7 @@ music: { file: "guru-beat.wav", volume: 0.1 }   // file in public/music/, volume
 
 The file loops under the whole video; prep fails if it is missing. It ducks to silence (6-frame linear ramps either side) around three kinds of window: every cutaway, every freeze, and every impact (2 frames), each padded by 2 frames and merged when they touch. Voice, SFX and the other moments are never ducked.
 
-`public/music/guru-beat.wav` is a synthesised 140 BPM, 8-bar seamless loop; regenerate it with `npm run music:guru`. It is a placeholder: swap in a licensed track by dropping a file in `public/music/` and pointing `music.file` at it.
+`public/music/guru-beat.wav` is a synthesised 140 BPM, 8-bar seamless loop; regenerate it with `npm run music:guru`. The committed file had a separate `loudnorm` ffmpeg pass applied after `music:guru` (the script does not do it), so a regenerated file will be quieter until you re-run that pass. It is a placeholder: swap in a licensed track by dropping a file in `public/music/` and pointing `music.file` at it.
 
 ## Cover image
 
