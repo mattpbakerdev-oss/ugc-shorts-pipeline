@@ -2,6 +2,14 @@
 
 Turns numbered talking-head takes (iPhone, 9:16) into finished 1080x1920 / 30 fps shorts: silence trimmed, colour-corrected, captioned, with section titles, graphics and sound effects timed to what you say. You write a small storyboard per video; everything else is automatic. Built on Remotion 4.0.534.
 
+## Why this exists
+
+Paid short-form work for a SaaS client: a steady run of talking-head shorts for YouTube and TikTok. Editing each one by hand (trimming silence, captions, titles, graphics, sound) didn't scale past the first few. So each video is now a small storyboard, and everything else is automatic.
+
+Output: [Short 1](https://youtube.com/shorts/S4q-Ie9Scps), [Short 2](https://youtube.com/shorts/p9sebfN-z20), [TikTok](https://www.tiktok.com/@postizwithmatt/video/7694395558743510274)
+
+Built with Claude Code from a design spec and an implementation plan; see `docs/superpowers`.
+
 Layers, bottom to top (`src/layers/`):
 
 1. **Face**: the takes joined back to back, HLG to SDR through a LUT, with punch-ins, a slow push-in, crash zooms, camera shakes and freezes (the frame is held while the timeline extends).
