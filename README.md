@@ -22,8 +22,6 @@ Layers, bottom to top (`src/layers/`):
 8. **Music**: an optional looping bed that ducks under cutaways, freezes and impacts.
 9. **Zones overlay** (debug only): shows the face box and zones.
 
-Note: any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (root-owned files in `~/.npm`).
-
 ## New video, start to finish
 
 1. Put the takes in a folder named after the video id, e.g. `<sourceRoot>/v4_topic/`, named `<n> <name>.mp4` (`1 hook.mp4`, `2 tip1.mp4`, ...). Take 1 is the hook. Ids use underscores. Any 9:16 portrait source at 30 fps or more is accepted (`scripts/source.ts`): 4K / 60 fps iPhone clips, stored landscape with a rotation tag, are scaled to 1080x1920 at 30 fps in prep. Only the first video and first audio stream are used, so the spatial-audio (APAC) track newer iPhones add is ignored.
@@ -31,7 +29,7 @@ Note: any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (r
    ```
    npm run prep -- v4_topic [sourceRoot]
    ```
-   Without `sourceRoot` it uses the ugc-renderer reposts folder (`/Users/mattdev/Projects/ugc-renderer/reposts/7 Oct - v2 and v3 originals`).
+   Without `sourceRoot` it uses the folder set in `scripts/prep.ts`.
 3. Transcribe (writes `public/videos/<id>/words.json`). Each take is transcribed separately and offset onto the joined timeline, because whisper stretches a word over silence and, on the joined audio, would start a take's first word inside the previous take. When `work/<id>/take_NN.mp4` exists (it does after prep), Whisper hears that **uncut** take and the word times are mapped through the storyboard's `cuts` afterwards (`mapWordsThroughKept` in `scripts/cuts.ts`): Whisper aligns words badly when a clip starts or ends tight on speech, which is exactly the air the cuts remove. Words inside a removed range (a false start, a click) are dropped and logged; a word stretched into a cut is clamped to it. On a checkout without `work/`, the cut take is sliced from `face.mp4` instead. Words Whisper places more than a frame after a take's measured speech end (trailing silence below -35 dB) are dropped as hallucinations; a word starting at the boundary is kept (Whisper stretches the previous word up to the speech end and starts the real last word there) and clamped to 2 frames past it. The first run downloads whisper.cpp 1.5.5 and the medium.en model (about 1.5 GB) into `./whisper/`:
    ```
    npm run transcribe -- v4_topic
@@ -224,3 +222,7 @@ iPhone footage is HLG HDR; it is converted to SDR with the LUT `scripts/lut/hlg_
 - No automatic face detection; set `faceBox` by hand.
 - Cutaways are muted and full-frame only; there is no beat sync for music.
 - Big numbers and counters get small when the chosen side zone is narrow.
+
+## Local notes
+
+- Any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (root-owned files in `~/.npm`).
