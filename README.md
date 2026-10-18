@@ -211,7 +211,7 @@ Words come from Whisper (`public/videos/<id>/words.json`). Captions are fixed at
 
 ## Colour
 
-iPhone footage is HLG HDR; it is converted to SDR with the LUT `scripts/lut/hlg_to_sdr.cube`, applied in prep. The LUT route was chosen because the installed ffmpeg lacks `zscale`/`tonemap`. Background and rationale: the "Colour: iPhone HDR footage" section of the old ugc-renderer README (`/Users/mattdev/Projects/ugc-renderer/README.md`). To change the look, replace that `.cube` file and re-run `npm run prep` for the videos you want.
+iPhones record HLG HDR (BT.2020). Compositing standard-colour graphics onto that, or letting the player tone-map it, gives washed-out or over-saturated skin, so every take is converted to BT.709 SDR in prep before Remotion draws anything on it. The conversion uses the LUT `scripts/lut/hlg_to_sdr.cube`, chosen because the installed ffmpeg lacks `zscale`/`tonemap`; the LUT was fitted numerically against how the phone itself displays the footage. The chain (`SDR_FILTER` in `scripts/ffmpeg.ts`) converts to 16-bit full-range RGB, applies the LUT, and goes back to tv-range yuv420p. One thing that went wrong before and must stay fixed: the BT.709 tags are stamped inside the filter chain with `setparams` (prep also sets them on the command line), because `-color_trc` on the command line alone was ignored by ffmpeg 9 and the next stage converted the file a second time (blown whites, magenta skin). Remotion then renders the composite in RGB and encodes its own yuv420p output. To change the look, replace the `.cube` file and re-run `npm run prep` for the videos you want.
 
 ## SFX
 
