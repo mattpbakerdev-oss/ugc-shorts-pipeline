@@ -41,7 +41,13 @@ export const validateStoryboard = (sb: Storyboard): void => {
   });
   (sb.transcriptOverrides ?? []).forEach((o, i) => {
     if (!Number.isInteger(o.take) || o.take < 1) throw new Error(`${sb.id}: transcriptOverride ${i} has take ${o.take}; takes are numbered from 1`);
-    if (typeof o.text !== "string" || !o.text.trim()) throw new Error(`${sb.id}: transcriptOverride ${i} has empty text`);
+    const hasText = typeof o.text === "string";
+    const hasDrop = Array.isArray(o.drop) && o.drop.length > 0;
+    const hasReplace = !!o.replace && Object.keys(o.replace).length > 0;
+    if (hasText && (hasDrop || hasReplace)) throw new Error(`${sb.id}: transcriptOverride ${i} has text as well as drop/replace; use one, not both`);
+    if (!hasText && !hasDrop && !hasReplace) throw new Error(`${sb.id}: transcriptOverride ${i} needs text or drop/replace`);
+    if (hasText && !o.text!.trim()) throw new Error(`${sb.id}: transcriptOverride ${i} has empty text`);
+    if (hasDrop && o.drop!.some((d) => !d.trim())) throw new Error(`${sb.id}: transcriptOverride ${i} has an empty drop entry`);
   });
   if (sb.captionY !== undefined && !(sb.captionY >= 0.3 && sb.captionY <= 0.8)) {
     throw new Error(`${sb.id}: captionY ${sb.captionY} must be between 0.3 and 0.80 (leaves room for the caption band above the platform UI)`);
@@ -69,10 +75,18 @@ export const validateStoryboard = (sb: Storyboard): void => {
     }
     const known: string[] = [...SFX_NAMES];
     if (m.sfx && !known.includes(m.sfx)) throw new Error(`${label} uses unknown sfx "${m.sfx}"; known: ${known.join(", ")}`);
-    const kinds = (["show", "cutaway", "crashZoom", "impact", "freeze"] as const).filter((k) => m[k] !== undefined);
-    const okPair = kinds.length === 2 && kinds.includes("impact") && kinds.includes("crashZoom");
+    const kinds = (["show", "cutaway", "crashZoom", "impact", "freeze", "cameraShake"] as const).filter((k) => m[k] !== undefined);
+    const okPair = kinds.length === 2 && kinds.includes("impact") && (kinds.includes("crashZoom") || kinds.includes("cameraShake"));
     if (kinds.length > 1 && !okPair) {
-      throw new Error(`${label} combines ${kinds.join(" + ")}; show, cutaway, crashZoom, impact and freeze are mutually exclusive (only impact + crashZoom may combine)`);
+      throw new Error(`${label} combines ${kinds.join(" + ")}; show, cutaway, crashZoom, impact, freeze and cameraShake are mutually exclusive (only impact + crashZoom or impact + cameraShake may combine)`);
+    }
+    if (m.cameraShake) {
+      if (m.hold !== undefined) throw new Error(`${label}: a cameraShake's length is its frames; remove "hold"`);
+      if (typeof m.cameraShake === "object") {
+        const { frames, px } = m.cameraShake;
+        if (frames !== undefined && !(Number.isInteger(frames) && frames >= 1)) throw new Error(`${label}: cameraShake.frames ${frames} must be an integer >= 1`);
+        if (px !== undefined && !(px > 0)) throw new Error(`${label}: cameraShake.px ${px} must be > 0`);
+      }
     }
     if (m.impact && m.hold !== undefined && !m.crashZoom) {
       throw new Error(`${label}: impact with "hold" needs crashZoom (a lone impact is always 2 frames); remove "hold" or add crashZoom`);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFixes, captionsToWords, offsetWords, dropAfterSpeechEnd, spreadWords } from "./captionFixes";
+import { applyFixes, captionsToWords, dropWordsByText, offsetWords, dropAfterSpeechEnd, replaceWordsByText, spreadWords } from "./captionFixes";
 
 describe("applyFixes", () => {
   it("corrects known mis-hearings case-insensitively, keeping punctuation", () => {
@@ -148,8 +148,17 @@ describe("two-word fixes", () => {
 
 describe("dropAfterSpeechEnd", () => {
   const w = (text: string, startFrame: number, endFrame: number) => ({ text, startFrame, endFrame });
-  it("drops a word starting after speech end", () => {
-    expect(dropAfterSpeechEnd([w("a", 10, 20), w("ghost", 25, 40)], 25)).toEqual([w("a", 10, 20)]);
+  it("drops a word starting 2+ frames after speech end", () => {
+    expect(dropAfterSpeechEnd([w("a", 10, 20), w("ghost", 27, 40)], 25)).toEqual([w("a", 10, 20)]);
+  });
+  it("keeps a real word Whisper places at the speech end, giving it 2 frames past the boundary", () => {
+    expect(dropAfterSpeechEnd([w("you", 275, 289), w("forget", 289, 347)], 289)).toEqual([w("you", 275, 289), w("forget", 289, 291)]);
+  });
+  it("keeps a word starting one frame after speech end", () => {
+    expect(dropAfterSpeechEnd([w("a", 10, 20), w("b", 26, 40)], 25)).toEqual([w("a", 10, 20), w("b", 25, 27)]);
+  });
+  it("trims the previous word when the boundary word needs room", () => {
+    expect(dropAfterSpeechEnd([w("a", 10, 25), w("b", 25, 40)], 24)).toEqual([w("a", 10, 24), w("b", 24, 26)]);
   });
   it("clamps a word straddling speech end", () => {
     expect(dropAfterSpeechEnd([w("a", 10, 40)], 25)).toEqual([w("a", 10, 27)]);
@@ -215,5 +224,26 @@ describe("spreadWords", () => {
     expect(out).toHaveLength(3);
     expect(out.every((w) => w.endFrame - w.startFrame >= 2)).toBe(true);
     expect(out[0].startFrame).toBe(10);
+  });
+});
+
+describe("dropWordsByText", () => {
+  const w = (text: string, startFrame: number, endFrame: number) => ({ text, startFrame, endFrame });
+  it("removes every word whose normalised text matches, keeping the rest in order", () => {
+    expect(dropWordsByText([w("hey", 0, 5), w("guys", 5, 10), w("Thank", 10, 12)], ["thank"])).toEqual([w("hey", 0, 5), w("guys", 5, 10)]);
+  });
+  it("ignores case and punctuation and leaves unmatched lists alone", () => {
+    expect(dropWordsByText([w("Thank,", 0, 5), w("you", 5, 8)], ["THANK", "nothing"])).toEqual([w("you", 5, 8)]);
+    expect(dropWordsByText([w("a", 0, 5)], [])).toEqual([w("a", 0, 5)]);
+  });
+});
+
+describe("replaceWordsByText", () => {
+  const w = (text: string, startFrame: number, endFrame: number) => ({ text, startFrame, endFrame });
+  it("replaces matching words' text, keeping their timing and punctuation", () => {
+    expect(replaceWordsByText([w("Fix", 0, 5), w("too,", 5, 9)], { too: "two" })).toEqual([w("Fix", 0, 5), w("two,", 5, 9)]);
+  });
+  it("matches ignoring case and leaves other words alone", () => {
+    expect(replaceWordsByText([w("Too", 0, 5), w("tool", 5, 9)], { TOO: "two" })).toEqual([w("two", 0, 5), w("tool", 5, 9)]);
   });
 });

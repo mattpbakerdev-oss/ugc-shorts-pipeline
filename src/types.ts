@@ -43,8 +43,10 @@ export type Moment = {
   cutaway?: { file: string; from: number; to: number };
   /** 4-frame punch-in on the phrase start, snap back at the phrase end (or `hold`). Default scale 1.35, no shake. */
   crashZoom?: { scale?: number; shake?: boolean } | true;
-  /** 2-frame full-frame flash at the phrase start. May combine with crashZoom only. */
+  /** 2-frame full-frame flash at the phrase start. May combine with crashZoom or cameraShake only. */
   impact?: "white" | "black";
+  /** Whole-frame jolt of the face layer from the phrase start: alternating, decaying offsets. Default 8 frames, 14 px. Excludes show/cutaway/crashZoom/freeze and hold. */
+  cameraShake?: { frames?: number; px?: number } | true;
   /** Freeze the frame for `seconds`, extending the timeline, with a big caption. */
   freeze?: { seconds: number; text: string };
 };
@@ -67,16 +69,22 @@ export type Storyboard = {
   /** Number of takes the hook chips span (default 1). Sections may only target takes after it. */
   hookTakes?: number;
   hook: string; sections: Section[]; moments: Moment[]; cuts?: Cut[];
-  /** Pins a take's transcript text when Whisper mishears it (takes numbered from 1). */
-  transcriptOverrides?: { take: number; text: string }[];
+  /**
+   * Per take (numbered from 1). `text` pins the whole transcript when Whisper mishears a short clip (spread evenly).
+   * Otherwise `drop` removes Whisper's words by text (a phantom "Thank" on a breath) and `replace` swaps a word's
+   * text keeping its timing ({ too: "two" }); both may be given together, neither with `text`.
+   */
+  transcriptOverrides?: { take: number; text?: string; drop?: string[]; replace?: Record<string, string> }[];
 };
 export type ResolvedMoment = {
   enterFrame: number; exitFrame: number; show?: GraphicSpec; emphasis?: Emphasis; sfx?: SfxName; zone: ZoneName; stack?: boolean;
   /** fromFrame/toFrame are clip-local (not on the video timeline); enterFrame/exitFrame are. Zone is "full". */
   cutaway?: { file: string; fromFrame: number; toFrame: number };
   crashZoom?: { scale: number; shake: boolean };
-  /** Window is enterFrame to enterFrame + IMPACT_FRAMES (exitFrame may be later when combined with crashZoom). */
+  /** Window is enterFrame to enterFrame + IMPACT_FRAMES (exitFrame may be later when combined with crashZoom or cameraShake). */
   impact?: "white" | "black";
+  /** Window is enterFrame to enterFrame + frames (= exitFrame). */
+  cameraShake?: { frames: number; px: number };
   /** enterFrame is the frozen frame; exitFrame = enterFrame + lengthFrames. */
   freeze?: { lengthFrames: number; text: string };
 };

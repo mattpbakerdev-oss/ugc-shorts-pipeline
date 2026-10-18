@@ -31,6 +31,14 @@ describe("validateStoryboard", () => {
     expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 2, text: "hi there" }] })).not.toThrow();
     expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 0, text: "hi" }] })).toThrow(/transcriptOverride 0.*take/);
     expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, text: "  " }] })).toThrow(/transcriptOverride 0.*empty/);
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, drop: ["thank"] }] })).not.toThrow();
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1 }] })).toThrow(/transcriptOverride 0.*text or drop/);
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, drop: [] }] })).toThrow(/transcriptOverride 0.*text or drop/);
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, text: "hi", drop: ["x"] }] })).toThrow(/transcriptOverride 0.*not both/);
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, replace: { too: "two" } }] })).not.toThrow();
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, drop: ["thank"], replace: { too: "two" } }] })).not.toThrow();
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, text: "hi", replace: { too: "two" } }] })).toThrow(/transcriptOverride 0.*not both/);
+    expect(() => validateStoryboard({ ...base, transcriptOverrides: [{ take: 1, replace: {} }] })).toThrow(/transcriptOverride 0.*text or drop/);
   });
   it("accepts valid cuts", () => {
     expect(() => validateStoryboard({ ...base, cuts: [{ take: 1, from: 0, to: 1.5 }] })).not.toThrow();
@@ -112,5 +120,29 @@ describe("meme moment validation", () => {
   it("rejects freeze text longer than 16 characters", () => {
     expect(() => validateStoryboard({ ...base, moments: [{ at: 1, freeze: { seconds: 1, text: "A".repeat(17) } }] })).toThrow(/limit is 16/);
     expect(() => validateStoryboard({ ...base, moments: [{ at: 1, freeze: { seconds: 1, text: "A".repeat(16) } }] })).not.toThrow();
+  });
+});
+
+describe("cameraShake validation", () => {
+  const v = (m: Storyboard["moments"][number]) => () => validateStoryboard({ ...base, moments: [m] });
+  it("accepts true, options, and cameraShake + impact", () => {
+    expect(v({ at: 1, cameraShake: true })).not.toThrow();
+    expect(v({ at: 1, cameraShake: { frames: 6, px: 10 } })).not.toThrow();
+    expect(v({ at: 1, cameraShake: true, impact: "white" })).not.toThrow();
+  });
+  it("rejects cameraShake with show, crashZoom, cutaway or freeze", () => {
+    const show = { kind: "flashCard", word: "x" } as const;
+    expect(v({ at: 1, cameraShake: true, show })).toThrow(/mutually exclusive/);
+    expect(v({ at: 1, cameraShake: true, crashZoom: true })).toThrow(/mutually exclusive/);
+    expect(v({ at: 1, cameraShake: true, cutaway: { file: "a", from: 0, to: 1 } })).toThrow(/mutually exclusive/);
+    expect(v({ at: 1, cameraShake: true, freeze: { seconds: 1, text: "x" } })).toThrow(/mutually exclusive/);
+  });
+  it("rejects hold on a cameraShake", () => {
+    expect(v({ at: 1, cameraShake: true, hold: 1 })).toThrow(/hold/);
+  });
+  it("rejects frames below 1 and px at or below 0", () => {
+    expect(v({ at: 1, cameraShake: { frames: 0 } })).toThrow(/frames/);
+    expect(v({ at: 1, cameraShake: { frames: 2.5 } })).toThrow(/frames/);
+    expect(v({ at: 1, cameraShake: { px: 0 } })).toThrow(/px/);
   });
 });

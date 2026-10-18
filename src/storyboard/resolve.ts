@@ -1,3 +1,4 @@
+import { CAMERA_SHAKE_DEFAULT } from "../cameraShake";
 import { findPhrase, PhraseNotFoundError, normaliseToken } from "../phrase";
 import { DEFAULT_FACE_BOX, zonesFor } from "../zones";
 import type {
@@ -101,11 +102,16 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
       cutaway = { file: m.cutaway.file, fromFrame: Math.round(m.cutaway.from * fps), toFrame: Math.round(m.cutaway.to * fps) };
       if (cutaway.toFrame <= cutaway.fromFrame) throw new Error(`${sb.id}: moment ${i} cutaway range ${m.cutaway.from}-${m.cutaway.to}s is under one frame`);
     }
+    const cameraShake = m.cameraShake
+      ? { frames: (m.cameraShake === true ? undefined : m.cameraShake.frames) ?? CAMERA_SHAKE_DEFAULT.frames, px: (m.cameraShake === true ? undefined : m.cameraShake.px) ?? CAMERA_SHAKE_DEFAULT.px }
+      : undefined;
     let exitFrame: number;
     if (cutaway) {
       exitFrame = enterFrame + (cutaway.toFrame - cutaway.fromFrame);
     } else if (m.freeze) {
       exitFrame = enterFrame + 1; // replaced by the real length during expansion
+    } else if (cameraShake) {
+      exitFrame = enterFrame + cameraShake.frames;
     } else if (m.impact && !m.crashZoom) {
       exitFrame = enterFrame + IMPACT_FRAMES;
     } else if (typeof m.hold === "string") {
@@ -139,7 +145,7 @@ export const resolveStoryboard = (sb: Storyboard, takesFile: TakesFile, wordsFil
       : undefined;
     return {
       enterFrame, exitFrame, show: m.show, emphasis: m.emphasis, sfx: m.sfx ?? (m.freeze ? "record-scratch" : undefined),
-      zone: zoneFor(m), stack: m.stack, cutaway, crashZoom, impact: m.impact,
+      zone: zoneFor(m), stack: m.stack, cutaway, crashZoom, impact: m.impact, cameraShake,
       freeze: m.freeze ? { lengthFrames: Math.round(m.freeze.seconds * fps), text: m.freeze.text } : undefined,
     };
   });

@@ -6,9 +6,10 @@ import {
   toCaptions,
   transcribe,
 } from "@remotion/install-whisper-cpp";
-import { ffmpeg } from "./ffmpeg";
+import { ffmpeg, probe } from "./ffmpeg";
+import { keptSegments, mapWordsThroughKept } from "./cuts";
 import { assertOverrideTakes } from "./takes";
-import { captionsToWords, dropAfterSpeechEnd, offsetWords, spreadWords } from "../src/captionFixes";
+import { captionsToWords, dropAfterSpeechEnd, dropWordsByText, offsetWords, replaceWordsByText, spreadWords } from "../src/captionFixes";
 import { storyboards } from "../src/videos";
 import type { TakesFile, Word, WordsFile } from "../src/types";
 
@@ -59,24 +60,38 @@ const main = async () => {
 
   // Transcribe each take on its own: whisper smears a word across silence, so on the joined audio
   // a take's first word can start inside the previous take. Per take, words cannot cross a join.
-  const overrides = (storyboards as Record<string, { transcriptOverrides?: { take: number; text: string }[] }>)[id]?.transcriptOverrides ?? [];
+  const sb = (storyboards as Record<string, { transcriptOverrides?: { take: number; text?: string; drop?: string[]; replace?: Record<string, string> }[]; cuts?: { take: number; from: number; to: number }[] }>)[id];
+  const overrides = sb?.transcriptOverrides ?? [];
+  const cuts = sb?.cuts ?? [];
   assertOverrideTakes(id, overrides, takes.length);
   const words: Word[] = [];
   for (const [i, take] of takes.entries()) {
-    const wav = path.join(dir, `take_${String(i + 1).padStart(2, "0")}_16k.wav`);
-    const rawWav = path.join(dir, `take_${String(i + 1).padStart(2, "0")}_raw.wav`);
+    const nn = String(i + 1).padStart(2, "0");
+    const wav = path.join(dir, `take_${nn}_16k.wav`);
+    const rawWav = path.join(dir, `take_${nn}_raw.wav`);
+    // Prefer the UNCUT trimmed take from prep's work dir: Whisper aligns words badly when a clip starts or ends
+    // tight on speech, and the cuts remove exactly that air. Words are mapped through the cuts afterwards.
+    // Fall back to slicing face.mp4 (a fresh checkout without work/) where there is nothing to map.
+    const uncut = path.join("work", id, `take_${nn}.mp4`);
+    const takeCuts = cuts.filter((c) => c.take === i + 1);
+    let source: string[];
+    let keptSegs: { from: number; to: number }[] | null = null;
+    try {
+      await fs.access(uncut);
+      source = ["-i", uncut];
+      if (takeCuts.length) keptSegs = keptSegments((await probe(uncut)).duration, takeCuts, fps);
+    } catch {
+      if (takeCuts.length) console.log(`take ${i + 1}: ${uncut} is missing (run prep); transcribing the cut take from face.mp4 instead`);
+      source = ["-ss", String(take.startFrame / fps), "-t", String((take.endFrame - take.startFrame) / fps), "-i", face];
+    }
     await ffmpeg([
-      "-ss", String(take.startFrame / fps), "-t", String((take.endFrame - take.startFrame) / fps),
-      "-i", face, "-vn",
+      ...source, "-vn",
       // Trailing silence: whisper drops the last words when the audio ends right on them.
       "-af", "apad=pad_dur=1",
       "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav,
     ]);
     // Speech end is measured on the unpadded take; words Whisper puts after it are hallucinations.
-    await ffmpeg([
-      "-ss", String(take.startFrame / fps), "-t", String((take.endFrame - take.startFrame) / fps),
-      "-i", face, "-vn", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", rawWav,
-    ]);
+    await ffmpeg([...source, "-vn", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", rawWav]);
     const speechEndFrame = Math.round((await speechEndSeconds(rawWav)) * fps);
     await fs.rm(rawWav);
     const output = await transcribe({
@@ -89,17 +104,28 @@ const main = async () => {
     });
     const { captions } = toCaptions({ whisperCppOutput: output });
     const takeWords = captionsToWords(captions, fps);
-    const kept = dropAfterSpeechEnd(takeWords, speechEndFrame);
-    if (kept.length < takeWords.length) {
-      console.log(`take ${i + 1}: dropped after speech end (frame ${speechEndFrame}): ${takeWords.slice(kept.length).map((w) => w.text).join(" ")}`);
+    const afterSpeech = dropAfterSpeechEnd(takeWords, speechEndFrame);
+    if (afterSpeech.length < takeWords.length) {
+      console.log(`take ${i + 1}: dropped after speech end (frame ${speechEndFrame}): ${takeWords.slice(afterSpeech.length).map((w) => w.text).join(" ")}`);
     }
+    const mapped = keptSegs ? mapWordsThroughKept(afterSpeech, keptSegs, fps) : afterSpeech;
     const override = overrides.find((o) => o.take === i + 1);
-    if (override) {
+    const dropped = override?.drop?.length ? dropWordsByText(mapped, override.drop) : mapped;
+    if (dropped.length < mapped.length) console.log(`take ${i + 1}: dropped by override: ${mapped.filter((w) => !dropped.includes(w)).map((w) => w.text).join(" ")}`);
+    const kept = override?.replace ? replaceWordsByText(dropped, override.replace) : dropped;
+    if (kept !== dropped) console.log(`take ${i + 1}: replaced by override: ${Object.entries(override!.replace!).map(([k, v]) => `${k} -> ${v}`).join(", ")}`);
+    if (keptSegs && mapped.length < afterSpeech.length) {
+      const segs = keptSegs.map((g) => ({ from: Math.round(g.from * fps), to: Math.round(g.to * fps) }));
+      const inCuts = afterSpeech.filter((w) => !segs.some((g) => w.startFrame >= g.from && w.startFrame < g.to));
+      console.log(`take ${i + 1}: inside cuts, dropped: ${inCuts.map((w) => w.text).join(" ")}`);
+    }
+    if (override?.text) {
       const len = take.endFrame - take.startFrame;
       const pad = Math.round(0.2 * fps);
       const from = kept.length ? kept[0].startFrame : pad;
       const to = kept.length ? kept[kept.length - 1].endFrame : len - pad;
       const pinned = spreadWords(override.text, from, Math.max(to, from + 2));
+      if (override.drop?.length || override.replace) throw new Error(`${id}: transcriptOverrides take ${i + 1} has text as well as drop/replace; those only apply to Whisper's words`);
       console.log(`take ${i + 1}: transcript pinned: ${override.text}`);
       words.push(...pinned.map((w) => ({ ...w, startFrame: w.startFrame + take.startFrame, endFrame: Math.min(w.endFrame + take.startFrame, take.endFrame) })));
     } else {

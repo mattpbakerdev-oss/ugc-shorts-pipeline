@@ -8,9 +8,7 @@ import { buildTakes } from "./takes";
 import { partsPlan } from "./parts";
 import type { CutawaysFile, TakesFile } from "../src/types";
 
-const FPS = 30;
-const WIDTH = 1080;
-const HEIGHT = 1920;
+import { checkSource, FPS, HEIGHT, WIDTH } from "./source";
 const SYNC_TOLERANCE = 0.04; // seconds; AAC frames are ~21ms so exact frame equality is not achievable
 const DEFAULT_SOURCE_ROOT = "/Users/mattdev/Projects/ugc-renderer/reposts/7 Oct - v2 and v3 originals";
 
@@ -99,18 +97,13 @@ const main = async () => {
   const trimmed: { file: string; frames: number; path: string }[] = [];
   for (const [i, { name: file, src }] of plan.entries()) {
     const info = await probe(src);
-    if (info.width !== WIDTH || info.height !== HEIGHT) {
-      throw new Error(`${file} is ${info.width}x${info.height}; expected ${WIDTH}x${HEIGHT}`);
-    }
-    if (Math.abs(info.fps - FPS) > 0.01) {
-      throw new Error(`${file} is ${info.fps} fps; expected ${FPS}`);
-    }
+    const { scale } = checkSource(file, info);
     const isHdr = info.colorTrc === "arib-std-b67" || info.colorTrc === "smpte2084";
 
     let speechStart = 0;
     let speechEnd = info.duration;
     if (!noTrim) {
-      const { stderr } = await ffmpeg(["-i", src, "-map", "0:a", "-af", "silencedetect=noise=-35dB:d=0.3", "-f", "null", "-"]);
+      const { stderr } = await ffmpeg(["-i", src, "-map", "0:a:0", "-af", "silencedetect=noise=-35dB:d=0.3", "-f", "null", "-"]);
       // Audio ends ~0.3s before video on iPhone takes; detect trailing silence against the audio length.
       const audioLen = (await streamDurations(src)).audio ?? info.duration;
       const parsed = parseSilence(stderr, audioLen);
@@ -122,7 +115,10 @@ const main = async () => {
     const out = path.join(workDir, `take_${String(i + 1).padStart(2, "0")}.mp4`);
     await ffmpeg([
       "-ss", String(speechStart), "-to", String(speechEnd), "-i", src,
-      ...(isHdr ? ["-vf", SDR_FILTER] : ["-vf", "format=yuv420p"]),
+      // First video and first audio only: newer iPhones add a spatial (APAC) track ffmpeg cannot decode, plus data streams.
+      "-map", "0:v:0", "-map", "0:a:0",
+      // ffmpeg auto-rotates on decode; scale 4K (2160x3840 displayed) takes to 1080x1920 before the LUT.
+      "-vf", (scale ? `scale=${WIDTH}:${HEIGHT}:flags=lanczos+accurate_rnd,` : "") + (isHdr ? SDR_FILTER : "format=yuv420p"),
       "-r", String(FPS), "-c:v", "libx264", "-preset", "medium", "-crf", "18",
       "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
       // iPhone audio runs ~0.3s shorter than video; pad so copy-concat cannot drift sync.

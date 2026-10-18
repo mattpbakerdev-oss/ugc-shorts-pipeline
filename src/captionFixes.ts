@@ -1,3 +1,4 @@
+import { normaliseToken } from "./phrase";
 import type { Word } from "./types";
 
 /** transcript word (lowercase, no punctuation) → what the caption should say */
@@ -179,16 +180,39 @@ export const offsetWords = (words: Word[], startFrame: number, endFrame: number)
 };
 
 /**
- * Whisper hallucinates words in the silence it is padded with. Words starting at or after
+ * Whisper hallucinates words in the silence it is padded with. Words starting more than a frame after
  * `speechEndFrame` (take-local frames; a word cannot start once sound has stopped) are dropped; a word
- * ending past `speechEndFrame + 2` is clamped to that point (at least 1 frame long).
+ * ending past `speechEndFrame + 2` is clamped to that point (at least 2 frames long, trimming the previous word if it has to start earlier).
  */
 export const dropAfterSpeechEnd = (words: Word[], speechEndFrame: number): Word[] => {
   const limit = speechEndFrame + 2;
   const out: Word[] = [];
   for (const w of words) {
-    if (w.startFrame >= speechEndFrame) continue;
-    out.push(w.endFrame > limit ? { ...w, endFrame: Math.max(w.startFrame + 1, limit) } : w);
+    // Whisper stretches the second-to-last word up to the speech end and starts the real last word there;
+    // a hallucination in the padded silence starts later. Tolerate one frame.
+    if (w.startFrame > speechEndFrame + 1) continue;
+    if (w.endFrame <= limit) { out.push(w); continue; }
+    const start = Math.min(w.startFrame, limit - 2);
+    const prev = out[out.length - 1];
+    if (prev && prev.endFrame > start) out[out.length - 1] = { ...prev, endFrame: start };
+    out.push({ ...w, startFrame: start, endFrame: limit });
   }
   return out;
+};
+
+/** Remove every word whose normalised text (case and punctuation ignored) is in `texts`. */
+export const dropWordsByText = (words: Word[], texts: string[]): Word[] => {
+  const drop = new Set(texts.map(normaliseToken));
+  return words.filter((w) => !drop.has(normaliseToken(w.text)));
+};
+
+/** Replace the text of every word whose normalised text is a key of `map` (keys compared case-insensitively), keeping punctuation and timing. */
+export const replaceWordsByText = (words: Word[], map: Record<string, string>): Word[] => {
+  const table = new Map(Object.entries(map).map(([k, v]) => [normaliseToken(k), v]));
+  return words.map((w) => {
+    const to = table.get(normaliseToken(w.text));
+    if (to === undefined) return w;
+    const m = w.text.match(/^(\W*)(.*?)(\W*)$/);
+    return { ...w, text: m ? `${m[1]}${to}${m[3]}` : to };
+  });
 };

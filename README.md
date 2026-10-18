@@ -4,7 +4,7 @@ Turns numbered talking-head takes (iPhone, 9:16) into finished 1080x1920 / 30 fp
 
 Layers, bottom to top (`src/layers/`):
 
-1. **Face**: the takes joined back to back, HLG to SDR through a LUT, with punch-ins, a slow push-in, crash zooms and freezes (the frame is held while the timeline extends).
+1. **Face**: the takes joined back to back, HLG to SDR through a LUT, with punch-ins, a slow push-in, crash zooms, camera shakes and freezes (the frame is held while the timeline extends).
 2. **Cutaways** and **impact flashes**: full-frame muted inserts, and 2-frame white/black flashes (see "Comedy / meme edits").
 3. **Section titles and hook chips**: the hook (take 1, or takes 1 to `hookTakes`) is up to three stacked chips (split on `//`, sized to fit the top band); later takes get one title each. Hidden during cutaways.
 4. **Graphics**: big numbers, punch lists, icon stacks, counters, flash cards and the save/share CTA, placed in zones around the face. Hidden during cutaways.
@@ -18,13 +18,13 @@ Note: any `npm install` on this machine needs `--cache ~/.npm-cache-remotion` (r
 
 ## New video, start to finish
 
-1. Put the takes in a folder named after the video id, e.g. `<sourceRoot>/v4_topic/`, named `<n> <name>.mp4` (`1 hook.mp4`, `2 tip1.mp4`, ...). Take 1 is the hook. Ids use underscores.
+1. Put the takes in a folder named after the video id, e.g. `<sourceRoot>/v4_topic/`, named `<n> <name>.mp4` (`1 hook.mp4`, `2 tip1.mp4`, ...). Take 1 is the hook. Ids use underscores. Any 9:16 portrait source at 30 fps or more is accepted (`scripts/source.ts`): 4K / 60 fps iPhone clips, stored landscape with a rotation tag, are scaled to 1080x1920 at 30 fps in prep. Only the first video and first audio stream are used, so the spatial-audio (APAC) track newer iPhones add is ignored.
 2. Prep (trims silence, applies the LUT, writes `public/videos/<id>/` and `takes.json`):
    ```
    npm run prep -- v4_topic [sourceRoot]
    ```
    Without `sourceRoot` it uses the ugc-renderer reposts folder (`/Users/mattdev/Projects/ugc-renderer/reposts/7 Oct - v2 and v3 originals`).
-3. Transcribe (writes `public/videos/<id>/words.json`). Each take is transcribed separately and offset onto the joined timeline, because whisper stretches a word over silence and, on the joined audio, would start a take's first word inside the previous take. Words Whisper places after a take's measured speech end (trailing silence below -35 dB) are dropped as hallucinations, and a word running past it is clamped. The first run downloads whisper.cpp 1.5.5 and the medium.en model (about 1.5 GB) into `./whisper/`:
+3. Transcribe (writes `public/videos/<id>/words.json`). Each take is transcribed separately and offset onto the joined timeline, because whisper stretches a word over silence and, on the joined audio, would start a take's first word inside the previous take. When `work/<id>/take_NN.mp4` exists (it does after prep), Whisper hears that **uncut** take and the word times are mapped through the storyboard's `cuts` afterwards (`mapWordsThroughKept` in `scripts/cuts.ts`): Whisper aligns words badly when a clip starts or ends tight on speech, which is exactly the air the cuts remove. Words inside a removed range (a false start, a click) are dropped and logged; a word stretched into a cut is clamped to it. On a checkout without `work/`, the cut take is sliced from `face.mp4` instead. Words Whisper places more than a frame after a take's measured speech end (trailing silence below -35 dB) are dropped as hallucinations; a word starting at the boundary is kept (Whisper stretches the previous word up to the speech end and starts the real last word there) and clamped to 2 frames past it. The first run downloads whisper.cpp 1.5.5 and the medium.en model (about 1.5 GB) into `./whisper/`:
    ```
    npm run transcribe -- v4_topic
    ```
@@ -71,7 +71,7 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 
 **Storyboard**: `id` (underscored, matches the data folder), `faceBox?` (fractions), `cuts?` (`{ take, from, to }[]`: take-local seconds of `work/<id>/take_NN.mp4` BEFORE cutting; prep removes them), `captionY?` (top of the caption band, 0.3 to 0.80, i.e. 1 - 0.10 platform UI - 0.10 caption height; must be at least the face bottom + 0.02), `graphicsBox?` (`{ x, y, w, h }` fractions; replaces the primary graphics zone, must keep a gap of at least 0.02 from `faceBox`, must not overlap the captions band or the top band, width >= 0.10), `hookBox?` (`{ x, y, w, h }` fractions; replaces the top band for the hook chips), `source?` and `music?` (see "Comedy / meme edits"), `hook` (shown on take 1, or takes 1 to `hookTakes` when `hookTakes` is set; sections must then target later takes), `sections` (`{ take, title }`, takes numbered from 1; take 1 is the hook so sections start at 2), `moments`.
 
-**Transcript overrides**: `transcriptOverrides?` (`{ take, text }[]`, takes numbered from 1). When Whisper mishears a short clip, pin its text: `npm run transcribe` replaces that take's words with `text` split on whitespace, spread evenly from the take's first transcribed word start to its last word end (or the whole take minus 0.2 s at each end if Whisper heard nothing), each word at least 2 frames.
+**Transcript overrides**: `transcriptOverrides?` (`{ take, text?, drop?, replace? }[]`, takes numbered from 1). When Whisper mishears a short clip, pin its text: `npm run transcribe` replaces that take's words with `text` split on whitespace, spread evenly from the take's first transcribed word start to its last word end (or the whole take minus 0.2 s at each end if Whisper heard nothing), each word at least 2 frames. For a single bad word keep Whisper's timings instead: `drop: ["thank"]` removes every word with that text in the take (a phantom word Whisper hears in a breath, which starts inside the real last word so no silence rule catches it), and `replace: { too: "two" }` swaps a word's text keeping its punctuation and timing. `drop` and `replace` may be combined; neither may be given with `text`. Matching ignores case and punctuation.
 
 **Moment** (each needs exactly one of `on` / `at`):
 
@@ -84,6 +84,7 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 | `sfx` | One of the 13 names in the SFX section. A `freeze` moment defaults to `record-scratch`. |
 | `hold` | How long the graphic stays: seconds, or `"until:<phrase>"`. |
 | `stack` | `true` appends the graphic below the previous one in the same zone. |
+| `cameraShake` | `true` or `{ frames?, px? }`: the whole face layer jolts from the phrase start (default 8 frames, 14 px, alternating and decaying), scaled up by just enough that the shifted edge never shows. Chips, graphics and captions stay still. Excludes `show`, `cutaway`, `crashZoom`, `freeze` and `hold`; may combine with `impact`. `v5_mistakes_a` uses it on the hook with a `thud`. |
 | `cutaway`, `crashZoom`, `impact`, `freeze` | Comedy moment kinds; see "Comedy / meme edits". |
 
 **Rules that bite**
@@ -104,7 +105,7 @@ Types are in `src/types.ts`; helpers in `src/storyboard/dsl.ts`.
 2. `npm run bloopers -- <id>` on this UNCUT take: it prints take-local seconds that match `cuts`.
 3. Check each proposal against the transcript and paste the `cuts: [...]` block into the storyboard.
 4. Re-run `npm run prep -- <id>` to apply the cuts.
-5. Delete `public/videos/<id>/words.json` and run `npm run transcribe -- <id>` again, because the timings have moved.
+5. Delete `public/videos/<id>/words.json` and run `npm run transcribe -- <id>` again: the words are re-mapped through the new cuts (Whisper itself hears the same uncut take as before).
 
 **Finding retakes (`npm run bloopers -- <id>`)**
 
@@ -145,13 +146,13 @@ source: { dir: "/path/to/Batch 16", parts: ["viral/v00_cold.mp4", "viral/v01_hoo
 
 ### Moment kinds
 
-Each moment has exactly one of `on`/`at`, plus optionally `sfx`. The kinds below, together with `show`, are mutually exclusive in one moment, except that `impact` may be combined with `crashZoom`. A violation fails the build.
+Each moment has exactly one of `on`/`at`, plus optionally `sfx`. The kinds below, together with `show` and `cameraShake`, are mutually exclusive in one moment, except that `impact` may be combined with `crashZoom` or `cameraShake`. A violation fails the build.
 
 | Field | Meaning |
 | --- | --- |
 | `cutaway: { file, from, to }` | Muted full-frame insert. `file` is the clip id **without extension** (a name from `cutaways.json`, e.g. `"j_IMG_6162"`); `from`/`to` are seconds **within the clip** (`0 <= from < to`, and `to` must not exceed the clip length). Its length is `to - from`, so `hold` is rejected. The face audio keeps playing underneath. |
 | `crashZoom: { scale?, shake? }` or `true` | 4-frame punch-in on the phrase start, snap back at the phrase end (or at `hold` if given). `scale` default **1.35** (must be > 1), `shake` default **false**. Multiplies with the face's punch-in. |
-| `impact: "white" \| "black"` | 2-frame full-frame flash at the phrase start. May be combined with `crashZoom` (`{ on: "...", crashZoom: true, impact: "white" }`). |
+| `impact: "white" \| "black"` | 2-frame full-frame flash at the phrase start. May be combined with `crashZoom` (`{ on: "...", crashZoom: true, impact: "white" }`) or with `cameraShake`. |
 | `freeze: { seconds, text }` | Holds the face frame at the phrase start for `seconds` (> 0), **extending the video**, and shows `text` (non-empty) as a big chip over it. The face is muted and the voice pauses (it resumes where it left off), and later moments, titles and caption words shift by the freeze length. `sfx` defaults to `record-scratch`. `hold` is rejected. A freeze cannot start inside a cutaway (the build names both moments). |
 
 Notes:

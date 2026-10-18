@@ -22,18 +22,18 @@ export const ffmpeg = async (args: string[]): Promise<{ stdout: string; stderr: 
   }
 };
 
-export type Probe = { width: number; height: number; fps: number; duration: number; colorTrc: string };
+export type Probe = { width: number; height: number; fps: number; duration: number; colorTrc: string; rotation: number };
 
 export const probe = async (file: string): Promise<Probe> => {
   const { stdout } = await run("ffprobe", [
     "-v", "error",
     "-select_streams", "v:0",
-    "-show_entries", "stream=width,height,r_frame_rate,color_transfer:format=duration",
+    "-show_entries", "stream=width,height,r_frame_rate,color_transfer:stream_side_data=rotation:format=duration",
     "-of", "json",
     file,
   ]);
   const j = JSON.parse(stdout) as {
-    streams: { width: number; height: number; r_frame_rate: string; color_transfer?: string }[];
+    streams: { width: number; height: number; r_frame_rate: string; color_transfer?: string; side_data_list?: { rotation?: number }[] }[];
     format: { duration: string };
   };
   const s = j.streams[0];
@@ -44,6 +44,7 @@ export const probe = async (file: string): Promise<Probe> => {
     fps: n / d,
     duration: Number(j.format.duration),
     colorTrc: s.color_transfer ?? "unknown",
+    rotation: s.side_data_list?.find((d) => d.rotation !== undefined)?.rotation ?? 0,
   };
 };
 

@@ -46,6 +46,26 @@ export const RemotionRoot: React.FC = () => {
         calculateMetadata={calculateMetadata}
       />
       <Composition
+        id="v5-mistakes-a"
+        component={TalkingHead}
+        durationInFrames={30}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ id: "v5_mistakes_a", showZones: false, cover: false }}
+        calculateMetadata={calculateMetadata}
+      />
+      <Composition
+        id="v6-hooks-a"
+        component={TalkingHead}
+        durationInFrames={30}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ id: "v6_hooks_a", showZones: false, cover: false }}
+        calculateMetadata={calculateMetadata}
+      />
+      <Composition
         id="w1-viral"
         component={TalkingHead}
         durationInFrames={30}

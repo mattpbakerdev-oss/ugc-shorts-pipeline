@@ -285,3 +285,25 @@ describe("hookTakes", () => {
     expect(() => resolveStoryboard({ id: "h", hook: "H", hookTakes: 4, sections: [{ take: 2, title: "T" }], moments: [] }, t3, w)).toThrow(/take 2/);
   });
 });
+
+describe("cameraShake resolution", () => {
+  const base = { id: "c", hook: "H", sections: [] as Storyboard["sections"] };
+  const run = (moments: Moment[]) => resolveStoryboard({ ...base, moments }, takes, wordsFile);
+  it("resolves cameraShake defaults and exits after 8 frames", () => {
+    const m = run([{ on: "ten", cameraShake: true }]).moments[0];
+    expect(m.cameraShake).toEqual({ frames: 8, px: 14 });
+    expect(m.exitFrame).toBe(m.enterFrame + 8);
+  });
+  it("honours cameraShake options", () => {
+    const m = run([{ on: "ten", cameraShake: { frames: 4, px: 20 } }]).moments[0];
+    expect(m.cameraShake).toEqual({ frames: 4, px: 20 });
+    expect(m.exitFrame).toBe(m.enterFrame + 4);
+  });
+  it("keeps the impact window when combined with cameraShake", () => {
+    const m = run([{ on: "ten", cameraShake: true, impact: "black" }]).moments[0];
+    expect([m.impact, m.exitFrame]).toEqual(["black", m.enterFrame + 8]);
+  });
+  it("leaves cameraShake undefined on other moments", () => {
+    expect(run([{ on: "ten", emphasis: "pulse" }]).moments[0].cameraShake).toBeUndefined();
+  });
+});
